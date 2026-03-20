@@ -34,3 +34,4 @@ Thumbs.db
 
 # typescript
 next-env.d.ts
+*.tsbuildinfo
