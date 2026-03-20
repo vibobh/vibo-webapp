@@ -1,0 +1,101 @@
+{
+  "lang": "en",
+  "dir": "ltr",
+  "nav": {
+    "about": "About",
+    "features": "Features",
+    "safety": "Safety",
+    "contact": "Contact",
+    "download": "Download Vibo"
+  },
+  "hero": {
+    "headline": "Real people. Real moments.",
+    "subtitle": "A global social platform born in the Middle East, connecting creators worldwide."
+  },
+  "about": {
+    "statement": "Vibo is where creativity meets community. A space for everyone to share their story, discover new perspectives, connect with the world, and find the things that truly move them. We believe every person has something worth sharing."
+  },
+  "phone": {
+    "label": "The App Experience",
+    "heading": "Your world, your feed, your way.",
+    "description": "Scroll through an endless stream of content tailored just for you. Like, comment, share, and connect with creators from around the globe — all from one powerful app.",
+    "features": ["For You Feed", "AI Recommendations", "HD Video", "Live Streaming", "Duets & Stitches", "AR Filters"]
+  },
+  "bentoLabel": "What makes Vibo different",
+  "bentoHeading": "Built for creators, designed for everyone.",
+  "bento": [
+    {
+      "label": "Short Videos",
+      "heading": "Create and share short videos that captivate, inspire, and start conversations."
+    },
+    {
+      "label": "Stories",
+      "heading": "Share your day, your way. Moments that disappear but leave a lasting impression."
+    },
+    {
+      "label": "Messaging",
+      "heading": "Stay connected with the people who matter most to you."
+    },
+    {
+      "label": "Explore",
+      "heading": "Discover trends, creators, and content curated just for you."
+    },
+    {
+      "label": "For Every Creator",
+      "heading": "Tools, reach, and community to grow your voice."
+    }
+  ],
+  "creators": {
+    "label": "Creator Spotlight",
+    "heading": "Meet the voices shaping Vibo.",
+    "description": "From storytellers to artists, dancers to educators — our creators are redefining what social media can be."
+  },
+  "cinematic": {
+    "label": "The Vibo Experience",
+    "heading": "Where every scroll tells a story.",
+    "description": "Immerse yourself in a world of authentic content — from breathtaking visuals to raw, unfiltered moments that bring people together."
+  },
+  "safety": {
+    "badge": "Safety First",
+    "heading": "Your safety is our priority.",
+    "description": "We're committed to creating a safe, supportive environment where everyone can express themselves freely. Our tools and policies are designed to protect our community.",
+    "features": [
+      {
+        "title": "Content Moderation",
+        "description": "AI-powered systems review content 24/7 to keep the community safe and welcoming."
+      },
+      {
+        "title": "Privacy Controls",
+        "description": "Full control over who sees your content, messages you, and interacts with your profile."
+      },
+      {
+        "title": "Transparency Reports",
+        "description": "Regular reports on how we enforce our community guidelines and protect users."
+      }
+    ]
+  },
+  "stats": [
+    { "value": "150M+", "label": "Active users worldwide" },
+    { "value": "50+", "label": "Countries and regions" },
+    { "value": "2B+", "label": "Videos watched daily" },
+    { "value": "10M+", "label": "Creators on the platform" }
+  ],
+  "cta": {
+    "heading": "Start your story on Vibo.",
+    "subtitle": "Download the app and join millions of creators, storytellers, and explorers around the world.",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "footer": {
+    "company": "Company",
+    "companyLinks": ["About", "Newsroom", "Careers", "Contact"],
+    "programs": "Programs",
+    "programLinks": ["Vibo for Good", "Creators", "Advertise", "Developers"],
+    "resources": "Resources",
+    "resourceLinks": ["Help Center", "Safety Center", "Privacy Center", "Community Guidelines"],
+    "legal": "Legal",
+    "legalLinks": ["Terms of Service", "Privacy Policy", "Cookie Policy"],
+    "copyright": "© 2026 Vibo. All rights reserved.",
+    "switchLang": "العربية"
+  }
+}

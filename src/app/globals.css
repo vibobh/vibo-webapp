@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "InstagramSans";
+  src: url("/fonts/InstagramSans-Regular.woff2") format("woff2"),
+    url("/fonts/InstagramSans-Regular.woff") format("woff"),
+    url("/fonts/InstagramSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "InstagramSans";
+  src: url("/fonts/InstagramSans-Medium.woff2") format("woff2"),
+    url("/fonts/InstagramSans-Medium.woff") format("woff"),
+    url("/fonts/InstagramSans-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "InstagramSans";
+  src: url("/fonts/InstagramSans-Bold.woff2") format("woff2"),
+    url("/fonts/InstagramSans-Bold.woff") format("woff"),
+    url("/fonts/InstagramSans-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexSansArabic_500Medium";
+  src: url("/fonts/IBMPlexSansArabic-Medium.woff2") format("woff2"),
+    url("/fonts/IBMPlexSansArabic-Medium.woff") format("woff"),
+    url("/fonts/IBMPlexSansArabic-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: #fdfcf9;
+    color: #111;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgba(75, 4, 21, 0.12);
+  }
+
+  video {
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-marquee-left,
+    .animate-marquee-right {
+      animation: none !important;
+    }
+  }
+}
+
+@layer components {
+  .section-padding {
+    @apply px-6 sm:px-8 lg:px-12 xl:px-16;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
