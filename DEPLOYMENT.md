@@ -144,7 +144,13 @@ Your domain is registered elsewhere (GoDaddy, Namecheap, Cloudflare, etc.). Poin
 
 ---
 
-## 5. Performance checklist (already done in code)
+## 5. Hero videos (Git LFS)
+
+Large MP4s live in **`public/videos/`** and are tracked with **Git LFS**. On Vercel, turn **Git LFS** **on** under **Project → Settings → Git**, then redeploy. See **`docs/VIDEOS_PRODUCTION.md`** for verification (`/videos/vid1.mp4` should be real video bytes, not a pointer file).
+
+---
+
+## 6. Performance checklist (already done in code)
 
 - Videos load/play only when near the viewport (`LazyVideo`).
 - Gradient background uses CSS gradients (no heavy blur stacks).
@@ -153,13 +159,13 @@ Your domain is registered elsewhere (GoDaddy, Namecheap, Cloudflare, etc.). Poin
 
 ---
 
-## 6. Local port 3001
+## 7. Local port 3001
 
 Vercel does **not** use 3001 — that’s only local (`next dev -p 3001`). Production uses `https://joinvibo.com` on Vercel’s edge.
 
 ---
 
-## Troubleshooting
+## 8. Troubleshooting
 
 | Issue | Fix |
 |--------|-----|
@@ -167,7 +173,7 @@ Vercel does **not** use 3001 — that’s only local (`next dev -p 3001`). Produ
 | “No Convex deployment configuration” on Vercel | Set **`CONVEX_DEPLOY_KEY`** (Production deploy key) in Vercel — see **`docs/VERCEL_CONVEX_ENV.md`** |
 | `NEXT_PUBLIC_CONVEX_URL` missing | Convex dashboard → copy **Production** deployment URL |
 | Domain not verifying | Wait for DNS propagation; check A/CNAME match Vercel exactly |
-| Videos missing / broken on live site | Enable **Git LFS** in Vercel Git settings; run `git lfs push --all origin` locally if LFS objects never uploaded |
+| Videos missing / broken on live site | Enable **Git LFS** (Project → Settings → Git); redeploy — see **`docs/VIDEOS_PRODUCTION.md`** |
 
 ---
 
