@@ -164,7 +164,8 @@ Vercel does **not** use 3001 — that’s only local (`next dev -p 3001`). Produ
 | Issue | Fix |
 |--------|-----|
 | Build fails on Convex | Ensure `CONVEX_DEPLOY_KEY` and build command include `convex deploy` |
-| `NEXT_PUBLIC_CONVEX_URL` missing | Convex dashboard → copy deployment URL |
+| “No Convex deployment configuration” on Vercel | Set **`CONVEX_DEPLOY_KEY`** (Production deploy key) in Vercel — see **`docs/VERCEL_CONVEX_ENV.md`** |
+| `NEXT_PUBLIC_CONVEX_URL` missing | Convex dashboard → copy **Production** deployment URL |
 | Domain not verifying | Wait for DNS propagation; check A/CNAME match Vercel exactly |
 | Videos missing / broken on live site | Enable **Git LFS** in Vercel Git settings; run `git lfs push --all origin` locally if LFS objects never uploaded |
 
