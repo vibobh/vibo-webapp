@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { NewsArticle } from "@/types/news";
 import type { Lang } from "@/i18n";
 import { encodeArticleForSearchParam } from "@/lib/newsArticleUrl";
+import NewsImageFallback from "@/components/newsroom/NewsImageFallback";
 
 type LayoutMode = "grid" | "list";
 
@@ -43,9 +44,7 @@ export default function NewsroomCard({ article, readMore, layout, lang }: Props)
               loading="lazy"
             />
           ) : (
-            <div className="h-full w-full flex items-center justify-center bg-neutral-200 text-neutral-400 text-xs">
-              Vibo
-            </div>
+            <NewsImageFallback className="h-full w-full p-3 sm:p-4" logoClassName="max-h-[55%] max-w-[55%] min-h-[36px]" />
           )}
         </div>
         <div className="flex flex-col flex-1 min-w-0">
@@ -86,9 +85,7 @@ export default function NewsroomCard({ article, readMore, layout, lang }: Props)
             loading="lazy"
           />
         ) : (
-          <div className="h-full w-full flex items-center justify-center bg-neutral-200 text-neutral-400 text-xs">
-            Vibo
-          </div>
+          <NewsImageFallback className="h-full w-full p-3 sm:p-4" logoClassName="max-h-[55%] max-w-[55%] min-h-[36px]" />
         )}
       </div>
       <p className="text-[0.7rem] sm:text-[0.75rem] text-neutral-400 mb-2">

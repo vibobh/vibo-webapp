@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { decodeArticleFromSearchParam } from "@/lib/newsArticleUrl";
+import NewsImageFallback from "@/components/newsroom/NewsImageFallback";
 import { getTranslations, type Lang, isRTL } from "@/i18n";
 
 function stripNewsApiTruncation(s: string) {
@@ -122,8 +123,11 @@ export default function ArticleView() {
               />
             </div>
           ) : (
-            <div className="rounded-2xl bg-neutral-100 border border-neutral-100 aspect-[21/9] mb-10 flex items-center justify-center text-neutral-400 text-sm">
-              Vibo
+            <div className="rounded-2xl overflow-hidden border border-neutral-100/80 mb-10 aspect-[21/9] max-h-[420px]">
+              <NewsImageFallback
+                className="h-full w-full min-h-[200px] p-8 sm:p-12"
+                logoClassName="max-h-[45%] max-w-[45%] min-h-[64px]"
+              />
             </div>
           )}
 

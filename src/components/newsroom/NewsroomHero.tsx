@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { NewsArticle } from "@/types/news";
 import type { Lang } from "@/i18n";
 import { encodeArticleForSearchParam } from "@/lib/newsArticleUrl";
+import NewsImageFallback from "@/components/newsroom/NewsImageFallback";
 
 type Props = {
   article: NewsArticle | null;
@@ -42,9 +43,10 @@ export default function NewsroomHero({ article, readMore, lang }: Props) {
               loading="eager"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-neutral-200 to-neutral-300">
-              <span className="text-neutral-500 text-sm">Vibo</span>
-            </div>
+            <NewsImageFallback
+              className="absolute inset-0 p-6 sm:p-10"
+              logoClassName="max-h-[48%] max-w-[48%] min-h-[56px] sm:min-h-[72px]"
+            />
           )}
         </div>
         <div className="relative z-[1] w-full lg:w-[42%] flex flex-col justify-center bg-white p-6 sm:p-8 lg:p-10 lg:-ms-6 lg:rounded-2xl lg:shadow-xl lg:border lg:border-neutral-100">
