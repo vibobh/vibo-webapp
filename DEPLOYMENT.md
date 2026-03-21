@@ -65,6 +65,8 @@ git push -u origin main
 
 ## 3. Vercel — deploy
 
+This repo includes **`vercel.json`**: build runs **`npx convex deploy --cmd "npm run build"`** (Convex production + Next.js). Cursor’s **Vercel MCP** (`user-vercel`) can list teams/projects and remind you to run **`vercel deploy`**; see **`docs/VERCEL_MCP.md`** for the full MCP + CLI flow.
+
 1. Sign in at [vercel.com](https://vercel.com) with **joinvibo@gmail.com**.
 
 2. **Import** the GitHub repo (`vibobh/...`).

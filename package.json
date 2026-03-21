@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "convex:dev": "convex dev",
-    "convex:deploy": "convex deploy"
+    "convex:deploy": "convex deploy",
+    "vercel:deploy": "npx --yes vercel deploy",
+    "vercel:prod": "npx --yes vercel deploy --prod"
   },
   "dependencies": {
     "convex": "^1.34.0",
