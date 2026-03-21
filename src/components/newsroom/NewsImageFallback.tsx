@@ -1,5 +1,6 @@
 /**
  * Branded placeholder when NewsAPI has no thumbnail (maroon + cream Vibo mark).
+ * Uses a PNG with transparent background around the logo.
  */
 type Props = {
   className?: string;

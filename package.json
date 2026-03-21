@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "generate:favicon": "node scripts/generate-favicon.mjs",
+    "generate:news-placeholder": "node scripts/transparent-news-placeholder.mjs",
     "convex:dev": "convex dev",
     "convex:deploy": "convex deploy",
     "vercel:deploy": "npx --yes vercel deploy",
