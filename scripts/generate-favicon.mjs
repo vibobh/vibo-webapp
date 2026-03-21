@@ -1,6 +1,6 @@
 /**
  * Builds favicons from public/images/vibo-icon-maroon.png:
- * white mark on #4b0415 (same maroon as footer CTA).
+ * white icon only, transparent background (same mark as footer, no plate).
  * Run: node scripts/generate-favicon.mjs
  */
 import sharp from "sharp";
@@ -12,8 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const srcPath = join(root, "public/images/vibo-icon-maroon.png");
 
-/** Footer / brand maroon #4b0415 */
-const MAROON = { r: 75, g: 4, b: 21, alpha: 1 };
+const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 };
 
 async function toWhiteSilhouette(pngBuffer) {
   const { data, info } = await sharp(pngBuffer)
@@ -35,6 +34,7 @@ async function toWhiteSilhouette(pngBuffer) {
   }).png();
 }
 
+/** White icon centered on transparent square canvas */
 async function renderIconBuffer(canvasSize, padding) {
   const pngBuffer = readFileSync(srcPath);
   const whitePipe = await toWhiteSilhouette(pngBuffer);
@@ -48,7 +48,7 @@ async function renderIconBuffer(canvasSize, padding) {
       width: canvasSize,
       height: canvasSize,
       channels: 4,
-      background: MAROON,
+      background: TRANSPARENT,
     },
   })
     .png()
