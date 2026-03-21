@@ -10,11 +10,14 @@ interface FooterProps {
 
 export default function Footer({ t, lang, onSwitchLang }: FooterProps) {
   return (
-    <footer className="relative z-[2] text-[#3d2a18] bg-gradient-to-b from-[#e8d4b0] via-[#d4b896] to-[#c4a87c]">
+    <footer
+      id="careers"
+      className="relative z-[2] text-[#3d2a18] bg-gradient-to-b from-[#e8d4b0] via-[#d4b896] to-[#c4a87c] scroll-mt-24"
+    >
       <div className="max-w-[1400px] mx-auto section-padding pt-16 sm:pt-20 pb-8">
         {/* Top row — logo + download */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-14 lg:mb-16">
-          <a href="#" className="flex items-center">
+          <a href="/" className="flex items-center">
             {/* Maroon icon → pure white; transparency preserved (no black box) */}
             <img
               src="/images/vibo-icon-maroon.png"
@@ -46,16 +49,19 @@ export default function Footer({ t, lang, onSwitchLang }: FooterProps) {
               {t.footer.company}
             </h4>
             <ul className="space-y-2.5">
-              {t.footer.companyLinks.map((link: string, i: number) => (
-                <li key={i}>
-                  <a
-                    href="#"
-                    className="text-[0.85rem] text-[#3d2a18]/85 hover:text-[#4b0415] transition-colors duration-200"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
+              {t.footer.companyLinks.map((link: string, i: number) => {
+                const hrefs = ["/#about", "/newsroom", "/#careers", "#contact"];
+                return (
+                  <li key={i}>
+                    <a
+                      href={hrefs[i] ?? "#"}
+                      className="text-[0.85rem] text-[#3d2a18]/85 hover:text-[#4b0415] transition-colors duration-200"
+                    >
+                      {link}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <div>
@@ -112,7 +118,10 @@ export default function Footer({ t, lang, onSwitchLang }: FooterProps) {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-[#4b0415]/15">
+        <div
+          id="contact"
+          className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-[#4b0415]/15 scroll-mt-24"
+        >
           <p className="text-[0.75rem] text-[#4b0415]/55">{t.footer.copyright}</p>
           <div className="flex items-center gap-5">
             <button

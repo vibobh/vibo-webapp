@@ -1,0 +1,144 @@
+"use client";
+
+import { useState, useCallback, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { getTranslations, Lang, isRTL } from "@/i18n";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import NewsroomHero from "@/components/newsroom/NewsroomHero";
+import NewsroomFilters from "@/components/newsroom/NewsroomFilters";
+import NewsroomCard from "@/components/newsroom/NewsroomCard";
+import type { NewsArticle, NewsTag } from "@/types/news";
+
+export default function NewsroomPage() {
+  const [lang, setLang] = useState<Lang>("en");
+  const t = getTranslations(lang);
+  const rtl = isRTL(lang);
+  const nt = t.newsroom;
+
+  const [tag, setTag] = useState<NewsTag>("all");
+  const [layout, setLayout] = useState<"grid" | "list">("grid");
+  const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [mock, setMock] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = rtl ? "rtl" : "ltr";
+    document.body.classList.toggle("font-ar", rtl);
+    document.body.classList.toggle("font-en", !rtl);
+  }, [lang, rtl]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetch(`/api/news?tag=${encodeURIComponent(tag)}`)
+      .then((res) => res.json())
+      .then((data: { articles: NewsArticle[]; mock?: boolean }) => {
+        if (cancelled) return;
+        setArticles(data.articles || []);
+        setMock(!!data.mock);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setArticles([]);
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [tag]);
+
+  const switchLang = useCallback(() => {
+    setLang((prev) => (prev === "en" ? "ar" : "en"));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  const filterLabels: Record<NewsTag, string> = {
+    all: nt.filters.all,
+    community: nt.filters.community,
+    company: nt.filters.company,
+    news: nt.filters.news,
+    product: nt.filters.product,
+    safety: nt.filters.safety,
+  };
+
+  const featured = articles[0] ?? null;
+  const rest = articles.slice(1);
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={lang}
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="min-h-screen bg-white text-neutral-900"
+      >
+        <Navbar t={t} lang={lang} onSwitchLang={switchLang} />
+        <main className="relative z-[1] pt-[72px] lg:pt-[80px]">
+          <div className="max-w-[1200px] mx-auto section-padding py-10 sm:py-12 lg:py-14">
+            <header className="mb-8 sm:mb-10">
+              <h1 className="text-[1.75rem] sm:text-[2rem] font-bold tracking-[-0.03em] text-neutral-900">
+                {nt.title}
+              </h1>
+              <p className="mt-2 text-[0.95rem] text-neutral-500 max-w-2xl">{nt.description}</p>
+              {mock && (
+                <p className="mt-3 text-[0.8rem] text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 inline-block">
+                  {nt.mockHint}
+                </p>
+              )}
+            </header>
+
+            {loading ? (
+              <div className="py-20 text-center text-neutral-400 text-sm">{nt.loading}</div>
+            ) : (
+              <>
+                {featured && <NewsroomHero article={featured} readMore={nt.readMore} />}
+
+                <NewsroomFilters
+                  tag={tag}
+                  onTagChange={setTag}
+                  layout={layout}
+                  onLayoutChange={setLayout}
+                  labels={filterLabels}
+                  ariaGrid={nt.ariaGrid}
+                  ariaList={nt.ariaList}
+                />
+
+                {rest.length === 0 && !featured ? (
+                  <p className="text-center text-neutral-500 py-12">{nt.empty}</p>
+                ) : rest.length > 0 && layout === "grid" ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+                    {rest.map((article, i) => (
+                      <NewsroomCard
+                        key={`${article.url}-${i}`}
+                        article={article}
+                        readMore={nt.readMore}
+                        layout="grid"
+                      />
+                    ))}
+                  </div>
+                ) : rest.length > 0 ? (
+                  <div className="flex flex-col gap-8">
+                    {rest.map((article, i) => (
+                      <NewsroomCard
+                        key={`${article.url}-${i}`}
+                        article={article}
+                        readMore={nt.readMore}
+                        layout="list"
+                      />
+                    ))}
+                  </div>
+                ) : null}
+              </>
+            )}
+          </div>
+        </main>
+        <Footer t={t} lang={lang} onSwitchLang={switchLang} />
+      </motion.div>
+    </AnimatePresence>
+  );
+}

@@ -36,7 +36,7 @@ export default function BentoGrid({ t }: BentoGridProps) {
   const features = t.bento;
 
   return (
-    <section className="bg-transparent">
+    <section id="features" className="bg-transparent scroll-mt-24">
       <div ref={ref} className="max-w-[1400px] mx-auto section-padding py-16 sm:py-24">
         <motion.p
           className="text-xs uppercase tracking-[0.15em] text-vibo-primary font-medium mb-3"

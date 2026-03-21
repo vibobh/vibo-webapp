@@ -12,7 +12,7 @@ export default function About({ t }: AboutProps) {
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section ref={ref} className="bg-transparent">
+    <section ref={ref} id="about" className="bg-transparent scroll-mt-24">
       <div className="max-w-[1100px] mx-auto section-padding py-28 sm:py-36 lg:py-44">
         <motion.p
           className="text-[clamp(1.4rem,3.2vw,2.8rem)] font-bold leading-[1.2] tracking-[-0.025em] text-neutral-800"

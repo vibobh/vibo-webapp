@@ -83,6 +83,7 @@ This repo includes **`vercel.json`**: build runs **`npx convex deploy --cmd "npm
    |------|--------|
    | `NEXT_PUBLIC_CONVEX_URL` | Your Convex **production** deployment URL from the Convex dashboard |
    | `CONVEX_DEPLOY_KEY` | Deploy key from Convex (Production only is enough) |
+   | `NEWS_API_KEY` | (Optional) Free API key from [NewsAPI.org](https://newsapi.org) — powers **`/newsroom`** live headlines. If unset, the page shows placeholder items. |
 
 5. **Build command** (Project → Settings → General → Build & Development):
 

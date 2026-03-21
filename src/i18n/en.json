@@ -4,9 +4,27 @@
   "nav": {
     "about": "About",
     "features": "Features",
-    "safety": "Safety",
-    "contact": "Contact",
+    "newsroom": "Newsroom",
+    "careers": "Careers",
     "download": "Download Vibo"
+  },
+  "newsroom": {
+    "title": "Newsroom",
+    "description": "Updates, announcements, and stories from Vibo and around the world.",
+    "readMore": "Read more",
+    "loading": "Loading stories…",
+    "empty": "No stories in this category right now.",
+    "mockHint": "Add NEWS_API_KEY to your environment for live headlines (NewsAPI.org).",
+    "ariaGrid": "Grid view",
+    "ariaList": "List view",
+    "filters": {
+      "all": "All",
+      "community": "Community",
+      "company": "Company",
+      "news": "News",
+      "product": "Product",
+      "safety": "Safety"
+    }
   },
   "hero": {
     "headline": "Real people. Real moments.",

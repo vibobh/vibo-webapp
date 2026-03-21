@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 import type { Lang } from "@/i18n";
 
 interface NavbarProps {
@@ -14,6 +15,19 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const isRTL = lang === "ar";
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: "/#about", label: t.nav.about, id: "about" as const },
+    { href: "/#features", label: t.nav.features, id: "features" as const },
+    { href: "/newsroom", label: t.nav.newsroom, id: "newsroom" as const },
+    { href: "/#careers", label: t.nav.careers, id: "careers" as const },
+  ];
+
+  const linkActive = (id: (typeof navItems)[number]["id"]) => {
+    if (id === "newsroom") return pathname === "/newsroom";
+    return false;
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -21,20 +35,19 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = [t.nav.about, t.nav.features, t.nav.safety, t.nav.contact];
+  const navSolid = scrolled || pathname === "/newsroom";
 
   return (
     <nav
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
-        scrolled
+        navSolid
           ? "bg-white/[0.97] shadow-[0_1px_0_rgba(0,0,0,0.04)]"
           : "bg-transparent"
       }`}
     >
       <div className="max-w-[1400px] mx-auto section-padding">
         <div className="flex items-center justify-between h-[60px] lg:h-[68px]">
-          {/* Real Vibo logo */}
-          <a href="#" className="flex items-center">
+          <a href="/" className="flex items-center">
             <img
               src="/images/vibo-icon-maroon.png"
               alt="Vibo"
@@ -42,25 +55,25 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
             />
           </a>
 
-          {/* Desktop links */}
           <div className="hidden lg:flex items-center gap-9">
-            {links.map((link, i) => (
+            {navItems.map((item) => (
               <a
-                key={i}
-                href="#"
+                key={item.id}
+                href={item.href}
                 className={`text-[0.85rem] tracking-[-0.01em] transition-colors duration-200 ${
-                  i === 0
+                  linkActive(item.id)
                     ? "text-vibo-primary font-medium"
                     : "text-neutral-400 hover:text-neutral-800"
                 }`}
               >
-                {link}
+                {item.label}
               </a>
             ))}
           </div>
 
           <div className="flex items-center gap-2.5">
             <button
+              type="button"
               onClick={onSwitchLang}
               className="text-[0.8rem] text-neutral-400 hover:text-neutral-700 transition-colors px-2.5 py-1.5 rounded-lg hover:bg-neutral-100/80"
             >
@@ -83,8 +96,8 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
               </svg>
             </a>
 
-            {/* Mobile hamburger */}
             <button
+              type="button"
               className="lg:hidden flex flex-col justify-center gap-[5px] w-8 h-8"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Menu"
@@ -106,7 +119,6 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
         </div>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -117,20 +129,28 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
             className="lg:hidden bg-white border-t border-neutral-100"
           >
             <div className="section-padding py-5 space-y-1">
-              {links.map((link, i) => (
+              {navItems.map((item, i) => (
                 <motion.a
-                  key={i}
-                  href="#"
-                  className="block py-2.5 text-base text-neutral-600 hover:text-vibo-primary transition-colors"
+                  key={item.id}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`block py-2.5 text-base transition-colors ${
+                    linkActive(item.id)
+                      ? "text-vibo-primary font-medium"
+                      : "text-neutral-600 hover:text-vibo-primary"
+                  }`}
                   initial={{ opacity: 0, x: isRTL ? 16 : -16 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04 }}
                 >
-                  {link}
+                  {item.label}
                 </motion.a>
               ))}
               <div className="pt-3">
-                <a href="#" className="inline-flex items-center gap-2 bg-vibo-primary text-white px-5 py-2.5 rounded-full text-sm font-medium">
+                <a
+                  href="#"
+                  className="inline-flex items-center gap-2 bg-vibo-primary text-white px-5 py-2.5 rounded-full text-sm font-medium"
+                >
                   {t.nav.download}
                 </a>
               </div>
