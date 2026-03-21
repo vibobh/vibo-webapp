@@ -35,3 +35,10 @@ Thumbs.db
 # typescript
 next-env.d.ts
 *.tsbuildinfo
+
+# Large media — GitHub blocks files >100MB; host on CDN / Vercel Blob / Git LFS instead
+/public/videos/*.mp4
+/public/videos/*.MP4
+
+# Local backup folder (do not commit)
+/public/videos_backup_git/
