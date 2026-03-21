@@ -1,5 +1,5 @@
 /**
- * Builds favicons from public/image (79).png:
+ * Builds favicons from public/Vibo App icon version-01.png:
  * 48×48 px square, transparent background around the scaled image.
  * Run: node scripts/generate-favicon.mjs
  */
@@ -10,7 +10,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
-const srcPath = join(root, "public", "image (79).png");
+const srcPath = join(root, "public", "Vibo App icon version-01.png");
 
 const SIZE = 48;
 const PADDING = 4;
@@ -56,7 +56,7 @@ async function main() {
   await sharp(buf).toFile(join(appDir, "apple-icon.png"));
 
   console.log(
-    `OK: ${SIZE}×${SIZE} from "image (79).png", transparent bg → icon.png, apple-icon.png, favicon.png, favicon-48.png`,
+    `OK: ${SIZE}×${SIZE} from "Vibo App icon version-01.png" → icon.png, apple-icon.png, favicon.png, favicon-48.png`,
   );
 }
 
