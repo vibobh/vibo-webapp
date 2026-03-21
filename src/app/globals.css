@@ -32,16 +32,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "IBMPlexSansArabic_500Medium";
-  src: url("/fonts/IBMPlexSansArabic-Medium.woff2") format("woff2"),
-    url("/fonts/IBMPlexSansArabic-Medium.woff") format("woff"),
-    url("/fonts/IBMPlexSansArabic-Medium.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
 @layer base {
   *,
   *::before,
@@ -61,6 +51,11 @@
     background: #fdfcf9;
     color: #111;
     overflow-x: hidden;
+  }
+
+  /** IBM Plex Sans Arabic Medium as default when `font-ar` is on (see layout + page.tsx) */
+  body.font-ar {
+    font-weight: 500;
   }
 
   ::selection {

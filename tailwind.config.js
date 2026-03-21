@@ -16,7 +16,13 @@ module.exports = {
       },
       fontFamily: {
         en: ['"InstagramSans"', "system-ui", "-apple-system", "sans-serif"],
-        ar: ['"IBMPlexSansArabic_500Medium"', '"IBM Plex Sans Arabic"', "sans-serif"],
+        /** IBM Plex Sans Arabic — loaded via next/font in layout (`--font-arabic`) */
+        ar: [
+          "var(--font-arabic)",
+          '"IBM Plex Sans Arabic"',
+          "Tahoma",
+          "sans-serif",
+        ],
       },
       keyframes: {
         "marquee-left": {
