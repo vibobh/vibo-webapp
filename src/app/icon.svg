@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32">
+  <defs>
+    <!-- Maroon shape ’ white silhouette (same idea as footer: brightness-0 invert) -->
+    <filter id="viboWhiteIcon" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feColorMatrix in="SourceGraphic" type="luminanceToAlpha" result="alpha" />
+      <feFlood flood-color="#ffffff" flood-opacity="1" result="white" />
+      <feComposite in="white" in2="alpha" operator="in" result="iconWhite" />
+    </filter>
+  </defs>
+  <!-- Footer-style maroon panel so the white icon stays visible on light browser chrome -->
+  <rect width="32" height="32" rx="8" fill="#4b0415" />
+  <image
+    xlink:href="/images/vibo-icon-maroon.png"
+    href="/images/vibo-icon-maroon.png"
+    x="5"
+    y="5"
+    width="22"
+    height="22"
+    preserveAspectRatio="xMidYMid meet"
+    filter="url(#viboWhiteIcon)"
+  />
+</svg>
