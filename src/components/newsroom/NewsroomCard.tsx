@@ -1,6 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import type { NewsArticle } from "@/types/news";
+import type { Lang } from "@/i18n";
+import { encodeArticleForSearchParam } from "@/lib/newsArticleUrl";
 
 type LayoutMode = "grid" | "list";
 
@@ -8,6 +11,7 @@ type Props = {
   article: NewsArticle;
   readMore: string;
   layout: LayoutMode;
+  lang: Lang;
 };
 
 function formatDate(iso: string, locale: string) {
@@ -22,8 +26,9 @@ function formatDate(iso: string, locale: string) {
   }
 }
 
-export default function NewsroomCard({ article, readMore, layout }: Props) {
+export default function NewsroomCard({ article, readMore, layout, lang }: Props) {
   const locale = typeof document !== "undefined" ? document.documentElement.lang || "en" : "en";
+  const articleHref = `/newsroom/article?d=${encodeURIComponent(encodeArticleForSearchParam(article))}&lang=${lang}`;
 
   if (layout === "list") {
     return (
@@ -53,10 +58,8 @@ export default function NewsroomCard({ article, readMore, layout }: Props) {
             {article.title}
           </h2>
           <p className="text-[0.85rem] text-neutral-600 line-clamp-2 mb-4 flex-1">{article.description}</p>
-          <a
-            href={article.url}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={articleHref}
             className="inline-flex items-center gap-2 text-[0.85rem] font-medium text-neutral-900 hover:text-vibo-primary w-fit"
           >
             <span className="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-200 bg-white">
@@ -65,7 +68,7 @@ export default function NewsroomCard({ article, readMore, layout }: Props) {
               </svg>
             </span>
             {readMore}
-          </a>
+          </Link>
         </div>
       </article>
     );
@@ -96,10 +99,8 @@ export default function NewsroomCard({ article, readMore, layout }: Props) {
       <h2 className="text-[0.95rem] sm:text-base font-bold text-neutral-900 leading-snug mb-2 line-clamp-3 flex-1">
         {article.title}
       </h2>
-      <a
-        href={article.url}
-        target="_blank"
-        rel="noopener noreferrer"
+      <Link
+        href={articleHref}
         className="inline-flex items-center gap-2 text-[0.8rem] font-medium text-neutral-900 hover:text-vibo-primary mt-auto pt-2"
       >
         <span className="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-200 bg-white">
@@ -108,7 +109,7 @@ export default function NewsroomCard({ article, readMore, layout }: Props) {
           </svg>
         </span>
         {readMore}
-      </a>
+      </Link>
     </article>
   );
 }

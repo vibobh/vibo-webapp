@@ -25,7 +25,7 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
   ];
 
   const linkActive = (id: (typeof navItems)[number]["id"]) => {
-    if (id === "newsroom") return pathname === "/newsroom";
+    if (id === "newsroom") return pathname === "/newsroom" || pathname?.startsWith("/newsroom/");
     return false;
   };
 
@@ -35,7 +35,7 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navSolid = scrolled || pathname === "/newsroom";
+  const navSolid = scrolled || pathname === "/newsroom" || pathname?.startsWith("/newsroom/");
 
   return (
     <nav

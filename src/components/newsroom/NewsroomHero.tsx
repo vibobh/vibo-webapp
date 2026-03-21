@@ -1,10 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import type { NewsArticle } from "@/types/news";
+import type { Lang } from "@/i18n";
+import { encodeArticleForSearchParam } from "@/lib/newsArticleUrl";
 
 type Props = {
   article: NewsArticle | null;
   readMore: string;
+  lang: Lang;
 };
 
 function formatDate(iso: string, locale: string) {
@@ -19,10 +23,11 @@ function formatDate(iso: string, locale: string) {
   }
 }
 
-export default function NewsroomHero({ article, readMore }: Props) {
+export default function NewsroomHero({ article, readMore, lang }: Props) {
   if (!article) return null;
 
   const locale = typeof document !== "undefined" ? document.documentElement.lang || "en" : "en";
+  const articleHref = `/newsroom/article?d=${encodeURIComponent(encodeArticleForSearchParam(article))}&lang=${lang}`;
 
   return (
     <section className="mb-10 sm:mb-14 lg:mb-16">
@@ -54,10 +59,8 @@ export default function NewsroomHero({ article, readMore }: Props) {
           <p className="text-[0.9rem] sm:text-[0.95rem] text-neutral-600 leading-relaxed line-clamp-4 mb-6">
             {article.description}
           </p>
-          <a
-            href={article.url}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={articleHref}
             className="inline-flex items-center gap-2 text-[0.9rem] font-medium text-neutral-900 hover:text-vibo-primary transition-colors group"
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-neutral-50 group-hover:border-vibo-primary/30 group-hover:bg-vibo-primary/5">
@@ -66,7 +69,7 @@ export default function NewsroomHero({ article, readMore }: Props) {
               </svg>
             </span>
             {readMore}
-          </a>
+          </Link>
         </div>
       </div>
     </section>

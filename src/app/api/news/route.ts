@@ -27,6 +27,7 @@ const MOCK_ARTICLES: NewsArticle[] = [
 function normalizeArticle(a: {
   title: string;
   description: string | null;
+  content?: string | null;
   url: string;
   urlToImage: string | null;
   publishedAt: string;
@@ -35,6 +36,7 @@ function normalizeArticle(a: {
   return {
     title: a.title,
     description: a.description || "",
+    content: a.content ?? null,
     url: a.url,
     urlToImage: a.urlToImage,
     publishedAt: a.publishedAt,
@@ -116,6 +118,7 @@ export async function GET(request: Request) {
       articles?: Array<{
         title: string;
         description: string | null;
+        content?: string | null;
         url: string;
         urlToImage: string | null;
         publishedAt: string;

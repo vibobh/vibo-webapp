@@ -23,6 +23,12 @@ export default function NewsroomPage() {
   const [mock, setMock] = useState(false);
 
   useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("lang");
+    if (q === "ar") setLang("ar");
+    if (q === "en") setLang("en");
+  }, []);
+
+  useEffect(() => {
     document.documentElement.lang = lang;
     document.documentElement.dir = rtl ? "rtl" : "ltr";
     document.body.classList.toggle("font-ar", rtl);
@@ -96,7 +102,7 @@ export default function NewsroomPage() {
               <div className="py-20 text-center text-neutral-400 text-sm">{nt.loading}</div>
             ) : (
               <>
-                {featured && <NewsroomHero article={featured} readMore={nt.readMore} />}
+                {featured && <NewsroomHero article={featured} readMore={nt.readMore} lang={lang} />}
 
                 <NewsroomFilters
                   tag={tag}
@@ -118,6 +124,7 @@ export default function NewsroomPage() {
                         article={article}
                         readMore={nt.readMore}
                         layout="grid"
+                        lang={lang}
                       />
                     ))}
                   </div>
@@ -129,6 +136,7 @@ export default function NewsroomPage() {
                         article={article}
                         readMore={nt.readMore}
                         layout="list"
+                        lang={lang}
                       />
                     ))}
                   </div>

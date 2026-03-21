@@ -24,6 +24,12 @@
       "news": "News",
       "product": "Product",
       "safety": "Safety"
+    },
+    "article": {
+      "back": "Back to Newsroom",
+      "readOriginal": "Read original article",
+      "notFound": "We couldn't load this article.",
+      "notFoundCta": "Return to Newsroom"
     }
   },
   "hero": {

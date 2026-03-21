@@ -9,6 +9,8 @@ export type NewsTag =
 export type NewsArticle = {
   title: string;
   description: string;
+  /** Full body when NewsAPI provides it (often truncated with "[+N chars]") */
+  content?: string | null;
   url: string;
   urlToImage: string | null;
   publishedAt: string;
