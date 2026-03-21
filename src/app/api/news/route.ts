@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NewsArticle, NewsTag } from "@/types/news";
+import { filterArticlesForVibo } from "@/lib/newsContentFilter";
 
 export const revalidate = 300;
+
+/** Fetch enough items so filtering for social + safety still leaves a full page. */
+const PAGE_SIZE = 100;
 
 const MOCK_ARTICLES: NewsArticle[] = [
   {
@@ -55,6 +59,35 @@ function isNewsTag(s: string | null): s is NewsTag {
   );
 }
 
+/**
+ * NewsAPI `everything` queries: social / creator / platform focused (OR must be uppercase).
+ * Server-side filtering in `filterArticlesForVibo` removes war, adult, and off-topic items.
+ */
+function everythingQueryForTag(tag: NewsTag): string {
+  /** OR-only queries work reliably on NewsAPI; filtering tightens to social + safe. */
+  const socialCore =
+    "social media OR TikTok OR Instagram OR YouTube OR Snapchat OR Threads OR " +
+    "creator OR influencer OR viral OR reels OR Discord OR Reddit OR Twitch OR " +
+    "streaming OR Meta OR vtuber OR \"short video\" OR \"content creator\"";
+
+  switch (tag) {
+    case "all":
+      return socialCore;
+    case "news":
+      return `${socialCore} OR technology OR platform OR digital OR app`;
+    case "community":
+      return `${socialCore} OR online community OR Discord OR Reddit OR community guidelines OR followers`;
+    case "company":
+      return "Meta OR Snap OR TikTok OR Instagram OR YouTube OR Spotify OR streaming OR platform OR tech OR earnings OR social media";
+    case "product":
+      return "TikTok OR Instagram OR YouTube OR Snapchat OR app OR social app OR iOS OR Android OR update OR streaming OR messaging OR creator tools";
+    case "safety":
+      return "online safety OR teen safety OR community guidelines OR digital wellness OR parental controls OR TikTok OR Instagram OR YouTube OR Snapchat OR social media";
+    default:
+      return socialCore;
+  }
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const raw = searchParams.get("tag");
@@ -73,30 +106,8 @@ export async function GET(request: Request) {
   const headers = { "X-Api-Key": apiKey };
 
   try {
-    let url: string;
-
-    switch (tag) {
-      case "news":
-        url = `${base}/top-headlines?country=us&category=general&pageSize=30`;
-        break;
-      case "all":
-        url = `${base}/top-headlines?country=us&pageSize=30`;
-        break;
-      case "community":
-        url = `${base}/everything?q=community&language=en&sortBy=publishedAt&pageSize=30`;
-        break;
-      case "company":
-        url = `${base}/everything?q=company+business&language=en&sortBy=publishedAt&pageSize=30`;
-        break;
-      case "product":
-        url = `${base}/everything?q=technology+product&language=en&sortBy=publishedAt&pageSize=30`;
-        break;
-      case "safety":
-        url = `${base}/everything?q=safety+security+online&language=en&sortBy=publishedAt&pageSize=30`;
-        break;
-      default:
-        url = `${base}/top-headlines?country=us&pageSize=30`;
-    }
+    const q = everythingQueryForTag(tag);
+    const url = `${base}/everything?q=${encodeURIComponent(q)}&language=en&sortBy=publishedAt&pageSize=${PAGE_SIZE}`;
 
     const res = await fetch(url, {
       headers,
@@ -127,15 +138,19 @@ export async function GET(request: Request) {
     };
 
     const rawArticles = data.articles || [];
-    const articles = rawArticles
+    const normalized = rawArticles
       .filter((a) => a.title && a.url)
       .map(normalizeArticle);
+
+    const filtered = filterArticlesForVibo(normalized);
+    const articles = filtered.slice(0, 30);
 
     if (articles.length === 0) {
       return NextResponse.json({
         articles: MOCK_ARTICLES,
         mock: true,
         tag,
+        filterEmpty: true,
       });
     }
 
