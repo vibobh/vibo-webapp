@@ -1,6 +1,6 @@
 /**
  * Builds favicons from public/Vibo App icon version-01.png:
- * 48×48 px square, transparent background around the scaled image.
+ * 128×128 px square (sharp when browsers scale down), minimal padding so the mark reads larger.
  * Run: node scripts/generate-favicon.mjs
  */
 import sharp from "sharp";
@@ -12,11 +12,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const srcPath = join(root, "public", "Vibo App icon version-01.png");
 
-const SIZE = 48;
-const PADDING = 4;
+/** Larger canvas = crisper tab icon; tiny padding = bigger artwork in the square */
+const SIZE = 128;
+const PADDING = 0;
 const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 };
 
-async function renderIcon48() {
+async function renderIcon() {
   const pngBuffer = readFileSync(srcPath);
   const inner = Math.max(8, SIZE - PADDING * 2);
   const resized = await sharp(pngBuffer)
@@ -49,14 +50,14 @@ async function main() {
 
   const pub = join(root, "public");
 
-  const buf = await renderIcon48();
+  const buf = await renderIcon();
   await sharp(buf).toFile(join(appDir, "icon.png"));
   await sharp(buf).toFile(join(pub, "favicon.png"));
-  await sharp(buf).toFile(join(pub, "favicon-48.png"));
+  await sharp(buf).toFile(join(pub, "favicon-128.png"));
   await sharp(buf).toFile(join(appDir, "apple-icon.png"));
 
   console.log(
-    `OK: ${SIZE}×${SIZE} from "Vibo App icon version-01.png" → icon.png, apple-icon.png, favicon.png, favicon-48.png`,
+    `OK: ${SIZE}×${SIZE} (padding ${PADDING}px) from "Vibo App icon version-01.png" → icon.png, apple-icon.png, favicon.png, favicon-128.png`,
   );
 }
 
