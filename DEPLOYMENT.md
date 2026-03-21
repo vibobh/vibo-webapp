@@ -69,14 +69,20 @@ git push -u origin main
 
 2. **Import** the GitHub repo (`vibobh/...`).
 
-3. **Environment variables** (Project → Settings → Environment Variables):
+3. **Git LFS (videos in `public/videos/`)** — required so builds get the real MP4 files, not tiny pointer files:
+
+   - **Locally / new clone:** `git lfs install` then `git lfs pull`.
+   - **Vercel:** Uses Git to clone your repo. Ensure **Git LFS** is enabled for the project: **Project → Settings → Git** — turn on **Git LFS** if you see that option (Vercel’s build environment fetches LFS objects when enabled).  
+   - If videos 404 in production, redeploy after confirming LFS is on and the latest push included the LFS upload (`git lfs ls-files` should list the five clips).
+
+4. **Environment variables** (Project → Settings → Environment Variables):
 
    | Name | Value |
    |------|--------|
    | `NEXT_PUBLIC_CONVEX_URL` | Your Convex **production** deployment URL from the Convex dashboard |
    | `CONVEX_DEPLOY_KEY` | Deploy key from Convex (Production only is enough) |
 
-4. **Build command** (Project → Settings → General → Build & Development):
+5. **Build command** (Project → Settings → General → Build & Development):
 
    Use Convex’s recommended production build:
 
@@ -92,9 +98,9 @@ git push -u origin main
 
    (Both run Convex deploy + Next.js build.)
 
-5. **Install** the official **Convex** integration for Vercel if you use it (optional; env vars above are enough for many setups).
+6. **Install** the official **Convex** integration for Vercel if you use it (optional; env vars above are enough for many setups).
 
-6. Deploy. After the first successful deploy, assign the custom domain (next section).
+7. Deploy. After the first successful deploy, assign the custom domain (next section).
 
 ---
 
@@ -158,6 +164,7 @@ Vercel does **not** use 3001 — that’s only local (`next dev -p 3001`). Produ
 | Build fails on Convex | Ensure `CONVEX_DEPLOY_KEY` and build command include `convex deploy` |
 | `NEXT_PUBLIC_CONVEX_URL` missing | Convex dashboard → copy deployment URL |
 | Domain not verifying | Wait for DNS propagation; check A/CNAME match Vercel exactly |
+| Videos missing / broken on live site | Enable **Git LFS** in Vercel Git settings; run `git lfs push --all origin` locally if LFS objects never uploaded |
 
 ---
 
