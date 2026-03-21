@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   },
   description:
     "Vibo is a global social media platform where creativity meets connection. Share short videos, stories, and messages with a community that celebrates authenticity.",
-  /** Favicons: 48×48 maroon icon, transparent bg (`vibo-icon-maroon.png`). Regenerate: `npm run generate:favicon` */
+  /** Favicons: 48×48 from `public/image (79).png`, transparent bg. Regenerate: `npm run generate:favicon` */
   openGraph: {
     title: "Vibo",
     url: "https://joinvibo.com",
