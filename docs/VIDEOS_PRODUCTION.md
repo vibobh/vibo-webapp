@@ -1,39 +1,33 @@
-# Videos on Vercel (`/videos/vid*.mp4`)
+# Hero videos in production
 
-The landing page loads MP4s from **`public/videos/`** (see `Hero.tsx`, `Creators.tsx`, etc.). Those files are stored in **Git LFS** because they’re large.
+MP4s are loaded from **`NEXT_PUBLIC_VIDEO_BASE_URL`** + filename (`vid1.mp4` … `vid5.mp4`).  
+They are **not** stored in the Git repo (avoids GitHub **Git LFS** bandwidth limits).
 
-## How it works
+## Setup
 
-1. **GitHub** holds LFS pointers + LFS objects for `vid1.mp4` … `vid5.mp4`.
-2. **Vercel** must check out the **real** video files during the build, not the tiny pointer text files.
+1. Host `vid1.mp4` … `vid5.mp4` at the **same base URL** (HTTPS).
 
-## What you must do in Vercel
+   **Free option — GitHub Release**
 
-1. **Project → Settings → Git**  
-   Turn **Git LFS** **ON** (see [Git LFS on Vercel](https://vercel.com/changelog/git-lfs-support)).
+   - Repo → **Releases** → **Draft a new release**
+   - Tag: e.g. `media-v1`
+   - Upload all five MP4s as release assets
+   - Base URL:  
+     `https://github.com/vibobh/vibo-webapp/releases/download/media-v1`  
+     (replace owner/repo/tag if different)
 
-2. **Redeploy** (Deployments → … → Redeploy), or push a new commit.
+2. **Vercel** → Project → **Environment variables**:
 
-3. **`vercel.json`** runs `git lfs install && git lfs pull` before `npm install` so LFS objects are present in the build output.
+   | Name | Example value |
+   |------|----------------|
+   | `NEXT_PUBLIC_VIDEO_BASE_URL` | `https://github.com/vibobh/vibo-webapp/releases/download/media-v1` |
+
+3. Redeploy.
 
 ## Verify
 
-- Open [your site](https://vibo-webapp.vercel.app/) → DevTools → **Network** → filter `mp4`.
-- Open a URL directly, e.g. `https://vibo-webapp.vercel.app/videos/vid1.mp4`  
-  - **Good:** response is large (many MB), `Content-Type: video/mp4`.  
-  - **Bad:** file is only ~100–200 bytes → still a pointer; fix LFS + redeploy.
+Open the site → DevTools → **Network** → filter `mp4`. Requests should go to your CDN/release URL and return **200** with video bytes (not HTML).
 
-## Changing videos later
+## Local dev
 
-```bash
-# replace file, same name
-git add public/videos/vid3.mp4
-git commit -m "chore: update vid3"
-git push
-```
-
-Ensure **Git LFS** still tracks `*.mp4` (see `.gitattributes`).
-
-## If you outgrow LFS quota
-
-Host clips on **S3 / R2 / Cloudinary / Vercel Blob** and switch components to full URLs via `NEXT_PUBLIC_VIDEO_BASE_URL` (would need a small code change).
+Leave `NEXT_PUBLIC_VIDEO_BASE_URL` unset and keep files in `public/videos/`.

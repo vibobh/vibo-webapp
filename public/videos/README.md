@@ -1,28 +1,24 @@
-# Video assets (Git LFS)
+# Video assets (`vid1.mp4` … `vid5.mp4`)
 
-These `.mp4` files are stored with **[Git LFS](https://git-lfs.github.com/)** so they can live in this repo without hitting GitHub’s **100 MB per-file** limit for normal Git blobs.
+These files are **not committed** to Git (they are large; **Git LFS** hits paid bandwidth limits on GitHub and breaks Vercel clones).
 
-## After cloning
+## Local development
 
-Install Git LFS, then pull file contents:
+Place `vid1.mp4` … `vid5.mp4` in this folder. Next.js serves them at `/videos/…`.
 
-```bash
-git lfs install
-git lfs pull
-```
+## Production (Vercel)
 
-If videos show as tiny pointer files only, run `git lfs pull` again or `git lfs fetch --all`.
+1. Upload the five files to **free** static hosting, for example:
+   - **GitHub Release** — create a release (e.g. tag `media-v1`), attach `vid1.mp4` … `vid5.mp4`.  
+     Base URL looks like:  
+     `https://github.com/OWNER/REPO/releases/download/media-v1`
+   - **Cloudflare R2**, **Backblaze B2**, or any HTTPS URL where each file is reachable as  
+     `BASE/vid1.mp4`, …, `BASE/vid5.mp4`.
 
-## Replacing a clip
+2. In **Vercel → Environment variables**, set:
 
-Keep the same filename (`vid1.mp4` … `vid5.mp4`) so paths in `Hero.tsx`, `Creators.tsx`, etc. stay valid.
+   `NEXT_PUBLIC_VIDEO_BASE_URL` = that base URL (**no** trailing slash)
 
-```bash
-git add public/videos/vid3.mp4
-git commit -m "chore: update vid3"
-git push
-```
+3. Redeploy.
 
-## Quota
-
-GitHub includes **1 GB** of LFS storage on the free plan (shared with bandwidth). Very large libraries may need [extra data packs](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-git-large-file-storage) or hosting on a CDN instead.
+See **`docs/VIDEOS_PRODUCTION.md`** and **`DEPLOYMENT.md`**.

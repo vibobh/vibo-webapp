@@ -36,5 +36,6 @@ Thumbs.db
 next-env.d.ts
 *.tsbuildinfo
 
-# Hero videos are tracked with Git LFS (see .gitattributes). Do not duplicate huge backups:
+# Large hero videos — not in Git (use NEXT_PUBLIC_VIDEO_BASE_URL in production). Local only:
+/public/videos/*.mp4
 /public/videos_backup_git/

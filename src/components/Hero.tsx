@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import LazyVideo from "@/components/LazyVideo";
+import { videoUrl } from "@/lib/videoUrls";
 
 interface HeroProps {
   t: any;
@@ -11,25 +12,25 @@ interface HeroProps {
 /** Mobile-first widths/heights; stagger margins only on lg+ */
 const cards = [
   {
-    src: "/videos/vid1.mp4",
+    src: videoUrl("/videos/vid1.mp4"),
     w: "w-[132px] min-w-[132px] sm:w-[180px] sm:min-w-[180px] md:w-[220px] lg:w-[260px]",
     h: "h-[210px] sm:h-[280px] md:h-[350px] lg:h-[400px]",
     mt: "mt-0 lg:mt-16 xl:mt-20",
   },
   {
-    src: "/videos/vid2.mp4",
+    src: videoUrl("/videos/vid2.mp4"),
     w: "w-[140px] min-w-[140px] sm:w-[200px] sm:min-w-[200px] md:w-[250px] lg:w-[290px]",
     h: "h-[224px] sm:h-[330px] md:h-[420px] lg:h-[480px]",
     mt: "mt-0 lg:mt-4 xl:mt-6",
   },
   {
-    src: "/videos/vid3.mp4",
+    src: videoUrl("/videos/vid3.mp4"),
     w: "w-[148px] min-w-[148px] sm:w-[220px] sm:min-w-[220px] md:w-[270px] lg:w-[320px]",
     h: "h-[236px] sm:h-[360px] md:h-[460px] lg:h-[530px]",
     mt: "mt-0",
   },
   {
-    src: "/videos/vid4.mp4",
+    src: videoUrl("/videos/vid4.mp4"),
     w: "w-[136px] min-w-[136px] sm:w-[190px] sm:min-w-[190px] md:w-[240px] lg:w-[280px]",
     h: "h-[216px] sm:h-[300px] md:h-[380px] lg:h-[440px]",
     mt: "mt-0 lg:mt-10 xl:mt-14",

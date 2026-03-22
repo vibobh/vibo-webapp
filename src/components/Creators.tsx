@@ -3,17 +3,18 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import LazyVideo from "@/components/LazyVideo";
+import { videoUrl } from "@/lib/videoUrls";
 
 interface CreatorsProps {
   t: any;
 }
 
 const creators = [
-  { name: "Sara", handle: "@sara.creates", followers: "1.2M", gradient: "from-pink-400 to-rose-500", video: "/videos/vid1.mp4" },
-  { name: "Ahmed", handle: "@ahmedvisuals", followers: "890K", gradient: "from-blue-400 to-indigo-500", video: "/videos/vid2.mp4" },
-  { name: "Lina", handle: "@lina.vibes", followers: "2.1M", gradient: "from-amber-400 to-orange-500", video: "/videos/vid3.mp4" },
-  { name: "Omar", handle: "@omar.world", followers: "650K", gradient: "from-emerald-400 to-teal-500", video: "/videos/vid4.mp4" },
-  { name: "Nora", handle: "@nora.daily", followers: "1.8M", gradient: "from-purple-400 to-violet-500", video: "/videos/vid5.mp4" },
+  { name: "Sara", handle: "@sara.creates", followers: "1.2M", gradient: "from-pink-400 to-rose-500", video: videoUrl("/videos/vid1.mp4") },
+  { name: "Ahmed", handle: "@ahmedvisuals", followers: "890K", gradient: "from-blue-400 to-indigo-500", video: videoUrl("/videos/vid2.mp4") },
+  { name: "Lina", handle: "@lina.vibes", followers: "2.1M", gradient: "from-amber-400 to-orange-500", video: videoUrl("/videos/vid3.mp4") },
+  { name: "Omar", handle: "@omar.world", followers: "650K", gradient: "from-emerald-400 to-teal-500", video: videoUrl("/videos/vid4.mp4") },
+  { name: "Nora", handle: "@nora.daily", followers: "1.8M", gradient: "from-purple-400 to-violet-500", video: videoUrl("/videos/vid5.mp4") },
 ];
 
 export default function Creators({ t }: CreatorsProps) {

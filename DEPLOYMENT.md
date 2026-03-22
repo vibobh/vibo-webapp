@@ -71,11 +71,7 @@ This repo includes **`vercel.json`**: build runs **`npx convex deploy --cmd "npm
 
 2. **Import** the GitHub repo (`vibobh/...`).
 
-3. **Git LFS (videos in `public/videos/`)** — required so builds get the real MP4 files, not tiny pointer files:
-
-   - **Locally / new clone:** `git lfs install` then `git lfs pull`.
-   - **Vercel:** Uses Git to clone your repo. Ensure **Git LFS** is enabled for the project: **Project → Settings → Git** — turn on **Git LFS** if you see that option (Vercel’s build environment fetches LFS objects when enabled).  
-   - If videos 404 in production, redeploy after confirming LFS is on and the latest push included the LFS upload (`git lfs ls-files` should list the five clips).
+3. **Hero videos (no Git LFS)** — large MP4s are **not** in the repo (GitHub **LFS bandwidth** is limited and breaks Vercel clones). Host `vid1.mp4` … `vid5.mp4` on a **free** HTTPS URL (e.g. **GitHub Release** assets) and set **`NEXT_PUBLIC_VIDEO_BASE_URL`** in Vercel. See **`docs/VIDEOS_PRODUCTION.md`**.
 
 4. **Environment variables** (Project → Settings → Environment Variables):
 
@@ -83,6 +79,7 @@ This repo includes **`vercel.json`**: build runs **`npx convex deploy --cmd "npm
    |------|--------|
    | `NEXT_PUBLIC_CONVEX_URL` | Your Convex **production** deployment URL from the Convex dashboard |
    | `CONVEX_DEPLOY_KEY` | Deploy key from Convex (Production only is enough) |
+   | `NEXT_PUBLIC_VIDEO_BASE_URL` | (Required for hero videos) Base URL with **no** trailing slash — same folder must contain `vid1.mp4` … `vid5.mp4` (e.g. GitHub Release download URL). |
    | `NEWS_API_KEY` | (Optional) Free API key from [NewsAPI.org](https://newsapi.org) — powers **`/newsroom`** live headlines. If unset, the page shows placeholder items. |
 
 5. **Build command** (Project → Settings → General → Build & Development):
@@ -174,7 +171,7 @@ Vercel does **not** use 3001 — that’s only local (`next dev -p 3001`). Produ
 | “No Convex deployment configuration” on Vercel | Set **`CONVEX_DEPLOY_KEY`** (Production deploy key) in Vercel — see **`docs/VERCEL_CONVEX_ENV.md`** |
 | `NEXT_PUBLIC_CONVEX_URL` missing | Convex dashboard → copy **Production** deployment URL |
 | Domain not verifying | Wait for DNS propagation; check A/CNAME match Vercel exactly |
-| Videos missing / broken on live site | Enable **Git LFS** (Project → Settings → Git); redeploy — see **`docs/VIDEOS_PRODUCTION.md`** |
+| Videos missing / broken on live site | Set **`NEXT_PUBLIC_VIDEO_BASE_URL`** to the folder that contains `vid1.mp4`…`vid5.mp4`; redeploy — see **`docs/VIDEOS_PRODUCTION.md`** |
 
 ---
 

@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import LazyVideo from "@/components/LazyVideo";
+import { videoUrl } from "@/lib/videoUrls";
 
 interface CinematicProps {
   t: any;
@@ -16,7 +17,7 @@ export default function Cinematic({ t }: CinematicProps) {
     <section className="relative h-[80vh] sm:h-screen w-full overflow-hidden">
       <div className="absolute inset-0">
         <LazyVideo
-          src="/videos/vid3.mp4"
+          src={videoUrl("/videos/vid3.mp4")}
           className="absolute inset-0 w-full h-full"
           videoClassName="w-full h-full object-cover scale-105"
         />

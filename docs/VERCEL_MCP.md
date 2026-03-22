@@ -38,7 +38,7 @@ npm run vercel:prod
 ## GitHub → Vercel (recommended)
 
 1. [Import the GitHub repo](https://vercel.com/new) in the Vercel dashboard.
-2. Turn **Git LFS** **on** for the project (required for `public/videos/*.mp4`). See [Git LFS on Vercel](https://vercel.com/changelog/git-lfs-support).
+2. Set **`NEXT_PUBLIC_VIDEO_BASE_URL`** for hero MP4s (hosted outside Git — see **`docs/VIDEOS_PRODUCTION.md`**). Git LFS is **not** used.
 3. Set env vars: `NEXT_PUBLIC_CONVEX_URL`, `CONVEX_DEPLOY_KEY`.
 4. Pushes to `main` deploy automatically; `vercel.json` already sets the **Convex + Next** build command.
 

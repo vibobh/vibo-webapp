@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "installCommand": "git lfs install && git lfs pull && npm install",
+  "installCommand": "npm install",
   "buildCommand": "npx convex deploy --cmd \"npm run build\""
 }

@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import LazyVideo from "@/components/LazyVideo";
+import { videoUrl } from "@/lib/videoUrls";
 
 interface PhoneShowcaseProps {
   t: any;
@@ -68,7 +69,7 @@ export default function PhoneShowcase({ t }: PhoneShowcaseProps) {
                 </div>
                 <div className="relative rounded-[30px] overflow-hidden aspect-[9/19.5] bg-black">
                   <LazyVideo
-                    src="/videos/vid5.mp4"
+                    src={videoUrl("/videos/vid5.mp4")}
                     className="absolute inset-0 w-full h-full"
                     videoClassName="w-full h-full object-cover"
                   />
