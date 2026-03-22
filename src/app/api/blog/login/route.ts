@@ -3,30 +3,39 @@ import {
   BLOG_SESSION_COOKIE,
   createSessionToken,
 } from "@/lib/blogSession";
+import {
+  credentialsMatch,
+  getBlogAdminAccounts,
+} from "@/lib/blogAdminAccounts";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const email = String(body.email ?? "").trim().toLowerCase();
+    const email = String(body.email ?? "");
     const password = String(body.password ?? "");
 
-    const adminEmail = process.env.BLOG_ADMIN_EMAIL?.trim().toLowerCase();
-    const adminPass = process.env.BLOG_ADMIN_PASSWORD;
+    const accounts = getBlogAdminAccounts();
 
-    if (!adminEmail || !adminPass || !process.env.BLOG_SESSION_SECRET) {
+    if (accounts.length === 0 || !process.env.BLOG_SESSION_SECRET) {
       return NextResponse.json(
         {
           ok: false,
           error:
-            "Blog admin is not configured on the server. Set BLOG_ADMIN_EMAIL, BLOG_ADMIN_PASSWORD, and BLOG_SESSION_SECRET in Vercel (or your host) environment variables, then redeploy.",
+            "Blog admin is not configured on the server. Set BLOG_ADMIN_EMAIL, BLOG_ADMIN_PASSWORD, and BLOG_SESSION_SECRET in Vercel (or your host) environment variables, then redeploy. Optional: BLOG_ADMIN_EMAIL_2 + BLOG_ADMIN_PASSWORD_2, or BLOG_ADMIN_USERS (JSON array).",
         },
         { status: 503 },
       );
     }
 
-    if (email !== adminEmail || password !== adminPass) {
+    const ok = credentialsMatch(accounts, email, password);
+    if (!ok) {
+      // Helps debug Vercel: confirm how many accounts loaded (no PII).
+      console.warn(
+        "[blog/login] failed attempt — configured accounts:",
+        accounts.length,
+      );
       return NextResponse.json(
         { ok: false, error: "Invalid email or password." },
         { status: 401 },

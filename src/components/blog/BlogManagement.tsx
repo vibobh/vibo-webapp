@@ -205,7 +205,10 @@ export default function BlogManagement({ ui }: Props) {
     const r = await fetch("/api/blog/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({
+        email: email.trim(),
+        password: password.replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, ""),
+      }),
       credentials: "include",
     });
     let j: { ok?: boolean; error?: string };
