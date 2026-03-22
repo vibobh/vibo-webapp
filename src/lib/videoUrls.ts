@@ -8,8 +8,21 @@
  *
  * Local dev: leave unset — Next.js serves files from `public/videos/`.
  */
+function normalizeVideoBase(raw: string | undefined): string {
+  if (!raw) return "";
+  let s = raw.trim();
+  // Vercel UI sometimes saves wrapping quotes by mistake
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    s = s.slice(1, -1);
+  }
+  return s.replace(/\/$/, "");
+}
+
+/**
+ * Final URL for <video src>. Encodes the filename (spaces etc.) for GitHub Release assets.
+ */
 export function videoUrl(publicPath: string): string {
-  const base = process.env.NEXT_PUBLIC_VIDEO_BASE_URL?.replace(/\/$/, "") ?? "";
+  const base = normalizeVideoBase(process.env.NEXT_PUBLIC_VIDEO_BASE_URL);
   const clean = publicPath.replace(/^\//, "");
   const fileName = clean.includes("/") ? (clean.split("/").pop() ?? clean) : clean;
 
@@ -17,5 +30,6 @@ export function videoUrl(publicPath: string): string {
     return `/${clean}`;
   }
 
-  return `${base}/${fileName}`;
+  const encodedFile = encodeURIComponent(fileName);
+  return `${base}/${encodedFile}`;
 }

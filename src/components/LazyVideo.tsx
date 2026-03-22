@@ -70,6 +70,9 @@ export default function LazyVideo({
           loop
           preload="metadata"
           className={videoClassName}
+          onError={() => {
+            console.error("[LazyVideo] Failed to load video. Check NEXT_PUBLIC_VIDEO_BASE_URL and that the URL opens in a new tab:", src);
+          }}
         />
       ) : (
         <div className={`${videoClassName} bg-neutral-300/40`} aria-hidden />
