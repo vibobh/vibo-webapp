@@ -1,33 +1,49 @@
 # Hero videos in production
 
-MP4s are loaded from **`NEXT_PUBLIC_VIDEO_BASE_URL`** + filename (`vid1.mp4` … `vid5.mp4`).  
-They are **not** stored in the Git repo (avoids GitHub **Git LFS** bandwidth limits).
+Videos are **not** in the Git repo. You point the app at HTTPS URLs using **Vercel environment variables** only.
 
-**Size:** aim for **each file under ~10 MB** (faster loads, fewer upload limits). See **`docs/COMPRESS_VIDEOS.md`**.
+**Size:** aim for **each file under ~10 MB** when possible. See **`docs/COMPRESS_VIDEOS.md`**.
 
-## Setup
+## Setup (recommended: full links in Vercel)
 
-1. Host `vid1.mp4` … `vid5.mp4` at the **same base URL** (HTTPS).
+1. Upload `vid1.mp4` … `vid5.mp4` somewhere public (e.g. **GitHub Release** → **Assets**).
 
-   **Free option — GitHub Release**
+2. For **each** file, **right‑click → Copy link address** (full URL ending in `vid1.mp4`, etc.).
 
-   - Repo → **Releases** → **Draft a new release**
-   - Tag: e.g. `media-v1` (remember it **exactly** — this becomes part of the URL)
-   - Upload all five MP4s as **release assets** (the files listed under the release, not only the tag)
-   - **Publish** the release (not left as **Draft**)
-   - Base URL (no trailing slash):  
-     `https://github.com/vibobh/vibo-webapp/releases/download/media-v1`  
-     (replace `vibobh`, `vibo-webapp`, and `media-v1` with your owner, repo name, and tag)
+3. **Vercel** → Project → **Settings** → **Environment Variables** → add **five** variables (Production):
 
-   **Do not use** `releases/latest/download/...` unless you know what you’re doing: GitHub’s **“latest”** ignores **draft** releases and **pre-releases**. If your only release is a **pre-release**, **`latest` URLs often 404** — use the **tag** URL above instead.
+   | Name | Value |
+   |------|--------|
+   | `NEXT_PUBLIC_VIDEO_VID1` | Full URL to `vid1.mp4` |
+   | `NEXT_PUBLIC_VIDEO_VID2` | Full URL to `vid2.mp4` |
+   | `NEXT_PUBLIC_VIDEO_VID3` | Full URL to `vid3.mp4` |
+   | `NEXT_PUBLIC_VIDEO_VID4` | Full URL to `vid4.mp4` |
+   | `NEXT_PUBLIC_VIDEO_VID5` | Full URL to `vid5.mp4` |
 
-2. **Vercel** → Project → **Environment variables**:
+   No quotes. Each value is the **entire** link GitHub gives you.
+
+4. **Redeploy** Production (required so Next.js picks up `NEXT_PUBLIC_*` at build time).
+
+**You do not need** `NEXT_PUBLIC_VIDEO_BASE_URL` if you set all five `NEXT_PUBLIC_VIDEO_VID*` variables.
+
+---
+
+## Alternative: one base URL in Vercel
+
+If all five files live under the **same** folder URL:
+
+1. **GitHub Release** (example): publish assets under one tag, e.g. `media-v1`.
+2. Set only:
 
    | Name | Example value |
    |------|----------------|
    | `NEXT_PUBLIC_VIDEO_BASE_URL` | `https://github.com/vibobh/vibo-webapp/releases/download/media-v1` |
 
+   (No trailing `/`.)
+
 3. Redeploy.
+
+**Do not use** `releases/latest/download/...` unless you understand GitHub’s “latest” rules (it skips drafts and pre-releases).
 
 ## Verify
 
@@ -35,11 +51,7 @@ They are **not** stored in the Git repo (avoids GitHub **Git LFS** bandwidth lim
    `https://github.com/vibobh/vibo-webapp/releases/download/media-v1/vid1.mp4`  
    You should **download or play** the file — **not** a 404 HTML page.
 
-2. On **Vercel** → **Settings** → **Environment Variables**:  
-   - Name: `NEXT_PUBLIC_VIDEO_BASE_URL`  
-   - Value: **no** quotes, **no** trailing `/`  
-     Example: `https://github.com/vibobh/vibo-webapp/releases/download/media-v1`  
-   - Enable for **Production** (and Preview if you want preview deploys to work).
+2. On **Vercel** → **Environment Variables**: either the **five** `NEXT_PUBLIC_VIDEO_VID1` … `VID5` full URLs, **or** `NEXT_PUBLIC_VIDEO_BASE_URL` — see **Setup** above. Enable for **Production** (and Preview if needed).
 
 3. **Redeploy** after changing env vars (Next.js bakes `NEXT_PUBLIC_*` in at **build** time).
 

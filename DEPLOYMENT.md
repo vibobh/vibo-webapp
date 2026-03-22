@@ -79,7 +79,8 @@ This repo includes **`vercel.json`**: build runs **`npx convex deploy --cmd "npm
    |------|--------|
    | `NEXT_PUBLIC_CONVEX_URL` | Your Convex **production** deployment URL from the Convex dashboard |
    | `CONVEX_DEPLOY_KEY` | Deploy key from Convex (Production only is enough) |
-   | `NEXT_PUBLIC_VIDEO_BASE_URL` | (Required for hero videos) Base URL with **no** trailing slash — same folder must contain `vid1.mp4` … `vid5.mp4` (e.g. GitHub Release download URL). |
+   | `NEXT_PUBLIC_VIDEO_VID1` … `NEXT_PUBLIC_VIDEO_VID5` | (Recommended) **Full HTTPS URL** for each MP4 — paste each “Copy link” from GitHub Release assets. |
+   | `NEXT_PUBLIC_VIDEO_BASE_URL` | (Alternative) One folder URL with **no** trailing slash; app appends `vid1.mp4` … `vid5.mp4`. Omit if you set the five `VID*` vars. |
    | `NEWS_API_KEY` | (Optional) Free API key from [NewsAPI.org](https://newsapi.org) — powers **`/newsroom`** live headlines. If unset, the page shows placeholder items. |
 
 5. **Build command** (Project → Settings → General → Build & Development):
