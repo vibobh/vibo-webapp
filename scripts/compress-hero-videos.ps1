@@ -1,15 +1,33 @@
 # Compress public/videos/vid1.mp4 … vid5.mp4 to ~720p H.264 for web (target: smaller files, often under 10MB).
-# Requires: ffmpeg in PATH (winget install Gyan.FFmpeg)
+# Requires: FFmpeg (winget install --id Gyan.FFmpeg -e). Works even if ffmpeg is not on PATH (finds WinGet install).
 $ErrorActionPreference = "Stop"
+
+function Get-FfmpegExe {
+  $cmd = Get-Command ffmpeg -ErrorAction SilentlyContinue
+  if ($cmd) { return $cmd.Source }
+  $pkgs = Join-Path $env:LOCALAPPDATA "Microsoft\WinGet\Packages"
+  $gyan = Get-ChildItem -Path $pkgs -Directory -Filter "Gyan.FFmpeg*" -ErrorAction SilentlyContinue | Select-Object -First 1
+  if ($gyan) {
+    $found = Get-ChildItem -Path $gyan.FullName -Recurse -Filter ffmpeg.exe -ErrorAction SilentlyContinue |
+      Where-Object { $_.DirectoryName -match "\\bin$" } | Select-Object -First 1
+    if ($found) { return $found.FullName }
+  }
+  if (Test-Path "C:\ffmpeg\bin\ffmpeg.exe") { return "C:\ffmpeg\bin\ffmpeg.exe" }
+  return $null
+}
+
+$ffmpeg = Get-FfmpegExe
+if (-not $ffmpeg) {
+  Write-Host "FFmpeg not found. Install with: winget install --id Gyan.FFmpeg -e" -ForegroundColor Red
+  Write-Host "Then close this terminal, open a new PowerShell, and run this script again." -ForegroundColor Yellow
+  exit 1
+}
+Write-Host "Using ffmpeg: $ffmpeg" -ForegroundColor DarkGray
+
 $root = Split-Path -Parent $PSScriptRoot
 $srcDir = Join-Path $root "public\videos"
 $outDir = Join-Path $srcDir "compressed"
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
-
-if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
-  Write-Host "FFmpeg not found. Install with: winget install --id Gyan.FFmpeg -e" -ForegroundColor Red
-  exit 1
-}
 
 1..5 | ForEach-Object {
   $name = "vid$_.mp4"
@@ -20,7 +38,7 @@ if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
     return
   }
   Write-Host "Encoding $name ..."
-  & ffmpeg -y -hide_banner -loglevel warning -i $in `
+  & $ffmpeg -y -hide_banner -loglevel warning -i $in `
     -vf "scale=720:-2" `
     -c:v libx264 -crf 28 -preset medium `
     -c:a aac -b:a 128k `

@@ -7,11 +7,12 @@ Some hosts (or your own rule) need each **`vid1.mp4` … `vid5.mp4`** under **~1
 ## Option A — Script (Windows, recommended)
 
 1. **Install FFmpeg** (once):
-   - Open PowerShell **as Administrator** and run:
    ```powershell
    winget install --id Gyan.FFmpeg -e
    ```
-   - Close and reopen the terminal, then run `ffmpeg -version` to confirm.
+   - **Important:** Close the terminal, open a **new** PowerShell window.  
+   - If `ffmpeg -version` still says “not recognized”, WinGet’s FFmpeg is installed but not on your PATH — run **`.\scripts\compress-hero-videos.ps1` anyway**; it auto-finds FFmpeg under WinGet’s folder.  
+   - Optional fix for PATH: **Settings → System → About → Advanced system settings → Environment Variables** → edit **Path** (User) → **New** → add the folder that contains `ffmpeg.exe` (often `...\WinGet\Packages\Gyan.FFmpeg_...\ffmpeg-*-full_build\bin`).
 
 2. From the **project root** (`vibo_webapp`):
 
