@@ -12,11 +12,14 @@ They are **not** stored in the Git repo (avoids GitHub **Git LFS** bandwidth lim
    **Free option — GitHub Release**
 
    - Repo → **Releases** → **Draft a new release**
-   - Tag: e.g. `media-v1`
-   - Upload all five MP4s as release assets
-   - Base URL:  
+   - Tag: e.g. `media-v1` (remember it **exactly** — this becomes part of the URL)
+   - Upload all five MP4s as **release assets** (the files listed under the release, not only the tag)
+   - **Publish** the release (not left as **Draft**)
+   - Base URL (no trailing slash):  
      `https://github.com/vibobh/vibo-webapp/releases/download/media-v1`  
-     (replace owner/repo/tag if different)
+     (replace `vibobh`, `vibo-webapp`, and `media-v1` with your owner, repo name, and tag)
+
+   **Do not use** `releases/latest/download/...` unless you know what you’re doing: GitHub’s **“latest”** ignores **draft** releases and **pre-releases**. If your only release is a **pre-release**, **`latest` URLs often 404** — use the **tag** URL above instead.
 
 2. **Vercel** → Project → **Environment variables**:
 
@@ -42,7 +45,31 @@ They are **not** stored in the Git repo (avoids GitHub **Git LFS** bandwidth lim
 
 4. On the live site → **DevTools** → **Network** → filter `mp4` → status should be **200**.
 
-### If videos still don’t play
+### Browser shows **404 Not Found** on the `.mp4` link
+
+Do this on GitHub (exact steps):
+
+1. Open: `https://github.com/YOUR_USER/YOUR_REPO/releases` (fix user/repo).
+2. Click the **release** you created (the title, e.g. “Hero videos”).
+3. Scroll to **Assets** (files under the release). You must see **`vid1.mp4`**, **`vid2.mp4`**, … listed there.
+   - If there are **no** `.mp4` files, you didn’t attach them — edit the release and **upload the files**.
+4. **Right‑click** **`vid1.mp4`** → **Copy link address** (or click Download and copy the URL from the address bar after it loads).
+5. The link should look like:  
+   `https://github.com/USER/REPO/releases/download/SOME_TAG/vid1.mp4`  
+   Your **`NEXT_PUBLIC_VIDEO_BASE_URL`** is that URL **with `/vid1.mp4` removed** (and no trailing `/`).  
+   Example: `https://github.com/vibobh/vibo-webapp/releases/download/media-v1`
+6. Paste that into Vercel → **Redeploy** Production.
+
+**Still 404?**
+
+| Check | What to do |
+|--------|------------|
+| **Private repository** | Anonymous users get 404. Make the repo **Public**, or host videos elsewhere (R2, etc.). |
+| **Wrong tag** | Tag in the URL must match the release tag **exactly** (`media-v1` ≠ `Media-v1` on some systems). |
+| **Pre-release + `latest` URL** | Don’t use `releases/latest/download/...` if the only release is a **pre-release**. Use `releases/download/TAG/...` from step 5. |
+| **Draft release** | Publish the release; drafts are not downloadable publicly. |
+
+### If videos still don’t play (but URL returns 200)
 
 | Cause | Fix |
 |--------|-----|
