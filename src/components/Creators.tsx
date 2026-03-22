@@ -14,7 +14,6 @@ const creators = [
   { name: "Ahmed", handle: "@ahmedvisuals", followers: "890K", gradient: "from-blue-400 to-indigo-500", video: videoUrl("/videos/vid2.mp4") },
   { name: "Lina", handle: "@lina.vibes", followers: "2.1M", gradient: "from-amber-400 to-orange-500", video: videoUrl("/videos/vid3.mp4") },
   { name: "Omar", handle: "@omar.world", followers: "650K", gradient: "from-emerald-400 to-teal-500", video: videoUrl("/videos/vid4.mp4") },
-  { name: "Nora", handle: "@nora.daily", followers: "1.8M", gradient: "from-purple-400 to-violet-500", video: videoUrl("/videos/vid5.mp4") },
 ];
 
 export default function Creators({ t }: CreatorsProps) {
@@ -50,13 +49,13 @@ export default function Creators({ t }: CreatorsProps) {
         </motion.p>
       </div>
 
-      {/* Horizontal scroll of creator cards */}
+      {/* Four creator cards — centered */}
       <div className="pb-20 sm:pb-28">
-        <div className="flex gap-4 sm:gap-5 px-6 sm:px-8 lg:px-12 xl:px-16 overflow-x-auto no-scrollbar">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 justify-items-center max-w-[1100px] mx-auto px-4 sm:px-6">
           {creators.map((creator, i) => (
             <motion.div
               key={i}
-              className="flex-shrink-0 w-[220px] sm:w-[260px] group"
+              className="w-full max-w-[260px] group"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{

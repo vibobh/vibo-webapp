@@ -17,7 +17,11 @@ export async function POST(request: Request) {
 
     if (!adminEmail || !adminPass || !process.env.BLOG_SESSION_SECRET) {
       return NextResponse.json(
-        { ok: false, error: "Blog admin is not configured on the server." },
+        {
+          ok: false,
+          error:
+            "Blog admin is not configured on the server. Set BLOG_ADMIN_EMAIL, BLOG_ADMIN_PASSWORD, and BLOG_SESSION_SECRET in Vercel (or your host) environment variables, then redeploy.",
+        },
         { status: 503 },
       );
     }
