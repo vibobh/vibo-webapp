@@ -19,13 +19,14 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
 
   const navItems = [
     { href: "/#about", label: t.nav.about, id: "about" as const },
-    { href: "/#features", label: t.nav.features, id: "features" as const },
+    { href: "/blogs", label: t.nav.blog, id: "blog" as const },
     { href: "/newsroom", label: t.nav.newsroom, id: "newsroom" as const },
     { href: "/#careers", label: t.nav.careers, id: "careers" as const },
   ];
 
   const linkActive = (id: (typeof navItems)[number]["id"]) => {
     if (id === "newsroom") return pathname === "/newsroom" || pathname?.startsWith("/newsroom/");
+    if (id === "blog") return pathname === "/blogs" || pathname?.startsWith("/blogs/");
     return false;
   };
 
@@ -35,7 +36,12 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navSolid = scrolled || pathname === "/newsroom" || pathname?.startsWith("/newsroom/");
+  const navSolid =
+    scrolled ||
+    pathname === "/newsroom" ||
+    pathname?.startsWith("/newsroom/") ||
+    pathname === "/blogs" ||
+    pathname?.startsWith("/blogs/");
 
   return (
     <nav

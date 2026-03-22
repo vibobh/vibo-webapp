@@ -4,6 +4,16 @@ Videos are **not** in the Git repo. You point the app at HTTPS URLs using **Verc
 
 **Size:** aim for **each file under ~10 MB** when possible. See **`docs/COMPRESS_VIDEOS.md`**.
 
+### Do **not** use `private-user-images.githubusercontent.com` … `?jwt=…`
+
+Links that look like:
+
+`https://private-user-images.githubusercontent.com/.../file.mp4?jwt=...`
+
+come from **temporary** GitHub uploads (e.g. chat, some UI flows). The JWT **expires**, and the URL is **not** permanent public hosting. Browsers often show **404** or “page can’t be found” later.
+
+**Use instead:** a **GitHub Release** asset URL (see below), or another public host (Cloudflare R2, etc.). In Vercel, set `NEXT_PUBLIC_VIDEO_VID1` … `VID5` to those **stable** `https://github.com/.../releases/download/...` links — never the `private-user-images` URL.
+
 ## Setup (recommended: full links in Vercel)
 
 1. Upload `vid1.mp4` … `vid5.mp4` somewhere public (e.g. **GitHub Release** → **Assets**).

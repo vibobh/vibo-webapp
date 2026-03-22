@@ -35,8 +35,10 @@ Some hosts (or your own rule) need each **`vid1.mp4` … `vid5.mp4`** under **~1
 Replace `INPUT.mp4` and `OUTPUT.mp4`:
 
 ```powershell
-ffmpeg -y -i INPUT.mp4 -vf "scale=720:-2" -c:v libx264 -crf 28 -preset medium -c:a aac -b:a 128k -movflags +faststart OUTPUT.mp4
+ffmpeg -y -i INPUT.mp4 -vf "scale=720:-2" -c:v libx264 -crf 28 -preset medium -an -movflags +faststart OUTPUT.mp4
 ```
+
+(`-an` = no sound — fine for muted hero videos; avoids warnings if the file has no audio.)
 
 - Still over 10 MB? Try **`-crf 30`** or **`scale=640:-2`** (smaller picture = smaller file).
 - **`scale=720:-2`** keeps aspect ratio and limits height/width sensibly.

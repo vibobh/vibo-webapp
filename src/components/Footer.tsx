@@ -50,7 +50,7 @@ export default function Footer({ t, lang, onSwitchLang }: FooterProps) {
             </h4>
             <ul className="space-y-2.5">
               {t.footer.companyLinks.map((link: string, i: number) => {
-                const hrefs = ["/#about", "/newsroom", "/#careers", "#contact"];
+                const hrefs = ["/#about", "/blogs", "/newsroom", "/#careers"];
                 return (
                   <li key={i}>
                     <a

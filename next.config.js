@@ -1,5 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Convex CLI often writes CONVEX_URL; the app expects NEXT_PUBLIC_* for the browser.
+  // Mirror so the React client and API routes hit the same deployment.
+  env: {
+    NEXT_PUBLIC_CONVEX_URL:
+      process.env.NEXT_PUBLIC_CONVEX_URL || process.env.CONVEX_URL || "",
+  },
+  async redirects() {
+    return [
+      {
+        source: "/blogs/management",
+        destination: "/blogs/mangment",
+        permanent: false,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },

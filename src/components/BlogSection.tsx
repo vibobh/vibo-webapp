@@ -1,0 +1,123 @@
+"use client";
+
+import { useMemo } from "react";
+import Link from "next/link";
+import { useQuery } from "convex/react";
+import { api } from "@convex/_generated/api";
+import type { BlogListItem } from "@/types/blog";
+
+type Props = {
+  label: string;
+  heading: string;
+  viewAll: string;
+  readMore: string;
+};
+
+const categoryLabel: Record<string, string> = {
+  article: "Article",
+  case_study: "Case study",
+  featured: "Featured",
+  guide: "Guide",
+};
+
+function formatDate(ts: number, locale: string) {
+  try {
+    return new Intl.DateTimeFormat(locale, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }).format(new Date(ts));
+  } catch {
+    return "";
+  }
+}
+
+export default function BlogSection({ label, heading, viewAll, readMore }: Props) {
+  const hasConvex = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL?.trim());
+  const postsRaw = useQuery(api.blogs.listPublished, hasConvex ? {} : "skip");
+
+  const posts: BlogListItem[] = useMemo(() => {
+    if (!postsRaw?.length) return [];
+    return postsRaw.slice(0, 3).map((p) => ({
+      ...p,
+      _id: String(p._id),
+    }));
+  }, [postsRaw]);
+
+  const locale = typeof document !== "undefined" ? document.documentElement.lang || "en" : "en";
+
+  return (
+    <section id="blog" className="bg-transparent scroll-mt-24">
+      <div className="max-w-[1200px] mx-auto section-padding py-16 sm:py-24">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10 sm:mb-12">
+          <div>
+            <p className="text-xs uppercase tracking-[0.15em] text-vibo-primary font-medium mb-3">
+              {label}
+            </p>
+            <h2 className="text-[clamp(1.6rem,3vw,2.4rem)] font-bold tracking-[-0.03em] text-neutral-900 max-w-xl leading-[1.15]">
+              {heading}
+            </h2>
+          </div>
+          <Link
+            href="/blogs"
+            className="inline-flex items-center gap-2 text-sm font-medium text-vibo-primary hover:underline shrink-0"
+          >
+            {viewAll}
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </Link>
+        </div>
+
+        {hasConvex && postsRaw === undefined ? (
+          <p className="text-neutral-400 text-sm">…</p>
+        ) : posts.length === 0 ? (
+          <p className="text-neutral-500 text-sm max-w-lg">
+            Stories will appear here once published from the blog management area.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
+            {posts.map((post) => (
+              <article key={post._id} className="flex flex-col h-full group">
+                <Link href={`/blogs/${post.slug}`} className="block flex-1 flex flex-col">
+                  <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-neutral-100 mb-3 ring-1 ring-neutral-100">
+                    {post.coverImageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={post.coverImageUrl}
+                        alt=""
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center bg-[#800000]/90 text-white/90 text-sm font-medium">
+                        Vibo
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-[0.7rem] text-neutral-400 mb-2">
+                    {formatDate(post.publishedAt, locale)}
+                    <span className="mx-1.5">•</span>
+                    <span>{categoryLabel[post.category] ?? post.category}</span>
+                  </p>
+                  <h3 className="text-lg font-bold text-neutral-900 leading-snug mb-2 line-clamp-2 group-hover:text-vibo-primary transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-[0.9rem] text-neutral-600 line-clamp-2 mb-4 flex-1">{post.excerpt}</p>
+                  <span className="inline-flex items-center gap-2 text-[0.85rem] font-medium text-neutral-900">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-200 bg-white">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </span>
+                    {readMore}
+                  </span>
+                </Link>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}

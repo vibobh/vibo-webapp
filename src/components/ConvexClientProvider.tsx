@@ -4,7 +4,8 @@ import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { type ReactNode, useMemo } from "react";
 
 function makeClient() {
-  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  // next.config.js mirrors CONVEX_URL → NEXT_PUBLIC_CONVEX_URL for the browser bundle
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim() || "";
   if (!url) return null;
   return new ConvexReactClient(url);
 }

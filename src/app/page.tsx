@@ -9,7 +9,7 @@ import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
 import About from "@/components/About";
 import PhoneShowcase from "@/components/PhoneShowcase";
-import BentoGrid from "@/components/BentoGrid";
+import BlogSection from "@/components/BlogSection";
 import Creators from "@/components/Creators";
 import Cinematic from "@/components/Cinematic";
 import CTA from "@/components/CTA";
@@ -48,7 +48,12 @@ export default function Home() {
           <Marquee />
           <About t={t} />
           <PhoneShowcase t={t} />
-          <BentoGrid t={t} />
+          <BlogSection
+            label={t.blog.sectionLabel}
+            heading={t.blog.sectionHeading}
+            viewAll={t.blog.viewAll}
+            readMore={t.blog.readMore}
+          />
           <Creators t={t} />
           <Cinematic t={t} />
           <CTA t={t} />

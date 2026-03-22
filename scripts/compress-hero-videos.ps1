@@ -38,10 +38,11 @@ New-Item -ItemType Directory -Force -Path $outDir | Out-Null
     return
   }
   Write-Host "Encoding $name ..."
+  # -an = no audio (hero clips are muted; avoids "b:a not used" when source has no audio track)
   & $ffmpeg -y -hide_banner -loglevel warning -i $in `
     -vf "scale=720:-2" `
     -c:v libx264 -crf 28 -preset medium `
-    -c:a aac -b:a 128k `
+    -an `
     -movflags +faststart `
     $out
   if ($LASTEXITCODE -ne 0) { throw "ffmpeg failed for $name" }

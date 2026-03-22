@@ -8,6 +8,10 @@ import Footer from "@/components/Footer";
 import { decodeArticleFromSearchParam } from "@/lib/newsArticleUrl";
 import NewsImageFallback from "@/components/newsroom/NewsImageFallback";
 import { getTranslations, type Lang, isRTL } from "@/i18n";
+import {
+  looksLikeHtml,
+  sanitizeNewsArticleHtml,
+} from "@/lib/sanitizeNewsHtml";
 
 function stripNewsApiTruncation(s: string) {
   return s.replace(/\s*\[\+?\d+\s*chars?\]\s*$/i, "").trim();
@@ -64,6 +68,16 @@ export default function ArticleView() {
     const parts = bodyText.split(/\n\n+/).map((p) => p.trim()).filter(Boolean);
     return parts.length > 0 ? parts : [bodyText];
   }, [bodyText]);
+
+  const bodyIsHtml = useMemo(
+    () => looksLikeHtml(bodyText),
+    [bodyText],
+  );
+
+  const sanitizedHtml = useMemo(
+    () => (bodyIsHtml ? sanitizeNewsArticleHtml(bodyText) : ""),
+    [bodyIsHtml, bodyText],
+  );
 
   if (!article) {
     return (
@@ -131,13 +145,20 @@ export default function ArticleView() {
             </div>
           )}
 
-          <div className="space-y-4 text-[0.95rem] sm:text-[1rem] text-neutral-700 leading-relaxed">
-            {paragraphs.map((p, i) => (
-              <p key={i} className="whitespace-pre-wrap">
-                {p}
-              </p>
-            ))}
-          </div>
+          {bodyIsHtml ? (
+            <div
+              className="news-article-body space-y-4 text-[0.95rem] sm:text-[1rem] text-neutral-700 leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1 [&_a]:text-vibo-primary [&_a]:underline"
+              dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+            />
+          ) : (
+            <div className="space-y-4 text-[0.95rem] sm:text-[1rem] text-neutral-700 leading-relaxed">
+              {paragraphs.map((p, i) => (
+                <p key={i} className="whitespace-pre-wrap">
+                  {p}
+                </p>
+              ))}
+            </div>
+          )}
 
           <p className="mt-12 pt-8 border-t border-neutral-100">
             <a
