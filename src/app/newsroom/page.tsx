@@ -34,7 +34,7 @@ export default function NewsroomPage() {
     if (!ready) return;
     let cancelled = false;
     setLoading(true);
-    fetch(`/api/news?tag=${encodeURIComponent(tag)}&lang=${lang}`)
+    fetch(`/api/news?tag=${encodeURIComponent(tag)}`)
       .then((res) => res.json())
       .then((data: { articles: NewsArticle[]; mock?: boolean }) => {
         if (cancelled) return;
@@ -50,7 +50,7 @@ export default function NewsroomPage() {
     return () => {
       cancelled = true;
     };
-  }, [tag, lang, ready]);
+  }, [tag, ready]);
 
   const filterLabels: Record<NewsTag, string> = {
     all: nt.filters.all,
