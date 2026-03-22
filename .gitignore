@@ -38,4 +38,5 @@ next-env.d.ts
 
 # Large hero videos — not in Git (use NEXT_PUBLIC_VIDEO_BASE_URL in production). Local only:
 /public/videos/*.mp4
+/public/videos/compressed/
 /public/videos_backup_git/

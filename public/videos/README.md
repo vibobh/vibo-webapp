@@ -2,6 +2,10 @@
 
 These files are **not committed** to Git (they are large; **Git LFS** hits paid bandwidth limits on GitHub and breaks Vercel clones).
 
+## File size (under ~10 MB each)
+
+Many free hosts work best if each clip is **under about 10 MB**. If yours are huge, compress them first — see **`docs/COMPRESS_VIDEOS.md`** or run `.\scripts\compress-hero-videos.ps1` (needs [FFmpeg](https://ffmpeg.org/)).
+
 ## Local development
 
 Place `vid1.mp4` … `vid5.mp4` in this folder. Next.js serves them at `/videos/…`.

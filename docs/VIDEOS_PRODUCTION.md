@@ -3,6 +3,8 @@
 MP4s are loaded from **`NEXT_PUBLIC_VIDEO_BASE_URL`** + filename (`vid1.mp4` … `vid5.mp4`).  
 They are **not** stored in the Git repo (avoids GitHub **Git LFS** bandwidth limits).
 
+**Size:** aim for **each file under ~10 MB** (faster loads, fewer upload limits). See **`docs/COMPRESS_VIDEOS.md`**.
+
 ## Setup
 
 1. Host `vid1.mp4` … `vid5.mp4` at the **same base URL** (HTTPS).
