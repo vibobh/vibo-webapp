@@ -27,7 +27,7 @@ function formatDate(iso: string, locale: string) {
 export default function NewsroomHero({ article, readMore, lang }: Props) {
   if (!article) return null;
 
-  const locale = typeof document !== "undefined" ? document.documentElement.lang || "en" : "en";
+  const locale = lang === "ar" ? "ar" : "en";
   const articleHref = `/newsroom/article?d=${encodeURIComponent(encodeArticleForSearchParam(article))}&lang=${lang}`;
 
   return (

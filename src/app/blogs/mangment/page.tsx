@@ -1,13 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BlogManagement from "@/components/blog/BlogManagement";
-import { getTranslations, type Lang, isRTL } from "@/i18n";
+import { getTranslations, isRTL } from "@/i18n";
+import { useViboLang } from "@/i18n/useViboLang";
 
 export default function BlogManagementPage() {
-  const [lang, setLang] = useState<Lang>("en");
+  const { lang, switchLang } = useViboLang();
   const t = getTranslations(lang);
   const rtl = isRTL(lang);
   const ui = t.blogManagement;
@@ -18,10 +19,6 @@ export default function BlogManagementPage() {
     document.body.classList.toggle("font-ar", rtl);
     document.body.classList.toggle("font-en", !rtl);
   }, [lang, rtl]);
-
-  const switchLang = useCallback(() => {
-    setLang((prev) => (prev === "en" ? "ar" : "en"));
-  }, []);
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-neutral-900">

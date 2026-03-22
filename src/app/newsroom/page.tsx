@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { getTranslations, Lang, isRTL } from "@/i18n";
+import { getTranslations, isRTL } from "@/i18n";
+import { useViboLang } from "@/i18n/useViboLang";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsroomHero from "@/components/newsroom/NewsroomHero";
@@ -11,7 +12,7 @@ import NewsroomCard from "@/components/newsroom/NewsroomCard";
 import type { NewsArticle, NewsTag } from "@/types/news";
 
 export default function NewsroomPage() {
-  const [lang, setLang] = useState<Lang>("en");
+  const { lang, switchLang, ready } = useViboLang();
   const t = getTranslations(lang);
   const rtl = isRTL(lang);
   const nt = t.newsroom;
@@ -23,12 +24,6 @@ export default function NewsroomPage() {
   const [mock, setMock] = useState(false);
 
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get("lang");
-    if (q === "ar") setLang("ar");
-    if (q === "en") setLang("en");
-  }, []);
-
-  useEffect(() => {
     document.documentElement.lang = lang;
     document.documentElement.dir = rtl ? "rtl" : "ltr";
     document.body.classList.toggle("font-ar", rtl);
@@ -36,9 +31,10 @@ export default function NewsroomPage() {
   }, [lang, rtl]);
 
   useEffect(() => {
+    if (!ready) return;
     let cancelled = false;
     setLoading(true);
-    fetch(`/api/news?tag=${encodeURIComponent(tag)}`)
+    fetch(`/api/news?tag=${encodeURIComponent(tag)}&lang=${lang}`)
       .then((res) => res.json())
       .then((data: { articles: NewsArticle[]; mock?: boolean }) => {
         if (cancelled) return;
@@ -54,12 +50,7 @@ export default function NewsroomPage() {
     return () => {
       cancelled = true;
     };
-  }, [tag]);
-
-  const switchLang = useCallback(() => {
-    setLang((prev) => (prev === "en" ? "ar" : "en"));
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  }, [tag, lang, ready]);
 
   const filterLabels: Record<NewsTag, string> = {
     all: nt.filters.all,

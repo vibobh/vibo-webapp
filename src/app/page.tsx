@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { getTranslations, Lang, isRTL } from "@/i18n";
+import { getTranslations, isRTL } from "@/i18n";
+import { useViboLang } from "@/i18n/useViboLang";
 import GradientBg from "@/components/GradientBg";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -16,7 +17,7 @@ import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 
 export default function Home() {
-  const [lang, setLang] = useState<Lang>("en");
+  const { lang, switchLang } = useViboLang();
   const t = getTranslations(lang);
   const rtl = isRTL(lang);
 
@@ -26,11 +27,6 @@ export default function Home() {
     document.body.classList.toggle("font-ar", rtl);
     document.body.classList.toggle("font-en", !rtl);
   }, [lang, rtl]);
-
-  const switchLang = useCallback(() => {
-    setLang((prev) => (prev === "en" ? "ar" : "en"));
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
 
   return (
     <AnimatePresence mode="wait">
@@ -49,10 +45,13 @@ export default function Home() {
           <About t={t} />
           <PhoneShowcase t={t} />
           <BlogSection
+            lang={lang}
             label={t.blog.sectionLabel}
             heading={t.blog.sectionHeading}
             viewAll={t.blog.viewAll}
             readMore={t.blog.readMore}
+            sectionEmpty={t.blog.sectionEmpty}
+            categories={t.blog.categories}
           />
           <Creators t={t} />
           <Cinematic t={t} />

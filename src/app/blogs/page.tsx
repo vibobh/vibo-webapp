@@ -1,21 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { api } from "@convex/_generated/api";
-import { getTranslations, type Lang, isRTL } from "@/i18n";
+import { getTranslations, isRTL } from "@/i18n";
+import { useViboLang } from "@/i18n/useViboLang";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import type { BlogListItem } from "@/types/blog";
-
-const categoryLabel: Record<string, string> = {
-  article: "Article",
-  case_study: "Case study",
-  featured: "Featured",
-  guide: "Guide",
-};
 
 function formatDate(ts: number, locale: string) {
   try {
@@ -30,10 +24,11 @@ function formatDate(ts: number, locale: string) {
 }
 
 export default function BlogsPage() {
-  const [lang, setLang] = useState<Lang>("en");
+  const { lang, switchLang } = useViboLang();
   const t = getTranslations(lang);
   const rtl = isRTL(lang);
   const bt = t.blog;
+  const categoryLabel = bt.categories;
 
   const hasConvex = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL?.trim());
   const postsRaw = useQuery(api.blogs.listPublished, hasConvex ? {} : "skip");
@@ -49,22 +44,11 @@ export default function BlogsPage() {
   }, [postsRaw]);
 
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get("lang");
-    if (q === "ar") setLang("ar");
-    if (q === "en") setLang("en");
-  }, []);
-
-  useEffect(() => {
     document.documentElement.lang = lang;
     document.documentElement.dir = rtl ? "rtl" : "ltr";
     document.body.classList.toggle("font-ar", rtl);
     document.body.classList.toggle("font-en", !rtl);
   }, [lang, rtl]);
-
-  const switchLang = useCallback(() => {
-    setLang((prev) => (prev === "en" ? "ar" : "en"));
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
 
   const locale = lang === "ar" ? "ar" : "en";
   const featured = posts[0] ?? null;
@@ -124,7 +108,8 @@ export default function BlogsPage() {
                         <p className="text-[0.8rem] text-neutral-400 mb-3">
                           {formatDate(featured.publishedAt, locale)}
                           <span className="mx-2">•</span>
-                          {categoryLabel[featured.category] ?? featured.category}
+                          {categoryLabel[featured.category as keyof typeof categoryLabel] ??
+                            featured.category}
                         </p>
                         <h2 className="text-[1.35rem] sm:text-[1.5rem] font-bold text-neutral-900 leading-tight tracking-[-0.02em] mb-3 group-hover:text-vibo-primary transition-colors">
                           {featured.title}
@@ -165,7 +150,8 @@ export default function BlogsPage() {
                         <p className="text-[0.7rem] text-neutral-400 mb-2">
                           {formatDate(post.publishedAt, locale)}
                           <span className="mx-1.5">•</span>
-                          {categoryLabel[post.category] ?? post.category}
+                          {categoryLabel[post.category as keyof typeof categoryLabel] ??
+                            post.category}
                         </p>
                         <h3 className="text-base sm:text-lg font-bold text-neutral-900 leading-snug mb-2 line-clamp-2 group-hover:text-vibo-primary transition-colors">
                           {post.title}

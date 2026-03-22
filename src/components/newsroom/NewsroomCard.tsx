@@ -28,7 +28,7 @@ function formatDate(iso: string, locale: string) {
 }
 
 export default function NewsroomCard({ article, readMore, layout, lang }: Props) {
-  const locale = typeof document !== "undefined" ? document.documentElement.lang || "en" : "en";
+  const locale = lang === "ar" ? "ar" : "en";
   const articleHref = `/newsroom/article?d=${encodeURIComponent(encodeArticleForSearchParam(article))}&lang=${lang}`;
 
   if (layout === "list") {

@@ -7,7 +7,7 @@ export const revalidate = 300;
 /** Fetch enough items so filtering for social + safety still leaves a full page. */
 const PAGE_SIZE = 100;
 
-const MOCK_ARTICLES: NewsArticle[] = [
+const MOCK_ARTICLES_EN: NewsArticle[] = [
   {
     title: "Vibo — Real People. Real Moments.",
     description:
@@ -27,6 +27,31 @@ const MOCK_ARTICLES: NewsArticle[] = [
     sourceName: "Vibo Newsroom",
   },
 ];
+
+const MOCK_ARTICLES_AR: NewsArticle[] = [
+  {
+    title: "فايبو — ناس حقيقيون، لحظات حقيقية.",
+    description:
+      "عندما لا يكون NEWS_API_KEY مضبوطاً، يُعرض هذا المقال التجريبي. أضف مفتاحاً من NewsAPI.org لرؤية العناوين المباشرة.",
+    url: "https://joinvibo.com",
+    urlToImage: null,
+    publishedAt: new Date().toISOString(),
+    sourceName: "فايبو",
+  },
+  {
+    title: "ابنِ مجتمعك على فايبو",
+    description:
+      "شارك فيديوهات قصيرة وقصصاً ورسائل مع مجتمع يقدّم الأصالة.",
+    url: "https://joinvibo.com",
+    urlToImage: null,
+    publishedAt: new Date().toISOString(),
+    sourceName: "غرفة أخبار فايبو",
+  },
+];
+
+function mockArticlesForLang(lang: "en" | "ar"): NewsArticle[] {
+  return lang === "ar" ? MOCK_ARTICLES_AR : MOCK_ARTICLES_EN;
+}
 
 function normalizeArticle(a: {
   title: string;
@@ -92,11 +117,13 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const raw = searchParams.get("tag");
   const tag: NewsTag = isNewsTag(raw) ? raw : "all";
+  const langParam = searchParams.get("lang");
+  const lang: "en" | "ar" = langParam === "ar" ? "ar" : "en";
 
   const apiKey = process.env.NEWS_API_KEY;
   if (!apiKey) {
     return NextResponse.json({
-      articles: MOCK_ARTICLES,
+      articles: mockArticlesForLang(lang),
       mock: true,
       tag,
     });
@@ -107,7 +134,7 @@ export async function GET(request: Request) {
 
   try {
     const q = everythingQueryForTag(tag);
-    const url = `${base}/everything?q=${encodeURIComponent(q)}&language=en&sortBy=publishedAt&pageSize=${PAGE_SIZE}`;
+    const url = `${base}/everything?q=${encodeURIComponent(q)}&language=${lang}&sortBy=publishedAt&pageSize=${PAGE_SIZE}`;
 
     const res = await fetch(url, {
       headers,
@@ -118,7 +145,7 @@ export async function GET(request: Request) {
       const errText = await res.text();
       console.error("[news API]", res.status, errText);
       return NextResponse.json({
-        articles: MOCK_ARTICLES,
+        articles: mockArticlesForLang(lang),
         mock: true,
         tag,
         error: "NewsAPI error",
@@ -147,7 +174,7 @@ export async function GET(request: Request) {
 
     if (articles.length === 0) {
       return NextResponse.json({
-        articles: MOCK_ARTICLES,
+        articles: mockArticlesForLang(lang),
         mock: true,
         tag,
         filterEmpty: true,
@@ -158,7 +185,7 @@ export async function GET(request: Request) {
   } catch (e) {
     console.error("[news API]", e);
     return NextResponse.json({
-      articles: MOCK_ARTICLES,
+      articles: mockArticlesForLang(lang),
       mock: true,
       tag,
       error: "fetch_failed",

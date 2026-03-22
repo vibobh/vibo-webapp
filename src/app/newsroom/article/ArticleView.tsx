@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { readStoredLang, writeStoredLang } from "@/i18n/useViboLang";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
@@ -34,11 +35,21 @@ export default function ArticleView() {
   const router = useRouter();
   const d = searchParams.get("d");
   const article = useMemo(() => decodeArticleFromSearchParam(d), [d]);
-  const rawLang = searchParams.get("lang");
-  const lang: Lang = rawLang === "ar" ? "ar" : "en";
+  const [lang, setLang] = useState<Lang>("en");
   const t = getTranslations(lang);
   const rtl = isRTL(lang);
   const na = t.newsroom.article;
+
+  useEffect(() => {
+    const q = searchParams.get("lang");
+    if (q === "ar" || q === "en") {
+      setLang(q);
+      writeStoredLang(q);
+      return;
+    }
+    const s = readStoredLang();
+    if (s) setLang(s);
+  }, [searchParams]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -147,11 +158,15 @@ export default function ArticleView() {
 
           {bodyIsHtml ? (
             <div
-              className="news-article-body space-y-4 text-[0.95rem] sm:text-[1rem] text-neutral-700 leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1 [&_a]:text-vibo-primary [&_a]:underline"
+              dir={rtl ? "rtl" : "ltr"}
+              className="news-article-body space-y-4 text-[0.95rem] sm:text-[1rem] text-neutral-700 leading-relaxed [&_ul]:list-disc [&_ul]:ps-6 [&_ol]:list-decimal [&_ol]:ps-6 [&_li]:my-1 [&_a]:text-vibo-primary [&_a]:underline"
               dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
             />
           ) : (
-            <div className="space-y-4 text-[0.95rem] sm:text-[1rem] text-neutral-700 leading-relaxed">
+            <div
+              dir={rtl ? "rtl" : "ltr"}
+              className="space-y-4 text-[0.95rem] sm:text-[1rem] text-neutral-700 leading-relaxed"
+            >
               {paragraphs.map((p, i) => (
                 <p key={i} className="whitespace-pre-wrap">
                   {p}

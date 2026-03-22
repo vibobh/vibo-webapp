@@ -45,7 +45,14 @@
     "authorRole": "الكاتب",
     "sectionLabel": "المدونة",
     "sectionHeading": "قصص ودلائل وتحديثات من فايبو.",
-    "viewAll": "عرض كل المنشورات"
+    "viewAll": "عرض كل المنشورات",
+    "sectionEmpty": "ستظهر القصص هنا بعد نشرها من صفحة إدارة المدونة.",
+    "categories": {
+      "article": "مقال",
+      "case_study": "دراسة حالة",
+      "featured": "مميّز",
+      "guide": "دليل"
+    }
   },
   "blogManagement": {
     "title": "إدارة المدونة",

@@ -17,10 +17,11 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
   const isRTL = lang === "ar";
   const pathname = usePathname();
 
+  const q = `?lang=${lang}`;
   const navItems = [
     { href: "/#about", label: t.nav.about, id: "about" as const },
-    { href: "/blogs", label: t.nav.blog, id: "blog" as const },
-    { href: "/newsroom", label: t.nav.newsroom, id: "newsroom" as const },
+    { href: `/blogs${q}`, label: t.nav.blog, id: "blog" as const },
+    { href: `/newsroom${q}`, label: t.nav.newsroom, id: "newsroom" as const },
     { href: "/#careers", label: t.nav.careers, id: "careers" as const },
   ];
 

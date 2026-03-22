@@ -5,19 +5,21 @@ import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import type { BlogListItem } from "@/types/blog";
+import type { Lang } from "@/i18n";
 
 type Props = {
+  lang: Lang;
   label: string;
   heading: string;
   viewAll: string;
   readMore: string;
-};
-
-const categoryLabel: Record<string, string> = {
-  article: "Article",
-  case_study: "Case study",
-  featured: "Featured",
-  guide: "Guide",
+  sectionEmpty: string;
+  categories: {
+    article: string;
+    case_study: string;
+    featured: string;
+    guide: string;
+  };
 };
 
 function formatDate(ts: number, locale: string) {
@@ -32,7 +34,15 @@ function formatDate(ts: number, locale: string) {
   }
 }
 
-export default function BlogSection({ label, heading, viewAll, readMore }: Props) {
+export default function BlogSection({
+  lang,
+  label,
+  heading,
+  viewAll,
+  readMore,
+  sectionEmpty,
+  categories,
+}: Props) {
   const hasConvex = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL?.trim());
   const postsRaw = useQuery(api.blogs.listPublished, hasConvex ? {} : "skip");
 
@@ -44,7 +54,8 @@ export default function BlogSection({ label, heading, viewAll, readMore }: Props
     }));
   }, [postsRaw]);
 
-  const locale = typeof document !== "undefined" ? document.documentElement.lang || "en" : "en";
+  const locale = lang === "ar" ? "ar" : "en";
+  const q = `?lang=${lang}`;
 
   return (
     <section id="blog" className="bg-transparent scroll-mt-24">
@@ -59,7 +70,7 @@ export default function BlogSection({ label, heading, viewAll, readMore }: Props
             </h2>
           </div>
           <Link
-            href="/blogs"
+            href={`/blogs${q}`}
             className="inline-flex items-center gap-2 text-sm font-medium text-vibo-primary hover:underline shrink-0"
           >
             {viewAll}
@@ -72,14 +83,12 @@ export default function BlogSection({ label, heading, viewAll, readMore }: Props
         {hasConvex && postsRaw === undefined ? (
           <p className="text-neutral-400 text-sm">…</p>
         ) : posts.length === 0 ? (
-          <p className="text-neutral-500 text-sm max-w-lg">
-            Stories will appear here once published from the blog management area.
-          </p>
+          <p className="text-neutral-500 text-sm max-w-lg">{sectionEmpty}</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
             {posts.map((post) => (
               <article key={post._id} className="flex flex-col h-full group">
-                <Link href={`/blogs/${post.slug}`} className="block flex-1 flex flex-col">
+                <Link href={`/blogs/${post.slug}${q}`} className="block flex-1 flex flex-col">
                   <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-neutral-100 mb-3 ring-1 ring-neutral-100">
                     {post.coverImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -98,7 +107,9 @@ export default function BlogSection({ label, heading, viewAll, readMore }: Props
                   <p className="text-[0.7rem] text-neutral-400 mb-2">
                     {formatDate(post.publishedAt, locale)}
                     <span className="mx-1.5">•</span>
-                    <span>{categoryLabel[post.category] ?? post.category}</span>
+                    <span>
+                      {categories[post.category as keyof typeof categories] ?? post.category}
+                    </span>
                   </p>
                   <h3 className="text-lg font-bold text-neutral-900 leading-snug mb-2 line-clamp-2 group-hover:text-vibo-primary transition-colors">
                     {post.title}

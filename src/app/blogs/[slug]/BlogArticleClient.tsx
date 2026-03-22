@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { readStoredLang, writeStoredLang } from "@/i18n/useViboLang";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { getTranslations, type Lang, isRTL } from "@/i18n";
@@ -8,13 +9,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import type { BlogPost } from "@/types/blog";
 import DOMPurify from "isomorphic-dompurify";
-
-const categoryLabel: Record<string, string> = {
-  article: "Article",
-  case_study: "Case study",
-  featured: "Featured",
-  guide: "Guide",
-};
 
 function formatDate(ts: number, locale: string) {
   try {
@@ -33,12 +27,23 @@ export default function BlogArticleClient() {
   const router = useRouter();
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const searchParams = useSearchParams();
-  const rawLang = searchParams.get("lang");
-  const lang: Lang = rawLang === "ar" ? "ar" : "en";
+  const [lang, setLang] = useState<Lang>("en");
   const t = getTranslations(lang);
   const rtl = isRTL(lang);
   const bt = t.blog;
+  const categoryLabel = bt.categories;
   const [post, setPost] = useState<BlogPost | null | undefined>(undefined);
+
+  useEffect(() => {
+    const q = searchParams.get("lang");
+    if (q === "ar" || q === "en") {
+      setLang(q);
+      writeStoredLang(q);
+      return;
+    }
+    const s = readStoredLang();
+    if (s) setLang(s);
+  }, [searchParams]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -136,7 +141,9 @@ export default function BlogArticleClient() {
           <p className="text-[0.8rem] text-neutral-400 mb-3">
             {formatDate(post.publishedAt, locale)}
             <span className="mx-2">•</span>
-            <span>{categoryLabel[post.category] ?? post.category}</span>
+            <span>
+              {categoryLabel[post.category as keyof typeof categoryLabel] ?? post.category}
+            </span>
           </p>
 
           <h1 className="text-[1.65rem] sm:text-[2rem] lg:text-[2.25rem] font-bold text-neutral-900 leading-[1.15] tracking-[-0.03em] mb-6">
@@ -175,7 +182,8 @@ export default function BlogArticleClient() {
           )}
 
           <div
-            className="blog-prose space-y-4 text-[0.95rem] sm:text-[1rem] text-neutral-800 leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1 [&_a]:text-vibo-primary [&_a]:underline [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:text-lg"
+            dir={rtl ? "rtl" : "ltr"}
+            className="blog-prose space-y-4 text-[0.95rem] sm:text-[1rem] text-neutral-800 leading-relaxed [&_ul]:list-disc [&_ul]:ps-6 [&_ol]:list-decimal [&_ol]:ps-6 [&_li]:my-1 [&_a]:text-vibo-primary [&_a]:underline [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:text-lg"
             dangerouslySetInnerHTML={{ __html: safeHtml }}
           />
         </article>

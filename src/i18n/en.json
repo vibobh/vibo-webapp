@@ -45,7 +45,14 @@
     "authorRole": "Author",
     "sectionLabel": "Blog",
     "sectionHeading": "Stories, guides, and updates from Vibo.",
-    "viewAll": "View all posts"
+    "viewAll": "View all posts",
+    "sectionEmpty": "Stories will appear here once published from the blog management area.",
+    "categories": {
+      "article": "Article",
+      "case_study": "Case study",
+      "featured": "Featured",
+      "guide": "Guide"
+    }
   },
   "blogManagement": {
     "title": "Blog management",
