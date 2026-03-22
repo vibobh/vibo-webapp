@@ -57,6 +57,16 @@ npx convex dev
 npx convex deploy
 ```
 
+### “Unexpected token &lt; … is not valid JSON” when publishing
+
+The browser tried to parse **JSON** but the server answered with an **HTML page** (often a Vercel/Next error page). Typical causes:
+
+1. **Missing env on Vercel** — `NEXT_PUBLIC_CONVEX_URL`, `BLOG_ADMIN_SECRET`, `BLOG_SESSION_SECRET`, or session/login vars.
+2. **`BLOG_ADMIN_SECRET` mismatch** — must match Convex production **exactly** (mutations fail server-side).
+3. **Redeploy** after changing env vars.
+
+After fixing env, **Redeploy** on Vercel. The app now shows a clearer alert instead of the raw JSON parse error.
+
 ## Security
 
 - Do **not** put real passwords in source code or chat.

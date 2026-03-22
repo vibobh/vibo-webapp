@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import "react-quill/dist/quill.snow.css";
 import type { BlogCategory } from "@/types/blog";
+import { parseApiJson } from "@/lib/parseApiJson";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -63,11 +64,11 @@ async function uploadToConvex(file: File): Promise<string> {
     method: "POST",
     credentials: "include",
   });
+  const data = await parseApiJson<{ uploadUrl?: string; error?: string }>(r);
   if (!r.ok) {
-    const err = await r.json().catch(() => ({}));
-    throw new Error((err as { error?: string }).error ?? "Could not get upload URL");
+    throw new Error(data.error ?? "Could not get upload URL");
   }
-  const { uploadUrl } = (await r.json()) as { uploadUrl?: string };
+  const uploadUrl = data.uploadUrl;
   if (!uploadUrl) throw new Error("No upload URL");
 
   const up = await fetch(uploadUrl, {
@@ -76,7 +77,7 @@ async function uploadToConvex(file: File): Promise<string> {
     body: file,
   });
   if (!up.ok) throw new Error("Upload failed");
-  const j = (await up.json()) as { storageId?: string };
+  const j = await parseApiJson<{ storageId?: string }>(up);
   if (!j.storageId) throw new Error("No storage id");
   return j.storageId;
 }
@@ -148,12 +149,14 @@ export default function BlogManagement({ ui }: Props) {
     setLoading(true);
     try {
       const r = await fetch("/api/blog/posts", { credentials: "include" });
+      const j = await parseApiJson<{ posts?: AdminPost[] }>(r);
       if (!r.ok) {
         setPosts([]);
         return;
       }
-      const j = (await r.json()) as { posts?: AdminPost[] };
       setPosts(j.posts ?? []);
+    } catch {
+      setPosts([]);
     } finally {
       setLoading(false);
     }
@@ -205,7 +208,13 @@ export default function BlogManagement({ ui }: Props) {
       body: JSON.stringify({ email, password }),
       credentials: "include",
     });
-    const j = (await r.json()) as { ok?: boolean; error?: string };
+    let j: { ok?: boolean; error?: string };
+    try {
+      j = await parseApiJson<{ ok?: boolean; error?: string }>(r);
+    } catch (err) {
+      setLoginError(err instanceof Error ? err.message : ui.loginError);
+      return;
+    }
     if (!r.ok) {
       setLoginError(j.error ?? ui.loginError);
       return;
@@ -269,7 +278,7 @@ export default function BlogManagement({ ui }: Props) {
           credentials: "include",
           body: JSON.stringify({ id: editingId, ...payload }),
         });
-        const j = (await r.json()) as { error?: string };
+        const j = await parseApiJson<{ error?: string }>(r);
         if (!r.ok) throw new Error(j.error ?? ui.saveError);
       } else {
         const r = await fetch("/api/blog/posts", {
@@ -278,7 +287,7 @@ export default function BlogManagement({ ui }: Props) {
           credentials: "include",
           body: JSON.stringify(payload),
         });
-        const j = (await r.json()) as { error?: string };
+        const j = await parseApiJson<{ error?: string }>(r);
         if (!r.ok) throw new Error(j.error ?? ui.saveError);
       }
       await loadPosts();
