@@ -67,6 +67,10 @@ The browser tried to parse **JSON** but the server answered with an **HTML page*
 
 After fixing env, **Redeploy** on Vercel. The app now shows a clearer alert instead of the raw JSON parse error.
 
+### `ERR_REQUIRE_ESM` / `encoding-lite.js` on `/api/blog/posts` (Vercel)
+
+That comes from **`isomorphic-dompurify` → jsdom → html-encoding-sniffer** loading an ESM-only package via `require()`. Blog **API** sanitization uses **`sanitize-html`** instead (no jsdom), so this should not occur after the current code is deployed.
+
 ## Security
 
 - Do **not** put real passwords in source code or chat.
