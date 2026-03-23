@@ -67,11 +67,16 @@ export default function BlogsPage() {
         <Navbar t={t} lang={lang} onSwitchLang={switchLang} />
         <main className="relative z-[1] pt-[72px] lg:pt-[80px]">
           <div className="max-w-[1200px] mx-auto section-padding py-10 sm:py-12 lg:py-14">
-            <header className="mb-10 sm:mb-12">
-              <h1 className="text-[1.75rem] sm:text-[2rem] font-bold tracking-[-0.03em] text-neutral-900">
-                {bt.title}
+            <header className="mb-10 sm:mb-12 text-left">
+              <p className="text-xs uppercase tracking-[0.15em] text-vibo-primary font-medium mb-3">
+                {bt.sectionLabel}
+              </p>
+              <h1 className="text-[clamp(1.6rem,3vw,2.6rem)] font-bold tracking-[-0.03em] text-neutral-900 leading-[1.1] max-w-lg">
+                {bt.sectionHeading}
               </h1>
-              <p className="mt-2 text-[0.95rem] text-neutral-500 max-w-2xl">{bt.description}</p>
+              <p className="mt-3 text-neutral-400 text-sm sm:text-base max-w-md">
+                {bt.description}
+              </p>
             </header>
 
             {!hasConvex ? (
