@@ -10,7 +10,12 @@ const nextConfig = {
     return [
       {
         source: "/blogs/management",
-        destination: "/blogs/mangment",
+        destination: "/mangment",
+        permanent: false,
+      },
+      {
+        source: "/blogs/mangment",
+        destination: "/mangment",
         permanent: false,
       },
     ];

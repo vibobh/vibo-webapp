@@ -16,3 +16,10 @@ export type NewsArticle = {
   publishedAt: string;
   sourceName: string;
 };
+
+export type NewsModerationItem = NewsArticle & {
+  _id: string;
+  tag: NewsTag;
+  status: "draft" | "approved";
+  publishedAtMs?: number;
+};

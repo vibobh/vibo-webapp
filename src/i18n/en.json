@@ -164,6 +164,16 @@
     "appStore": "App Store",
     "googlePlay": "Google Play"
   },
+  "newsroomManagement": {
+    "title": "Newsroom management",
+    "subtitle": "Fetch latest articles, review them, and approve per article to publish in the public Newsroom.",
+    "loading": "Loading drafts…",
+    "fetchLatest": "Fetch latest",
+    "approve": "Approve",
+    "reject": "Reject",
+    "empty": "No draft articles in this category yet. Click “Fetch latest”.",
+    "notAuthorized": "Please sign in to moderate news."
+  },
   "footer": {
     "company": "Company",
     "companyLinks": ["About", "Blog", "Newsroom", "Careers"],

@@ -2,7 +2,7 @@
 
 Public listing: `/blogs`  
 Single post: `/blogs/[slug]` (e.g. `/blogs/my-first-post`)  
-Admin UI: `/blogs/mangment` (typo preserved; `/blogs/management` redirects here)
+Admin UI: `/mangment` (covers blog + newsroom moderation)
 
 ## Stack
 
