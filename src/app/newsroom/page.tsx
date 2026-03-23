@@ -97,20 +97,12 @@ export default function NewsroomPage() {
               )}
             </header>
 
-            {loading && articles.length === 0 ? (
-              <div className="py-20 text-center text-neutral-400 text-sm">{nt.loading}</div>
-            ) : (
-              <>
-                {switching && (
-                  <div className="mb-4 text-[0.78rem] text-neutral-400 animate-pulse">{nt.loading}</div>
-                )}
-
-                <motion.div
-                  key={`${tag}-${layout}-${articles.length}`}
-                  initial={{ opacity: 0.88, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.22, ease: "easeOut" }}
-                >
+            <div className="min-h-[620px]">
+              <motion.div
+                initial={{ opacity: 1, y: 0 }}
+                animate={{ opacity: switching ? 0.93 : 1, y: switching ? 2 : 0 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+              >
                 {featured && <NewsroomHero article={featured} readMore={nt.readMore} lang={lang} />}
 
                 <NewsroomFilters
@@ -150,9 +142,8 @@ export default function NewsroomPage() {
                     ))}
                   </div>
                 ) : null}
-                </motion.div>
-              </>
-            )}
+              </motion.div>
+            </div>
           </div>
         </main>
         <Footer t={t} lang={lang} onSwitchLang={switchLang} />
