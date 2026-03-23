@@ -159,3 +159,58 @@ export const rejectDelete = mutation({
   },
 });
 
+export const createDraft = mutation({
+  args: {
+    secret: v.string(),
+    tag: newsTag,
+    title: v.string(),
+    description: v.string(),
+    content: v.optional(v.string()),
+    url: v.string(),
+    urlToImage: v.optional(v.string()),
+    publishedAt: v.string(),
+    sourceName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    requireAdmin(args.secret);
+    const now = Date.now();
+    const publishedAtMs = Date.parse(args.publishedAt) || now;
+    const existing = await ctx.db
+      .query("newsItems")
+      .withIndex("by_url_tag", (q) => q.eq("url", args.url).eq("tag", args.tag))
+      .unique();
+
+    if (existing) {
+      if (existing.status === "approved") {
+        throw new Error("This URL is already approved.");
+      }
+      await ctx.db.patch(existing._id, {
+        title: args.title,
+        description: args.description,
+        content: args.content,
+        urlToImage: args.urlToImage,
+        publishedAt: args.publishedAt,
+        publishedAtMs,
+        sourceName: args.sourceName,
+        updatedAt: now,
+      });
+      return existing._id;
+    }
+
+    return await ctx.db.insert("newsItems", {
+      tag: args.tag,
+      status: "draft",
+      title: args.title,
+      description: args.description,
+      content: args.content,
+      url: args.url,
+      urlToImage: args.urlToImage,
+      publishedAt: args.publishedAt,
+      publishedAtMs,
+      sourceName: args.sourceName,
+      createdAt: now,
+      updatedAt: now,
+    });
+  },
+});
+

@@ -39,7 +39,14 @@ export default function NewsroomModeration({ lang }: { lang: Lang }) {
   const [drafts, setDrafts] = useState<NewsModerationItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [fetchingLatest, setFetchingLatest] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [didInitialFetch, setDidInitialFetch] = useState(false);
+  const [manualTitle, setManualTitle] = useState("");
+  const [manualDescription, setManualDescription] = useState("");
+  const [manualSource, setManualSource] = useState("Vibo");
+  const [manualUrl, setManualUrl] = useState("");
+  const [manualImageUrl, setManualImageUrl] = useState("");
+  const [manualPublishedAt, setManualPublishedAt] = useState("");
 
   const loadDrafts = useCallback(async () => {
     setLoading(true);
@@ -77,18 +84,6 @@ export default function NewsroomModeration({ lang }: { lang: Lang }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (!loggedIn) return;
-    if (!didInitialFetch) {
-      // First time: fetch latest drafts so the editor immediately sees “new news to review”.
-      fetchLatest().finally(() => setDidInitialFetch(true));
-      return;
-    }
-
-    // Subsequent tag changes: keep it lightweight and just load existing drafts.
-    loadDrafts();
-  }, [didInitialFetch, loggedIn, loadDrafts, tag]);
-
   const fetchLatest = useCallback(async () => {
     setFetchingLatest(true);
     try {
@@ -111,6 +106,18 @@ export default function NewsroomModeration({ lang }: { lang: Lang }) {
       setFetchingLatest(false);
     }
   }, [loadDrafts, tag]);
+
+  useEffect(() => {
+    if (!loggedIn) return;
+    if (!didInitialFetch) {
+      // First time: fetch latest drafts so the editor immediately sees “new news to review”.
+      fetchLatest().finally(() => setDidInitialFetch(true));
+      return;
+    }
+
+    // Subsequent tag changes: keep it lightweight and just load existing drafts.
+    loadDrafts();
+  }, [didInitialFetch, fetchLatest, loggedIn, loadDrafts, tag]);
 
   const approve = useCallback(
     async (id: string) => {
@@ -141,6 +148,48 @@ export default function NewsroomModeration({ lang }: { lang: Lang }) {
     },
     [loadDrafts],
   );
+
+  const createManual = useCallback(async () => {
+    setCreating(true);
+    try {
+      const r = await fetch("/api/news/drafts/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          tag,
+          title: manualTitle,
+          description: manualDescription,
+          sourceName: manualSource,
+          url: manualUrl,
+          urlToImage: manualImageUrl,
+          publishedAt: manualPublishedAt,
+        }),
+      });
+      const j = await parseApiJson<{ ok?: boolean; error?: string }>(r);
+      if (!r.ok) throw new Error(j.error ?? "Failed to create");
+      setManualTitle("");
+      setManualDescription("");
+      setManualSource("Vibo");
+      setManualUrl("");
+      setManualImageUrl("");
+      setManualPublishedAt("");
+      await loadDrafts();
+    } catch {
+      // keep form values for quick edit/retry
+    } finally {
+      setCreating(false);
+    }
+  }, [
+    loadDrafts,
+    manualDescription,
+    manualImageUrl,
+    manualPublishedAt,
+    manualSource,
+    manualTitle,
+    manualUrl,
+    tag,
+  ]);
 
   return (
     <section className="mt-10">
@@ -179,6 +228,72 @@ export default function NewsroomModeration({ lang }: { lang: Lang }) {
             {filterLabels[t]}
           </button>
         ))}
+      </div>
+
+      <div className="bg-white border border-neutral-200 rounded-2xl p-4 mb-6">
+        <h3 className="text-[1rem] font-semibold text-neutral-900 mb-3">{nm.createNews}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-neutral-500">{nm.formTitle}</span>
+            <input
+              value={manualTitle}
+              onChange={(e) => setManualTitle(e.target.value)}
+              className="rounded-xl border border-neutral-200 px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-neutral-500">{nm.formSource}</span>
+            <input
+              value={manualSource}
+              onChange={(e) => setManualSource(e.target.value)}
+              className="rounded-xl border border-neutral-200 px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="flex flex-col gap-1 md:col-span-2">
+            <span className="text-xs text-neutral-500">{nm.formDescription}</span>
+            <textarea
+              value={manualDescription}
+              onChange={(e) => setManualDescription(e.target.value)}
+              rows={3}
+              className="rounded-xl border border-neutral-200 px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="flex flex-col gap-1 md:col-span-2">
+            <span className="text-xs text-neutral-500">{nm.formUrl}</span>
+            <input
+              value={manualUrl}
+              onChange={(e) => setManualUrl(e.target.value)}
+              className="rounded-xl border border-neutral-200 px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-neutral-500">{nm.formImageUrl}</span>
+            <input
+              value={manualImageUrl}
+              onChange={(e) => setManualImageUrl(e.target.value)}
+              className="rounded-xl border border-neutral-200 px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-neutral-500">{nm.formPublishedAt}</span>
+            <input
+              type="datetime-local"
+              value={manualPublishedAt}
+              onChange={(e) => setManualPublishedAt(e.target.value)}
+              className="rounded-xl border border-neutral-200 px-3 py-2 text-sm"
+            />
+          </label>
+        </div>
+        <div className="mt-3">
+          <button
+            type="button"
+            onClick={createManual}
+            disabled={!loggedIn || creating}
+            className="inline-flex items-center justify-center rounded-full bg-neutral-900 text-white px-5 py-2.5 text-sm font-medium hover:bg-neutral-800 disabled:opacity-50"
+          >
+            {creating ? nm.creating : nm.formCreate}
+          </button>
+        </div>
       </div>
 
       {!loggedIn ? (
