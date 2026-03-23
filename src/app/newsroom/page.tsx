@@ -21,6 +21,8 @@ export default function NewsroomPage() {
   const [layout, setLayout] = useState<"grid" | "list">("grid");
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [switching, setSwitching] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [mock, setMock] = useState(false);
 
   useEffect(() => {
@@ -33,7 +35,9 @@ export default function NewsroomPage() {
   useEffect(() => {
     if (!ready) return;
     let cancelled = false;
-    setLoading(true);
+    // Keep current cards visible while switching categories for smoother UX.
+    setSwitching(hasLoadedOnce);
+    if (!hasLoadedOnce) setLoading(true);
     fetch(`/api/news?tag=${encodeURIComponent(tag)}`)
       .then((res) => res.json())
       .then((data: { articles: NewsArticle[]; mock?: boolean }) => {
@@ -41,16 +45,20 @@ export default function NewsroomPage() {
         setArticles(data.articles || []);
         setMock(!!data.mock);
         setLoading(false);
+        setHasLoadedOnce(true);
+        setSwitching(false);
       })
       .catch(() => {
         if (cancelled) return;
-        setArticles([]);
+        if (!hasLoadedOnce) setArticles([]);
         setLoading(false);
+        setHasLoadedOnce(true);
+        setSwitching(false);
       });
     return () => {
       cancelled = true;
     };
-  }, [tag, ready]);
+  }, [hasLoadedOnce, tag, ready]);
 
   const filterLabels: Record<NewsTag, string> = {
     all: nt.filters.all,
@@ -89,10 +97,20 @@ export default function NewsroomPage() {
               )}
             </header>
 
-            {loading ? (
+            {loading && articles.length === 0 ? (
               <div className="py-20 text-center text-neutral-400 text-sm">{nt.loading}</div>
             ) : (
               <>
+                {switching && (
+                  <div className="mb-4 text-[0.78rem] text-neutral-400 animate-pulse">{nt.loading}</div>
+                )}
+
+                <motion.div
+                  key={`${tag}-${layout}-${articles.length}`}
+                  initial={{ opacity: 0.88, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
+                >
                 {featured && <NewsroomHero article={featured} readMore={nt.readMore} lang={lang} />}
 
                 <NewsroomFilters
@@ -132,6 +150,7 @@ export default function NewsroomPage() {
                     ))}
                   </div>
                 ) : null}
+                </motion.div>
               </>
             )}
           </div>
