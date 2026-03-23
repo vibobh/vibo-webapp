@@ -1,5 +1,10 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import ArticleView from "./ArticleView";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: true },
+};
 
 export default function NewsroomArticlePage() {
   return (
