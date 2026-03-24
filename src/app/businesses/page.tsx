@@ -81,7 +81,7 @@ function AdPreviewCard({
           {label}
         </span>
       ) : variant === "bottom" ? (
-        <span className="pointer-events-none absolute start-2.5 bottom-2.5 max-w-[calc(100%-1rem)] rounded-full bg-black/45 px-3 py-1.5 text-[10px] font-semibold text-white shadow-md backdrop-blur-[2px] sm:text-[11px]">
+        <span className="pointer-events-none absolute start-2.5 bottom-2.5 max-w-[calc(100%-1rem)] rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-semibold text-neutral-900 shadow-md ring-1 ring-black/5 sm:text-[11px]">
           {label}
         </span>
       ) : (
@@ -168,6 +168,7 @@ export default function BusinessesPage() {
   }, [boostStep, boostFlowVisible, reducesMotion]);
 
   const heroProfiles = tb.heroAdProfiles;
+  /** Instagram-style stagger: main center-left; top card’s bottom ≈ main’s vertical center; bottom card’s top ≈ main’s bottom. */
   const heroCards = [
     {
       variant: "main" as const,
@@ -175,7 +176,7 @@ export default function BusinessesPage() {
       profile: heroProfiles[0],
       videoFile: "vid1.mp4",
       className:
-        "absolute start-4 top-8 z-10 h-[300px] w-[200px] sm:start-10 sm:top-10 sm:h-[340px] sm:w-[220px]",
+        "absolute start-3 top-8 z-10 h-[300px] w-[200px] sm:start-6 sm:top-10 sm:h-[340px] sm:w-[230px]",
       float: "motion-safe:animate-float-slow",
     },
     {
@@ -184,7 +185,7 @@ export default function BusinessesPage() {
       profile: heroProfiles[1],
       videoFile: "vid2.mp4",
       className:
-        "absolute end-3 top-0 z-20 h-[228px] w-[142px] sm:end-6 sm:h-[248px] sm:w-[150px]",
+        "absolute end-2 z-20 h-[228px] w-[142px] top-[calc(2rem+150px-14.25rem)] sm:end-4 sm:h-[248px] sm:w-[152px] sm:top-[calc(2.5rem+170px-15.5rem)]",
       float: "motion-safe:animate-float-medium",
     },
     {
@@ -193,7 +194,7 @@ export default function BusinessesPage() {
       profile: heroProfiles[2],
       videoFile: "vid3.mp4",
       className:
-        "absolute end-8 bottom-1 z-10 h-[188px] w-[162px] sm:end-14 sm:bottom-3 sm:h-[198px] sm:w-[172px]",
+        "absolute end-5 z-[15] h-[188px] w-[164px] top-[calc(2rem+300px+2px)] sm:end-8 sm:h-[200px] sm:w-[176px] sm:top-[calc(2.5rem+340px+2px)]",
       float: "motion-safe:animate-float-fast",
     },
   ];
@@ -266,7 +267,7 @@ export default function BusinessesPage() {
               </motion.div>
 
               <motion.div
-                className="relative mx-auto min-h-[380px] w-full max-w-[min(100%,420px)] sm:min-h-[420px] lg:mx-0 lg:max-w-none lg:min-h-[400px]"
+                className="relative mx-auto min-h-[420px] w-full max-w-[min(100%,440px)] overflow-visible sm:min-h-[480px] lg:mx-0 lg:max-w-[min(100%,520px)] lg:min-h-[520px]"
                 initial={reducesMotion ? false : { opacity: 0, scale: 0.96 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={sectionView}
