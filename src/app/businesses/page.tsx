@@ -45,7 +45,11 @@ export default function BusinessesPage() {
   const tb = t.businesses;
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [boostStep, setBoostStep] = useState(0);
+  const [boostFlowVisible, setBoostFlowVisible] = useState(false);
   const boostStepRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const boostFlowSectionRef = useRef<HTMLElement | null>(null);
+  const pauseBoostAutoUntil = useRef(0);
+  const boostFlowWasVisible = useRef(false);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -54,38 +58,39 @@ export default function BusinessesPage() {
     document.body.classList.toggle("font-en", !rtl);
   }, [lang, rtl]);
 
+  const stepCount = tb.steps.length;
+
   useEffect(() => {
-    let ticking = false;
-    const updateBoostStep = () => {
-      const mid = window.innerHeight * 0.42;
-      let best = 0;
-      let bestD = Infinity;
-      boostStepRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const r = el.getBoundingClientRect();
-        const c = r.top + r.height / 2;
-        const d = Math.abs(c - mid);
-        if (d < bestD) {
-          bestD = d;
-          best = i;
-        }
-      });
-      setBoostStep(best);
-      ticking = false;
-    };
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(updateBoostStep);
-    };
-    updateBoostStep();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
+    const el = boostFlowSectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => setBoostFlowVisible(e.isIntersecting),
+      { threshold: [0, 0.08, 0.14, 0.22], rootMargin: "0px 0px -5% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (boostFlowVisible && !boostFlowWasVisible.current) {
+      setBoostStep(0);
+    }
+    boostFlowWasVisible.current = boostFlowVisible;
+  }, [boostFlowVisible]);
+
+  useEffect(() => {
+    if (!boostFlowVisible || reducesMotion || stepCount < 1) return;
+    const intervalMs = 3200;
+    const id = window.setInterval(() => {
+      if (Date.now() < pauseBoostAutoUntil.current) return;
+      setBoostStep((s) => (s + 1) % stepCount);
+    }, intervalMs);
+    return () => clearInterval(id);
+  }, [boostFlowVisible, reducesMotion, stepCount]);
+
+  const pauseBoostAutoplay = (ms = 14000) => {
+    pauseBoostAutoUntil.current = Date.now() + ms;
+  };
 
   const heroCards = [
     { label: tb.cards.boost, className: "absolute start-10 top-8 h-[300px] w-[220px]", float: "motion-safe:animate-float-slow" },
@@ -251,7 +256,7 @@ export default function BusinessesPage() {
               >
                 <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-br from-vibo-gold/35 via-vibo-primary/12 to-vibo-cream blur-2xl opacity-90" aria-hidden />
                 <BoostFlowPhone
-                  activeStep={boostStep}
+                  activeStep={Math.min(boostStep, stepCount - 1)}
                   reducesMotion={!!reducesMotion}
                   phoneUi={tb.phoneUi}
                 />
@@ -265,39 +270,51 @@ export default function BusinessesPage() {
                     }}
                     role="button"
                     tabIndex={0}
-                    layout
+                    layout="position"
                     onClick={() => {
+                      pauseBoostAutoplay();
                       setBoostStep(i);
                       boostStepRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
                     }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
+                        pauseBoostAutoplay();
                         setBoostStep(i);
                         boostStepRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
                       }
                     }}
-                    className={`cursor-pointer rounded-2xl border-2 px-5 py-4 text-start transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-vibo-primary/40 ${
+                    animate={
+                      reducesMotion
+                        ? undefined
+                        : { scale: boostStep === i ? 1 : 0.993 }
+                    }
+                    className={`cursor-pointer rounded-2xl border-2 px-5 py-4 text-start transition-[border-color,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-vibo-primary/40 ${
                       boostStep === i
-                        ? "border-vibo-primary bg-vibo-rose/40 shadow-lg shadow-vibo-primary/10"
-                        : "border-neutral-200/80 bg-white/70 hover:border-vibo-primary/25 hover:bg-white"
+                        ? "border-vibo-primary bg-vibo-rose/45 shadow-lg shadow-vibo-primary/[0.12]"
+                        : "border-neutral-200/80 bg-white/70 hover:border-vibo-primary/22 hover:bg-white"
                     }`}
-                    initial={reducesMotion ? false : { opacity: 0, x: rtl ? -28 : 28 }}
+                    initial={reducesMotion ? false : { opacity: 0, x: rtl ? -22 : 22 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={sectionView}
                     transition={{
-                      duration: 0.5,
-                      delay: i * 0.06,
-                      ease: [0.22, 1, 0.36, 1],
+                      layout: { type: "spring", stiffness: 320, damping: 34 },
+                      opacity: reducesMotion
+                        ? { duration: 0 }
+                        : { duration: 0.52, delay: i * 0.045, ease: [0.16, 1, 0.3, 1] },
+                      x: reducesMotion
+                        ? { duration: 0 }
+                        : { type: "spring", stiffness: 210, damping: 27, mass: 0.72, delay: i * 0.05 },
+                      scale: { type: "spring", stiffness: 280, damping: 30, mass: 0.55 },
                     }}
                   >
                     <div className="flex items-start gap-3.5">
                       <motion.span
                         layout
-                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors duration-300 ${
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
                           boostStep === i ? "bg-vibo-primary text-white" : "bg-neutral-200/95 text-neutral-600"
                         }`}
-                        transition={{ type: "spring", stiffness: 380, damping: 26 }}
+                        transition={{ type: "spring", stiffness: 320, damping: 24 }}
                       >
                         {i + 1}
                       </motion.span>

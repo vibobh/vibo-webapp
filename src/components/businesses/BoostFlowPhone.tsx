@@ -31,8 +31,13 @@ type Props = {
 };
 
 export default function BoostFlowPhone({ activeStep, reducesMotion, phoneUi }: Props) {
-  const d = reducesMotion ? 0 : 0.32;
   const ui = phoneUi;
+  const screenTransition = reducesMotion
+    ? { duration: 0 }
+    : {
+        duration: 0.52,
+        ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+      };
   return (
     <div className="relative mx-auto w-full max-w-[min(100%,304px)] select-none" dir="ltr">
       <div className="relative rounded-[2.35rem] border border-neutral-800/90 bg-gradient-to-b from-neutral-800 via-neutral-900 to-neutral-950 p-[11px] shadow-[0_28px_70px_rgba(75,4,21,0.28)]">
@@ -44,14 +49,14 @@ export default function BoostFlowPhone({ activeStep, reducesMotion, phoneUi }: P
           <div className="absolute inset-x-0 top-0 z-10 flex h-9 items-end justify-center pb-1 text-[10px] font-semibold text-neutral-500">
             9:41
           </div>
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={activeStep}
               className="absolute inset-0 top-9 flex flex-col px-3.5 pb-4 pt-1"
-              initial={reducesMotion ? false : { opacity: 0, x: 18 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={reducesMotion ? undefined : { opacity: 0, x: -18 }}
-              transition={{ duration: d, ease: [0.22, 1, 0.36, 1] }}
+              initial={reducesMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reducesMotion ? undefined : { opacity: 0, y: -8 }}
+              transition={screenTransition}
             >
               {activeStep === 0 && <ScreenPick ui={ui} />}
               {activeStep === 1 && <ScreenGoal ui={ui} />}
