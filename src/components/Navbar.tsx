@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import type { Lang } from "@/i18n";
@@ -80,29 +80,20 @@ export default function Navbar({
           </a>
 
           <div
-            className={`hidden lg:flex items-center ${headerAnchorNav ? "gap-x-1" : "gap-9"}`}
+            className={`hidden lg:flex items-center ${headerAnchorNav ? "gap-6 xl:gap-8" : "gap-9"}`}
           >
-            {navItems.map((item, i) => (
-              <Fragment key={item.id}>
-                {headerAnchorNav && i > 0 ? (
-                  <span
-                    className="text-neutral-300 select-none px-1 text-[0.85rem]"
-                    aria-hidden
-                  >
-                    ·
-                  </span>
-                ) : null}
-                <a
-                  href={item.href}
-                  className={`text-[0.85rem] tracking-[-0.01em] transition-colors duration-200 ${
-                    linkActive(item.id)
-                      ? "text-vibo-primary font-medium"
-                      : "text-neutral-400 hover:text-neutral-800"
-                  }`}
-                >
-                  {item.label}
-                </a>
-              </Fragment>
+            {navItems.map((item) => (
+              <a
+                key={item.id}
+                href={item.href}
+                className={`text-[0.85rem] tracking-[-0.01em] transition-colors duration-200 ${
+                  linkActive(item.id)
+                    ? "text-vibo-primary font-medium"
+                    : "text-neutral-400 hover:text-neutral-800"
+                }`}
+              >
+                {item.label}
+              </a>
             ))}
           </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { getTranslations, isRTL } from "@/i18n";
 import { useViboLang } from "@/i18n/useViboLang";
@@ -8,6 +8,7 @@ import GradientBg from "@/components/GradientBg";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Marquee from "@/components/Marquee";
+import BoostFlowPhone from "@/components/businesses/BoostFlowPhone";
 
 const SITE_ORIGIN = "https://joinvibo.com";
 
@@ -42,6 +43,8 @@ export default function BusinessesPage() {
   const reducesMotion = useReducedMotion();
   const tb = t.businesses;
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [boostStep, setBoostStep] = useState(0);
+  const boostStepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -49,6 +52,39 @@ export default function BusinessesPage() {
     document.body.classList.toggle("font-ar", rtl);
     document.body.classList.toggle("font-en", !rtl);
   }, [lang, rtl]);
+
+  useEffect(() => {
+    let ticking = false;
+    const updateBoostStep = () => {
+      const mid = window.innerHeight * 0.42;
+      let best = 0;
+      let bestD = Infinity;
+      boostStepRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const c = r.top + r.height / 2;
+        const d = Math.abs(c - mid);
+        if (d < bestD) {
+          bestD = d;
+          best = i;
+        }
+      });
+      setBoostStep(best);
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(updateBoostStep);
+    };
+    updateBoostStep();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   const heroCards = [
     { label: tb.cards.boost, className: "absolute start-10 top-8 h-[300px] w-[220px]", float: "motion-safe:animate-float-slow" },
@@ -204,40 +240,82 @@ export default function BusinessesPage() {
             </div>
           </section>
 
-          <section className="max-w-[1400px] mx-auto section-padding py-14 sm:py-20">
-            <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-10 items-center">
+          <section
+            id="boost-flow"
+            className="max-w-[1400px] mx-auto section-padding py-14 sm:py-20 scroll-mt-28"
+          >
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-start">
               <motion.div
-                className=" rounded-[28px] bg-gradient-to-br from-vibo-gold/90 via-vibo-primary/25 to-vibo-cream p-3 border border-vibo-primary/10"
-                initial={reducesMotion ? false : { opacity: 0, scale: 0.97 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                className="relative mx-auto w-full max-lg:max-w-[360px] lg:sticky lg:top-[5.75rem] lg:mx-0"
+                initial={reducesMotion ? false : { opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={sectionView}
-                transition={{ duration: 0.55 }}
+                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="rounded-[20px] bg-white/95 aspect-[9/16] max-w-[360px] mx-auto border border-vibo-primary/10 shadow-lg shadow-vibo-primary/10" />
+                <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-br from-vibo-gold/35 via-vibo-primary/12 to-vibo-cream blur-2xl opacity-90" aria-hidden />
+                <BoostFlowPhone
+                  activeStep={boostStep}
+                  reducesMotion={!!reducesMotion}
+                  phoneUi={tb.phoneUi}
+                />
               </motion.div>
-              <motion.div
-                className="space-y-5"
-                initial={reducesMotion ? false : { opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={sectionView}
-                transition={{ duration: 0.5 }}
-              >
-                {tb.steps.map((step: string, i: number) => (
+              <div className="space-y-3">
+                {tb.steps.map((stepTitle: string, i: number) => (
                   <motion.div
-                    key={step}
-                    className="border-b border-neutral-200/90 pb-4"
-                    initial={reducesMotion ? false : { opacity: 0, x: rtl ? -16 : 16 }}
+                    key={stepTitle}
+                    ref={(el) => {
+                      boostStepRefs.current[i] = el;
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    layout
+                    onClick={() => {
+                      setBoostStep(i);
+                      boostStepRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setBoostStep(i);
+                        boostStepRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
+                      }
+                    }}
+                    className={`cursor-pointer rounded-2xl border-2 px-5 py-4 text-start transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-vibo-primary/40 ${
+                      boostStep === i
+                        ? "border-vibo-primary bg-vibo-rose/40 shadow-lg shadow-vibo-primary/10"
+                        : "border-neutral-200/80 bg-white/70 hover:border-vibo-primary/25 hover:bg-white"
+                    }`}
+                    initial={reducesMotion ? false : { opacity: 0, x: rtl ? -28 : 28 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={sectionView}
-                    transition={{ duration: 0.45, delay: i * 0.06 }}
+                    transition={{
+                      duration: 0.5,
+                      delay: i * 0.06,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                   >
-                    <h3 className="text-[1.45rem] sm:text-[1.65rem] tracking-[-0.02em] font-semibold text-neutral-900">
-                      {step}
-                    </h3>
-                    {i === 2 && <p className="mt-2 text-neutral-600 leading-relaxed">{tb.step3Note}</p>}
+                    <div className="flex items-start gap-3.5">
+                      <motion.span
+                        layout
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors duration-300 ${
+                          boostStep === i ? "bg-vibo-primary text-white" : "bg-neutral-200/95 text-neutral-600"
+                        }`}
+                        transition={{ type: "spring", stiffness: 380, damping: 26 }}
+                      >
+                        {i + 1}
+                      </motion.span>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-[1.2rem] sm:text-[1.42rem] font-semibold tracking-[-0.02em] text-neutral-900">
+                          {stepTitle}
+                        </h3>
+                        <p className="mt-2 text-[0.9rem] sm:text-[0.95rem] leading-relaxed text-neutral-600">
+                          {tb.stepDetails[i]}
+                        </p>
+                      </div>
+                    </div>
                   </motion.div>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </section>
 
