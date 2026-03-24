@@ -184,6 +184,85 @@
     "empty": "No draft articles in this category yet. Click “Fetch latest”.",
     "notAuthorized": "Please sign in to moderate news."
   },
+  "businesses": {
+    "anchors": {
+      "getStarted": "Get started",
+      "ads": "Ads on Vibo",
+      "creative": "Creative tools",
+      "faq": "Help"
+    },
+    "createAd": "Create an ad",
+    "hero": {
+      "titleStart": "Captivate new ",
+      "titleAccent": "customers",
+      "titleEnd": " with Vibo ads.",
+      "subtitle": "Grow your business, push creative boundaries, and build lasting connections — all in one place.",
+      "ctaPrimary": "Get started",
+      "ctaSecondary": "Learn more"
+    },
+    "cards": {
+      "boost": "Boost Post",
+      "product": "New Product",
+      "learn": "Learn more"
+    },
+    "tagline": "Built for brands that value authentic connection.",
+    "objectivesLabel": "What do you want to achieve?",
+    "objectivesHeading": "Get results that matter throughout the customer journey.",
+    "goals": [
+      {
+        "title": "Grow awareness.",
+        "text": "Share content and test different formats so more people discover your brand and products."
+      },
+      {
+        "title": "Get new customers.",
+        "text": "Encourage people to purchase your product or service by clicking through to your website."
+      },
+      {
+        "title": "Build relationships.",
+        "text": "Grow your community by encouraging conversations through messages and comments."
+      }
+    ],
+    "creativeHeading": "Experiment with Vibo's creative tools to find what resonates with your community.",
+    "creativeKicker": "Reels",
+    "creativeLead": "Use features like short-form video, Remix, and product tags to put your spin on trends.",
+    "creativeBody": "Start your own momentum and reach people who are most likely to be interested in your business.",
+    "steps": [
+      "Step 1: Choose a post to boost.",
+      "Step 2: Select your goal.",
+      "Step 3: Define your audience.",
+      "Step 4: Set a budget and duration.",
+      "Step 5: Review and launch your ad."
+    ],
+    "step3Note": "Choose to target people similar to customers who already love your brand, or customize your audience.",
+    "insightsLabel": "Measure your impact",
+    "insightsTitleBefore": "Go deeper to understand your ",
+    "insightsTitleAccent": "ad performance.",
+    "insightsBody": "Performance insights can help you unlock your ad's success. Then use what you learn to make more effective ads.",
+    "ctaBandHeading": "Ready to grow with Vibo?",
+    "ctaBandBody": "Download the app to run campaigns, engage your community, and measure results in one place.",
+    "ctaBandButton": "Download Vibo",
+    "faqTitleBefore": "Frequently asked ",
+    "faqTitleAccent": "questions",
+    "faqSub": "Got questions about Vibo ads? We've got answers.",
+    "faqs": [
+      {
+        "q": "How can I make the best possible ad?",
+        "a": "Lead with a clear hook in the first seconds, show real product or service benefits, and use high-quality visuals. Test variations in creative and audience, then scale what performs best."
+      },
+      {
+        "q": "How do I find my target audience?",
+        "a": "Start from people similar to your existing followers or customers, then refine by interests, behaviors, and geography. Let early results guide which segments to expand or narrow."
+      },
+      {
+        "q": "What insights can I gain from my ads?",
+        "a": "You can track reach, engagement, clicks, and conversions depending on your objective. Use breakdowns to see which creatives and audiences drive the most efficient results."
+      },
+      {
+        "q": "How can I get started advertising on Vibo?",
+        "a": "Install Vibo, set up your business profile, pick a post or creative to promote, choose your goal and budget, then launch. Our team is expanding self-serve tools — stay tuned for updates."
+      }
+    ]
+  },
   "footer": {
     "company": "Company",
     "companyLinks": ["About", "Blog", "Newsroom", "Careers"],

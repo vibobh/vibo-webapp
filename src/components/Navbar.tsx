@@ -9,20 +9,23 @@ interface NavbarProps {
   t: any;
   lang: Lang;
   onSwitchLang: () => void;
+  /** When set (e.g. https://joinvibo.com), logo and nav targets use this origin (e.g. businesses subdomain). */
+  siteOrigin?: string;
 }
 
-export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
+export default function Navbar({ t, lang, onSwitchLang, siteOrigin }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const isRTL = lang === "ar";
   const pathname = usePathname();
+  const origin = siteOrigin?.replace(/\/$/, "") ?? "";
 
   const q = `?lang=${lang}`;
   const navItems = [
-    { href: "/#about", label: t.nav.about, id: "about" as const },
-    { href: `/blogs${q}`, label: t.nav.blog, id: "blog" as const },
-    { href: `/newsroom${q}`, label: t.nav.newsroom, id: "newsroom" as const },
-    { href: "/#careers", label: t.nav.careers, id: "careers" as const },
+    { href: `${origin}/#about`, label: t.nav.about, id: "about" as const },
+    { href: `${origin}/blogs${q}`, label: t.nav.blog, id: "blog" as const },
+    { href: `${origin}/newsroom${q}`, label: t.nav.newsroom, id: "newsroom" as const },
+    { href: `${origin}/#careers`, label: t.nav.careers, id: "careers" as const },
   ];
 
   const linkActive = (id: (typeof navItems)[number]["id"]) => {
@@ -54,7 +57,7 @@ export default function Navbar({ t, lang, onSwitchLang }: NavbarProps) {
     >
       <div className="max-w-[1400px] mx-auto section-padding">
         <div className="flex items-center justify-between h-[60px] lg:h-[68px]">
-          <a href="/" className="flex items-center">
+          <a href={origin ? `${origin}/` : "/"} className="flex items-center">
             <img
               src="/images/vibo-icon-maroon.png"
               alt="Vibo"

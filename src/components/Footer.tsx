@@ -6,9 +6,13 @@ interface FooterProps {
   t: any;
   lang: Lang;
   onSwitchLang: () => void;
+  /** When set, company links and logo target the main site (e.g. from businesses subdomain). */
+  siteOrigin?: string;
 }
 
-export default function Footer({ t, lang, onSwitchLang }: FooterProps) {
+export default function Footer({ t, lang, onSwitchLang, siteOrigin }: FooterProps) {
+  const origin = siteOrigin?.replace(/\/$/, "") ?? "";
+  const q = `?lang=${lang}`;
   return (
     <footer
       id="careers"
@@ -50,8 +54,12 @@ export default function Footer({ t, lang, onSwitchLang }: FooterProps) {
             </h4>
             <ul className="space-y-2.5">
               {t.footer.companyLinks.map((link: string, i: number) => {
-                const q = `?lang=${lang}`;
-                const hrefs = ["/#about", `/blogs${q}`, `/newsroom${q}`, "/#careers"];
+                const hrefs = [
+                  `${origin}/#about`,
+                  `${origin}/blogs${q}`,
+                  `${origin}/newsroom${q}`,
+                  `${origin}/#careers`,
+                ];
                 return (
                   <li key={i}>
                     <a
