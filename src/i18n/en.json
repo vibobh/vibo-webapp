@@ -237,39 +237,17 @@
     },
     "steps": [
       "Step 1: Choose a post to boost.",
-      "Step 2: Select your goal.",
-      "Step 3: Define your audience.",
-      "Step 4: Set a budget and duration.",
-      "Step 5: Review and launch your ad."
+      "Step 2: Define your audience.",
+      "Step 3: Set a budget and duration.",
+      "Step 4: Review and launch your ad."
     ],
     "stepDetails": [
       "Pick a post that shows your product or story well — it becomes the creative people see in the feed.",
-      "Tell us what success looks like: reach, traffic, messages, or sales. We tune delivery to that goal.",
       "Reach people similar to your best customers, or build a custom audience by interests, age, and location.",
       "Choose a comfortable daily or total spend and how long the campaign runs. You can adjust anytime.",
       "Double-check your creative, audience, and budget, then go live — pause or edit whenever you need."
     ],
-    "phoneUi": {
-      "boostHeader": "Boost post",
-      "selectPost": "Select a post",
-      "goalHeader": "Your goal",
-      "goalPrompt": "What do you want?",
-      "goals": ["Awareness", "Traffic", "Leads"],
-      "audienceHeader": "Audience",
-      "audiencePrompt": "Who should see this?",
-      "audienceRows": ["Similar to customers", "Interests & behaviors", "Near your business"],
-      "estReach": "Est. reach",
-      "budgetHeader": "Budget & schedule",
-      "dailyBudget": "Daily budget",
-      "totalCap": "Total spend cap",
-      "duration": "Duration",
-      "days": "days",
-      "budgetFootnote": "You won't be charged more than your cap.",
-      "reviewHeader": "Review",
-      "reviewRows": ["Creative ready", "Audience set", "Budget OK"],
-      "previewTag": "Live preview",
-      "launch": "Launch ad"
-    },
+    "boostFlowVideoAria": "Screen recording: walking through boost ad steps on Vibo and tapping next.",
     "insightsLabel": "Measure your impact",
     "insightsTitleBefore": "Go deeper to understand your ",
     "insightsTitleAccent": "ad performance.",

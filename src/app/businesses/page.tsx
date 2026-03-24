@@ -80,7 +80,7 @@ export default function BusinessesPage() {
 
   useEffect(() => {
     if (!boostFlowVisible || reducesMotion || stepCount < 1) return;
-    const intervalMs = 3200;
+    const intervalMs = 3800;
     const id = window.setInterval(() => {
       if (Date.now() < pauseBoostAutoUntil.current) return;
       setBoostStep((s) => (s + 1) % stepCount);
@@ -256,9 +256,14 @@ export default function BusinessesPage() {
               >
                 <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-br from-vibo-gold/35 via-vibo-primary/12 to-vibo-cream blur-2xl opacity-90" aria-hidden />
                 <BoostFlowPhone
-                  activeStep={Math.min(boostStep, stepCount - 1)}
+                  playWhenVisible={boostFlowVisible}
                   reducesMotion={!!reducesMotion}
-                  phoneUi={tb.phoneUi}
+                  ariaLabel={tb.boostFlowVideoAria}
+                  videoFile={
+                    process.env.NEXT_PUBLIC_VIDEO_BOOST_FLOW?.trim()
+                      ? "boost-flow.mp4"
+                      : "vid4.mp4"
+                  }
                 />
               </motion.div>
               <div className="space-y-3">
