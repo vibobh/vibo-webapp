@@ -226,6 +226,15 @@
     "creativeKicker": "Reels",
     "creativeLead": "Use features like short-form video, Remix, and product tags to put your spin on trends.",
     "creativeBody": "Start your own momentum and reach people who are most likely to be interested in your business.",
+    "reelComment": {
+      "badge": "Reels",
+      "username": "Maya K.",
+      "handle": "@maya.creates",
+      "message": "This collab is everything ✨ Love the energy — already shared with my friends!",
+      "likesLabel": "2.4k likes",
+      "heartCount": "2.4k",
+      "reply": "Reply"
+    },
     "steps": [
       "Step 1: Choose a post to boost.",
       "Step 2: Select your goal.",

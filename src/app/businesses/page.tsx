@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Marquee from "@/components/Marquee";
 import BoostFlowPhone from "@/components/businesses/BoostFlowPhone";
+import BusinessesReelShowcase from "@/components/businesses/BusinessesReelShowcase";
 
 const SITE_ORIGIN = "https://joinvibo.com";
 
@@ -213,17 +214,13 @@ export default function BusinessesPage() {
             </motion.h2>
             <div className="mt-10 grid lg:grid-cols-[0.95fr_1.05fr] gap-10 items-center">
               <motion.div
-                className="rounded-[28px] bg-gradient-to-br from-vibo-cream via-vibo-rose to-vibo-mint p-4 border border-vibo-primary/5"
+                className="flex justify-center lg:justify-start"
                 initial={reducesMotion ? false : { opacity: 0, x: rtl ? 24 : -24 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={sectionView}
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               >
-                <motion.div
-                  className="rounded-[22px] bg-gradient-to-br from-vibo-primary via-vibo-primary-light to-vibo-gold aspect-[3/4] shadow-[0_20px_50px_rgba(75,4,21,0.2)]"
-                  animate={reducesMotion ? undefined : { scale: [1, 1.02, 1] }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                />
+                <BusinessesReelShowcase copy={tb.reelComment} />
               </motion.div>
               <motion.div
                 initial={reducesMotion ? false : { opacity: 0, y: 20 }}
