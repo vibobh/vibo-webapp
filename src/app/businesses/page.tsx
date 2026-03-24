@@ -17,11 +17,14 @@ const SITE_ORIGIN = "https://joinvibo.com";
 
 const sectionView = { once: true, margin: "-70px" as const };
 
+type HeroAdVariant = "main" | "top" | "bottom";
+
 function AdPreviewCard({
   label,
   profileName,
   adBadge,
   videoFile,
+  variant,
   className,
   floatClass,
 }: {
@@ -29,15 +32,21 @@ function AdPreviewCard({
   profileName: string;
   adBadge: string;
   videoFile: string;
+  variant: HeroAdVariant;
   className?: string;
   floatClass: string;
 }) {
   const src = videoUrl(`/videos/${videoFile}`);
   const initial = profileName.trim().charAt(0).toUpperCase() || "V";
+  const radius = variant === "main" ? "rounded-[28px]" : "rounded-[22px]";
+  const shadow =
+    variant === "main"
+      ? "shadow-[0_20px_55px_rgba(0,0,0,0.14)]"
+      : "shadow-[0_14px_36px_rgba(0,0,0,0.12)]";
 
   return (
     <div
-      className={`relative overflow-hidden rounded-[24px] border border-black/10 bg-neutral-900 shadow-[0_12px_40px_rgba(75,4,21,0.14)] ${floatClass} ${className ?? ""}`}
+      className={`relative overflow-hidden border border-black/[0.08] bg-neutral-900 ${radius} ${shadow} ${floatClass} ${className ?? ""}`}
     >
       <LazyVideo
         src={src}
@@ -45,10 +54,12 @@ function AdPreviewCard({
         videoClassName="h-full w-full object-cover"
       />
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-black/30"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/25"
         aria-hidden
       />
-      <div className="pointer-events-none absolute start-2.5 top-2.5 end-2 flex items-start gap-2">
+      <div
+        className={`pointer-events-none absolute start-2.5 top-2.5 flex items-start gap-2 ${variant === "main" ? "end-16" : "end-2"}`}
+      >
         <span
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/95 text-[10px] font-bold text-vibo-primary shadow-md ring-1 ring-black/5"
           aria-hidden
@@ -56,7 +67,7 @@ function AdPreviewCard({
           {initial}
         </span>
         <div className="min-w-0 pt-0.5">
-          <p className="truncate text-[11px] font-semibold leading-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.65)]">
+          <p className="max-w-[8.5rem] truncate text-[11px] font-semibold leading-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.65)] sm:max-w-[10rem]">
             {profileName}
           </p>
           <p className="text-[9px] font-medium leading-tight text-white/85 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
@@ -64,11 +75,22 @@ function AdPreviewCard({
           </p>
         </div>
       </div>
-      <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 flex flex-wrap items-end justify-between gap-2">
-        <span className="inline-flex max-w-[85%] rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-semibold text-vibo-primary shadow-md ring-1 ring-black/5">
+
+      {variant === "main" ? (
+        <span className="pointer-events-none absolute end-0 top-1/2 z-20 -translate-y-1/2 translate-x-[18%] rounded-full bg-[#1877f2] px-3.5 py-2 text-[10px] font-bold uppercase tracking-wide text-white shadow-[0_4px_14px_rgba(24,119,242,0.45)] sm:px-4 sm:text-[11px] rtl:translate-x-[-18%]">
           {label}
         </span>
-      </div>
+      ) : variant === "bottom" ? (
+        <span className="pointer-events-none absolute start-2.5 bottom-2.5 max-w-[calc(100%-1rem)] rounded-full bg-black/45 px-3 py-1.5 text-[10px] font-semibold text-white shadow-md backdrop-blur-[2px] sm:text-[11px]">
+          {label}
+        </span>
+      ) : (
+        <div className="pointer-events-none absolute inset-x-2 bottom-2.5 flex justify-center">
+          <span className="inline-flex rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold text-vibo-primary shadow-md ring-1 ring-black/5 sm:px-3 sm:text-[11px]">
+            {label}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -148,24 +170,30 @@ export default function BusinessesPage() {
   const heroProfiles = tb.heroAdProfiles;
   const heroCards = [
     {
+      variant: "main" as const,
       label: tb.cards.boost,
       profile: heroProfiles[0],
       videoFile: "vid1.mp4",
-      className: "absolute start-10 top-8 h-[300px] w-[220px]",
+      className:
+        "absolute start-4 top-8 z-10 h-[300px] w-[200px] sm:start-10 sm:top-10 sm:h-[340px] sm:w-[220px]",
       float: "motion-safe:animate-float-slow",
     },
     {
+      variant: "top" as const,
       label: tb.cards.product,
       profile: heroProfiles[1],
       videoFile: "vid2.mp4",
-      className: "absolute end-6 top-0 h-[220px] w-[150px]",
+      className:
+        "absolute end-3 top-0 z-20 h-[228px] w-[142px] sm:end-6 sm:h-[248px] sm:w-[150px]",
       float: "motion-safe:animate-float-medium",
     },
     {
+      variant: "bottom" as const,
       label: tb.cards.learn,
       profile: heroProfiles[2],
       videoFile: "vid3.mp4",
-      className: "absolute end-12 bottom-2 h-[210px] w-[165px]",
+      className:
+        "absolute end-8 bottom-1 z-10 h-[188px] w-[162px] sm:end-14 sm:bottom-3 sm:h-[198px] sm:w-[172px]",
       float: "motion-safe:animate-float-fast",
     },
   ];
@@ -238,7 +266,7 @@ export default function BusinessesPage() {
               </motion.div>
 
               <motion.div
-                className="relative min-h-[420px]"
+                className="relative mx-auto min-h-[380px] w-full max-w-[min(100%,420px)] sm:min-h-[420px] lg:mx-0 lg:max-w-none lg:min-h-[400px]"
                 initial={reducesMotion ? false : { opacity: 0, scale: 0.96 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={sectionView}
@@ -247,6 +275,7 @@ export default function BusinessesPage() {
                 {heroCards.map((c) => (
                   <AdPreviewCard
                     key={c.label}
+                    variant={c.variant}
                     label={c.label}
                     profileName={c.profile.name}
                     adBadge={c.profile.adBadge}
