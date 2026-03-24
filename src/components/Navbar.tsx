@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import type { Lang } from "@/i18n";
+
+export type HeaderAnchorItem = { id: string; href: string; label: string };
 
 interface NavbarProps {
   t: any;
@@ -11,9 +13,17 @@ interface NavbarProps {
   onSwitchLang: () => void;
   /** When set (e.g. https://joinvibo.com), logo and nav targets use this origin (e.g. businesses subdomain). */
   siteOrigin?: string;
+  /** When set, replaces About/Blog/Newsroom/Careers with these links (e.g. businesses landing). */
+  headerAnchorNav?: HeaderAnchorItem[];
 }
 
-export default function Navbar({ t, lang, onSwitchLang, siteOrigin }: NavbarProps) {
+export default function Navbar({
+  t,
+  lang,
+  onSwitchLang,
+  siteOrigin,
+  headerAnchorNav,
+}: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const isRTL = lang === "ar";
@@ -21,14 +31,17 @@ export default function Navbar({ t, lang, onSwitchLang, siteOrigin }: NavbarProp
   const origin = siteOrigin?.replace(/\/$/, "") ?? "";
 
   const q = `?lang=${lang}`;
-  const navItems = [
-    { href: `${origin}/#about`, label: t.nav.about, id: "about" as const },
-    { href: `${origin}/blogs${q}`, label: t.nav.blog, id: "blog" as const },
-    { href: `${origin}/newsroom${q}`, label: t.nav.newsroom, id: "newsroom" as const },
-    { href: `${origin}/#careers`, label: t.nav.careers, id: "careers" as const },
+  const defaultNavItems: HeaderAnchorItem[] = [
+    { href: `${origin}/#about`, label: t.nav.about, id: "about" },
+    { href: `${origin}/blogs${q}`, label: t.nav.blog, id: "blog" },
+    { href: `${origin}/newsroom${q}`, label: t.nav.newsroom, id: "newsroom" },
+    { href: `${origin}/#careers`, label: t.nav.careers, id: "careers" },
   ];
 
-  const linkActive = (id: (typeof navItems)[number]["id"]) => {
+  const navItems = headerAnchorNav ?? defaultNavItems;
+
+  const linkActive = (id: string) => {
+    if (headerAnchorNav) return false;
     if (id === "newsroom") return pathname === "/newsroom" || pathname?.startsWith("/newsroom/");
     if (id === "blog") return pathname === "/blogs" || pathname?.startsWith("/blogs/");
     return false;
@@ -45,7 +58,8 @@ export default function Navbar({ t, lang, onSwitchLang, siteOrigin }: NavbarProp
     pathname === "/newsroom" ||
     pathname?.startsWith("/newsroom/") ||
     pathname === "/blogs" ||
-    pathname?.startsWith("/blogs/");
+    pathname?.startsWith("/blogs/") ||
+    pathname === "/businesses";
 
   return (
     <nav
@@ -65,19 +79,30 @@ export default function Navbar({ t, lang, onSwitchLang, siteOrigin }: NavbarProp
             />
           </a>
 
-          <div className="hidden lg:flex items-center gap-9">
-            {navItems.map((item) => (
-              <a
-                key={item.id}
-                href={item.href}
-                className={`text-[0.85rem] tracking-[-0.01em] transition-colors duration-200 ${
-                  linkActive(item.id)
-                    ? "text-vibo-primary font-medium"
-                    : "text-neutral-400 hover:text-neutral-800"
-                }`}
-              >
-                {item.label}
-              </a>
+          <div
+            className={`hidden lg:flex items-center ${headerAnchorNav ? "gap-x-1" : "gap-9"}`}
+          >
+            {navItems.map((item, i) => (
+              <Fragment key={item.id}>
+                {headerAnchorNav && i > 0 ? (
+                  <span
+                    className="text-neutral-300 select-none px-1 text-[0.85rem]"
+                    aria-hidden
+                  >
+                    ·
+                  </span>
+                ) : null}
+                <a
+                  href={item.href}
+                  className={`text-[0.85rem] tracking-[-0.01em] transition-colors duration-200 ${
+                    linkActive(item.id)
+                      ? "text-vibo-primary font-medium"
+                      : "text-neutral-400 hover:text-neutral-800"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              </Fragment>
             ))}
           </div>
 
