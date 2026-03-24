@@ -31,8 +31,6 @@ function individualUrlForFile(fileName: string): string | undefined {
     "vid3.mp4": process.env.NEXT_PUBLIC_VIDEO_VID3,
     "vid4.mp4": process.env.NEXT_PUBLIC_VIDEO_VID4,
     "vid5.mp4": process.env.NEXT_PUBLIC_VIDEO_VID5,
-    /** Optional dedicated URL for businesses /boost-flow phone demo (overrides filename lookup). */
-    "boost-flow.mp4": process.env.NEXT_PUBLIC_VIDEO_BOOST_FLOW,
   };
   const raw = map[fileName];
   if (!raw?.trim()) return undefined;
