@@ -38,11 +38,11 @@ function AdPreviewCard({
 }) {
   const src = videoUrl(`/videos/${videoFile}`);
   const initial = profileName.trim().charAt(0).toUpperCase() || "V";
-  const radius = variant === "main" ? "rounded-[28px]" : "rounded-[22px]";
+  const radius = variant === "main" ? "rounded-[30px]" : "rounded-[22px]";
   const shadow =
     variant === "main"
-      ? "shadow-[0_20px_55px_rgba(0,0,0,0.14)]"
-      : "shadow-[0_14px_36px_rgba(0,0,0,0.12)]";
+      ? "shadow-[0_22px_60px_rgba(0,0,0,0.12),0_4px_16px_rgba(0,0,0,0.06)]"
+      : "shadow-[0_16px_40px_rgba(0,0,0,0.1),0_2px_8px_rgba(0,0,0,0.05)]";
 
   return (
     <div
@@ -168,36 +168,27 @@ export default function BusinessesPage() {
   }, [boostStep, boostFlowVisible, reducesMotion]);
 
   const heroProfiles = tb.heroAdProfiles;
-  /** Instagram-style stagger: main center-left; top card’s bottom ≈ main’s vertical center; bottom card’s top ≈ main’s bottom. */
-  const heroCards = [
-    {
-      variant: "main" as const,
-      label: tb.cards.boost,
-      profile: heroProfiles[0],
-      videoFile: "vid1.mp4",
-      className:
-        "absolute start-3 top-8 z-10 h-[300px] w-[200px] sm:start-6 sm:top-10 sm:h-[340px] sm:w-[230px]",
-      float: "motion-safe:animate-float-slow",
-    },
-    {
-      variant: "top" as const,
-      label: tb.cards.product,
-      profile: heroProfiles[1],
-      videoFile: "vid2.mp4",
-      className:
-        "absolute end-2 z-20 h-[228px] w-[142px] top-[calc(2rem+150px-14.25rem)] sm:end-4 sm:h-[248px] sm:w-[152px] sm:top-[calc(2.5rem+170px-15.5rem)]",
-      float: "motion-safe:animate-float-medium",
-    },
-    {
-      variant: "bottom" as const,
-      label: tb.cards.learn,
-      profile: heroProfiles[2],
-      videoFile: "vid3.mp4",
-      className:
-        "absolute end-5 z-[15] h-[188px] w-[164px] top-[calc(2rem+300px+2px)] sm:end-8 sm:h-[200px] sm:w-[176px] sm:top-[calc(2.5rem+340px+2px)]",
-      float: "motion-safe:animate-float-fast",
-    },
-  ];
+  const heroMain = {
+    variant: "main" as const,
+    label: tb.cards.boost,
+    profile: heroProfiles[0],
+    videoFile: "vid1.mp4",
+    float: "motion-safe:animate-float-slow",
+  };
+  const heroTop = {
+    variant: "top" as const,
+    label: tb.cards.product,
+    profile: heroProfiles[1],
+    videoFile: "vid2.mp4",
+    float: "motion-safe:animate-float-medium",
+  };
+  const heroBottom = {
+    variant: "bottom" as const,
+    label: tb.cards.learn,
+    profile: heroProfiles[2],
+    videoFile: "vid3.mp4",
+    float: "motion-safe:animate-float-fast",
+  };
 
   return (
     <AnimatePresence mode="wait">
@@ -267,24 +258,46 @@ export default function BusinessesPage() {
               </motion.div>
 
               <motion.div
-                className="relative mx-auto min-h-[420px] w-full max-w-[min(100%,440px)] overflow-visible sm:min-h-[480px] lg:mx-0 lg:max-w-[min(100%,520px)] lg:min-h-[520px]"
+                className="relative mx-auto flex w-full max-w-[20.5rem] flex-col items-center gap-8 overflow-visible sm:max-w-[23rem] md:max-w-[min(100%,28rem)] md:flex-row md:items-center md:justify-center md:gap-0 lg:mx-0 lg:max-w-none lg:justify-end lg:pe-2"
                 initial={reducesMotion ? false : { opacity: 0, scale: 0.96 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={sectionView}
                 transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
               >
-                {heroCards.map((c) => (
+                <div className="relative z-20 shrink-0 md:-translate-y-1">
                   <AdPreviewCard
-                    key={c.label}
-                    variant={c.variant}
-                    label={c.label}
-                    profileName={c.profile.name}
-                    adBadge={c.profile.adBadge}
-                    videoFile={c.videoFile}
-                    className={c.className}
-                    floatClass={c.float}
+                    key={heroMain.label}
+                    variant={heroMain.variant}
+                    label={heroMain.label}
+                    profileName={heroMain.profile.name}
+                    adBadge={heroMain.profile.adBadge}
+                    videoFile={heroMain.videoFile}
+                    className="h-[288px] w-[200px] sm:h-[308px] sm:w-[214px] md:h-[340px] md:w-[232px]"
+                    floatClass={heroMain.float}
                   />
-                ))}
+                </div>
+                <div className="relative z-10 flex w-full max-w-[19rem] shrink-0 flex-row items-start justify-center gap-4 sm:max-w-none sm:gap-5 md:max-w-none md:-translate-x-7 md:flex-col md:items-stretch md:gap-5 md:pt-2 md:rtl:translate-x-7">
+                  <AdPreviewCard
+                    key={heroTop.label}
+                    variant={heroTop.variant}
+                    label={heroTop.label}
+                    profileName={heroTop.profile.name}
+                    adBadge={heroTop.profile.adBadge}
+                    videoFile={heroTop.videoFile}
+                    className="h-[210px] w-[136px] sm:h-[224px] sm:w-[144px] md:h-[248px] md:w-[152px]"
+                    floatClass={heroTop.float}
+                  />
+                  <AdPreviewCard
+                    key={heroBottom.label}
+                    variant={heroBottom.variant}
+                    label={heroBottom.label}
+                    profileName={heroBottom.profile.name}
+                    adBadge={heroBottom.profile.adBadge}
+                    videoFile={heroBottom.videoFile}
+                    className="h-[178px] w-[148px] sm:h-[190px] sm:w-[156px] md:mt-1 md:h-[200px] md:w-[168px]"
+                    floatClass={heroBottom.float}
+                  />
+                </div>
               </motion.div>
             </div>
           </section>
