@@ -10,6 +10,8 @@ import Footer from "@/components/Footer";
 import Marquee from "@/components/Marquee";
 import BoostFlowPhone from "@/components/businesses/BoostFlowPhone";
 import BusinessesReelShowcase from "@/components/businesses/BusinessesReelShowcase";
+import LazyVideo from "@/components/LazyVideo";
+import { videoUrl } from "@/lib/videoUrls";
 
 const SITE_ORIGIN = "https://joinvibo.com";
 
@@ -17,19 +19,53 @@ const sectionView = { once: true, margin: "-70px" as const };
 
 function AdPreviewCard({
   label,
+  profileName,
+  adBadge,
+  videoFile,
   className,
   floatClass,
 }: {
   label: string;
+  profileName: string;
+  adBadge: string;
+  videoFile: string;
   className?: string;
   floatClass: string;
 }) {
+  const src = videoUrl(`/videos/${videoFile}`);
+  const initial = profileName.trim().charAt(0).toUpperCase() || "V";
+
   return (
     <div
-      className={`rounded-[24px] border border-vibo-primary/10 shadow-[0_10px_30px_rgba(75,4,21,0.12)] bg-gradient-to-br from-vibo-primary via-vibo-primary-light to-vibo-gold ${floatClass} ${className ?? ""}`}
+      className={`relative overflow-hidden rounded-[24px] border border-black/10 bg-neutral-900 shadow-[0_12px_40px_rgba(75,4,21,0.14)] ${floatClass} ${className ?? ""}`}
     >
-      <div className="h-full w-full rounded-[24px] bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,.42),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,.2),transparent_40%)] p-4 flex items-end">
-        <span className="inline-flex rounded-full bg-white/92 text-vibo-primary text-[11px] px-3 py-1 font-medium shadow-sm">
+      <LazyVideo
+        src={src}
+        className="absolute inset-0 h-full w-full"
+        videoClassName="h-full w-full object-cover"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-black/30"
+        aria-hidden
+      />
+      <div className="pointer-events-none absolute start-2.5 top-2.5 end-2 flex items-start gap-2">
+        <span
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/95 text-[10px] font-bold text-vibo-primary shadow-md ring-1 ring-black/5"
+          aria-hidden
+        >
+          {initial}
+        </span>
+        <div className="min-w-0 pt-0.5">
+          <p className="truncate text-[11px] font-semibold leading-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.65)]">
+            {profileName}
+          </p>
+          <p className="text-[9px] font-medium leading-tight text-white/85 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+            {adBadge}
+          </p>
+        </div>
+      </div>
+      <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 flex flex-wrap items-end justify-between gap-2">
+        <span className="inline-flex max-w-[85%] rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-semibold text-vibo-primary shadow-md ring-1 ring-black/5">
           {label}
         </span>
       </div>
@@ -50,6 +86,8 @@ export default function BusinessesPage() {
   const boostFlowSectionRef = useRef<HTMLElement | null>(null);
   const pauseBoostAutoUntil = useRef(0);
   const boostFlowWasVisible = useRef(false);
+  /** Skip one mobile auto-scroll after the user taps a step (they already scroll explicitly). */
+  const skipMobileStepScrollRef = useRef(false);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -92,10 +130,44 @@ export default function BusinessesPage() {
     pauseBoostAutoUntil.current = Date.now() + ms;
   };
 
+  useEffect(() => {
+    if (!boostFlowVisible || reducesMotion) return;
+    if (typeof window === "undefined" || window.matchMedia("(min-width: 1024px)").matches) return;
+    if (skipMobileStepScrollRef.current) {
+      skipMobileStepScrollRef.current = false;
+      return;
+    }
+    const el = boostStepRefs.current[boostStep];
+    if (!el) return;
+    const id = window.setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 120);
+    return () => clearTimeout(id);
+  }, [boostStep, boostFlowVisible, reducesMotion]);
+
+  const heroProfiles = tb.heroAdProfiles;
   const heroCards = [
-    { label: tb.cards.boost, className: "absolute start-10 top-8 h-[300px] w-[220px]", float: "motion-safe:animate-float-slow" },
-    { label: tb.cards.product, className: "absolute end-6 top-0 h-[220px] w-[150px]", float: "motion-safe:animate-float-medium" },
-    { label: tb.cards.learn, className: "absolute end-12 bottom-2 h-[210px] w-[165px]", float: "motion-safe:animate-float-fast" },
+    {
+      label: tb.cards.boost,
+      profile: heroProfiles[0],
+      videoFile: "vid1.mp4",
+      className: "absolute start-10 top-8 h-[300px] w-[220px]",
+      float: "motion-safe:animate-float-slow",
+    },
+    {
+      label: tb.cards.product,
+      profile: heroProfiles[1],
+      videoFile: "vid2.mp4",
+      className: "absolute end-6 top-0 h-[220px] w-[150px]",
+      float: "motion-safe:animate-float-medium",
+    },
+    {
+      label: tb.cards.learn,
+      profile: heroProfiles[2],
+      videoFile: "vid3.mp4",
+      className: "absolute end-12 bottom-2 h-[210px] w-[165px]",
+      float: "motion-safe:animate-float-fast",
+    },
   ];
 
   return (
@@ -173,7 +245,15 @@ export default function BusinessesPage() {
                 transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
               >
                 {heroCards.map((c) => (
-                  <AdPreviewCard key={c.label} label={c.label} className={c.className} floatClass={c.float} />
+                  <AdPreviewCard
+                    key={c.label}
+                    label={c.label}
+                    profileName={c.profile.name}
+                    adBadge={c.profile.adBadge}
+                    videoFile={c.videoFile}
+                    className={c.className}
+                    floatClass={c.float}
+                  />
                 ))}
               </motion.div>
             </div>
@@ -243,25 +323,26 @@ export default function BusinessesPage() {
           </section>
 
           <section
+            ref={boostFlowSectionRef}
             id="boost-flow"
-            className="max-w-[1400px] mx-auto section-padding py-14 sm:py-20 scroll-mt-28"
+            className="max-w-[1400px] mx-auto section-padding max-lg:py-8 max-lg:pt-5 sm:py-14 lg:py-20 scroll-mt-28"
           >
-            <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-start">
+            <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12 lg:items-start">
               <motion.div
-                className="relative mx-auto w-full max-lg:max-w-[360px] lg:sticky lg:top-[5.75rem] lg:mx-0"
+                className="relative z-30 mx-auto w-full max-lg:max-w-[320px] max-lg:sticky max-lg:top-[4.65rem] max-lg:-mt-1 max-lg:bg-[#fdfcf9]/88 max-lg:backdrop-blur-md max-lg:py-2 max-lg:rounded-3xl lg:sticky lg:top-[5.75rem] lg:z-auto lg:mx-0 lg:bg-transparent lg:py-0 lg:backdrop-blur-none"
                 initial={reducesMotion ? false : { opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={sectionView}
                 transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-br from-vibo-gold/35 via-vibo-primary/12 to-vibo-cream blur-2xl opacity-90" aria-hidden />
+                <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-br from-vibo-gold/35 via-vibo-primary/12 to-vibo-cream blur-2xl opacity-90 max-lg:opacity-75" aria-hidden />
                 <BoostFlowPhone
                   activeStep={Math.min(boostStep, stepCount - 1)}
                   reducesMotion={!!reducesMotion}
                   phoneUi={tb.phoneUi}
                 />
               </motion.div>
-              <div className="space-y-3">
+              <div className="space-y-3 max-lg:scroll-mt-[calc(4.65rem+140px)]">
                 {tb.steps.map((stepTitle: string, i: number) => (
                   <motion.div
                     key={stepTitle}
@@ -273,6 +354,7 @@ export default function BusinessesPage() {
                     layout="position"
                     onClick={() => {
                       pauseBoostAutoplay();
+                      skipMobileStepScrollRef.current = true;
                       setBoostStep(i);
                       boostStepRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
                     }}
@@ -280,6 +362,7 @@ export default function BusinessesPage() {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
                         pauseBoostAutoplay();
+                        skipMobileStepScrollRef.current = true;
                         setBoostStep(i);
                         boostStepRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
                       }

@@ -205,6 +205,11 @@
       "product": "منتج جديد",
       "learn": "اعرف المزيد"
     },
+    "heroAdProfiles": [
+      { "name": "dezi", "adBadge": "إعلان" },
+      { "name": "cipicipi", "adBadge": "إعلان" },
+      { "name": "Mangata & Gallo", "adBadge": "إعلان" }
+    ],
     "tagline": "مصمم للعلامات التي تقدّر الصدق والتواصل الحقيقي.",
     "objectivesLabel": "ما الذي تريد تحقيقه؟",
     "objectivesHeading": "نتائج تهمّك في كل مرحلة من رحلة العميل.",
