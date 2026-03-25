@@ -153,7 +153,7 @@ export default function BusinessContactSection({ copy, siteOrigin }: Props) {
               <div className="rounded-3xl border border-vibo-primary/15 bg-gradient-to-br from-vibo-rose/40 via-white to-white p-8 sm:p-10 text-center shadow-[0_20px_50px_rgba(75,4,21,0.08)]">
                 <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-md ring-1 ring-vibo-primary/10">
                   <Image
-                    src="/Vibo App icon version-01.png"
+                    src="/vibo-app-icon.png"
                     alt="Vibo"
                     width={56}
                     height={56}
@@ -180,7 +180,7 @@ export default function BusinessContactSection({ copy, siteOrigin }: Props) {
               >
                 <div className="mb-6 flex items-center gap-3 border-b border-neutral-200/80 pb-6">
                   <Image
-                    src="/Vibo App icon version-01.png"
+                    src="/vibo-app-icon.png"
                     alt="Vibo"
                     width={44}
                     height={44}

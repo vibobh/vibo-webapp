@@ -1,5 +1,5 @@
 /**
- * Builds favicons from public/Vibo App icon version-01.png:
+ * Builds favicons from public/vibo-app-icon.png:
  * 128×128 px square (sharp when browsers scale down), minimal padding so the mark reads larger.
  * Run: node scripts/generate-favicon.mjs
  */
@@ -10,7 +10,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
-const srcPath = join(root, "public", "Vibo App icon version-01.png");
+const srcPath = join(root, "public", "vibo-app-icon.png");
 
 /** Larger canvas = crisper tab icon; tiny padding = bigger artwork in the square */
 const SIZE = 128;
@@ -57,7 +57,7 @@ async function main() {
   await sharp(buf).toFile(join(appDir, "apple-icon.png"));
 
   console.log(
-    `OK: ${SIZE}×${SIZE} (padding ${PADDING}px) from "Vibo App icon version-01.png" → icon.png, apple-icon.png, favicon.png, favicon-128.png`,
+    `OK: ${SIZE}×${SIZE} (padding ${PADDING}px) from "vibo-app-icon.png" → icon.png, apple-icon.png, favicon.png, favicon-128.png`,
   );
 }
 

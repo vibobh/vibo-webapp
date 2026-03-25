@@ -187,7 +187,7 @@ export const submitBusinessInquiry = action({
       });
     }
 
-    const logoUrl = "https://joinvibo.com/Vibo%20App%20icon%20version-01.png";
+    const logoUrl = "https://joinvibo.com/vibo-app-icon.png";
     const confirmSubject = "We received your message — Vibo for Business";
     const confirmHtml = `
       <div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;color:#111;">
