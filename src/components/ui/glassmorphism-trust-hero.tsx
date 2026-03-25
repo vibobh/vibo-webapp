@@ -68,19 +68,6 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
         .delay-500 { animation-delay: 0.5s; }
       `}</style>
 
-      {/* Subtle background wash so "glass" panels read on the app's light gradient */}
-      <div
-        className="absolute inset-0 -z-10"
-        aria-hidden
-        style={{
-          backgroundImage: `
-            radial-gradient(ellipse 60% 55% at 85% 15%, rgba(196,168,124,0.20), transparent 55%),
-            radial-gradient(ellipse 55% 60% at 10% 45%, rgba(75,4,21,0.10), transparent 55%),
-            radial-gradient(ellipse 35% 35% at 50% 85%, rgba(75,4,21,0.08), transparent 60%)
-          `,
-        }}
-      />
-
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 items-start">
         {/* --- LEFT COLUMN --- */}
         <div className="lg:col-span-7 flex flex-col justify-center space-y-8 pt-2">
@@ -140,9 +127,6 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
         <div className="lg:col-span-5 space-y-6 lg:mt-6">
           {/* Stats Card */}
           <div className="animate-fade-in delay-500 relative overflow-hidden rounded-3xl border border-vibo-primary/15 bg-white/75 p-8 backdrop-blur-xl shadow-[0_16px_40px_rgba(75,4,21,0.08)]">
-            {/* Card Glow Effect */}
-            <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-vibo-gold/20 blur-3xl pointer-events-none" />
-
             <div className="relative z-10">
               <div className="flex items-center gap-4 mb-8">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-vibo-primary/5 ring-1 ring-vibo-primary/15">

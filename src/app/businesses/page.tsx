@@ -114,30 +114,33 @@ export default function BusinessesPage() {
           ]}
         />
         <main className="relative z-[1] text-neutral-900">
-          <section
-            id="get-started"
-            className="max-w-[1400px] mx-auto section-padding pt-[calc(5.5rem+env(safe-area-inset-top))] pb-14 sm:pt-[calc(6rem+env(safe-area-inset-top))] sm:pb-20 scroll-mt-28"
-          >
-            <motion.div
-              initial={reducesMotion ? false : { opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={sectionView}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          {/* Solid block so the global GradientBg grid + washes don’t show through the hero */}
+          <div className="w-full bg-[#fdfcf9]">
+            <section
+              id="get-started"
+              className="max-w-[1400px] mx-auto section-padding pt-[calc(5.5rem+env(safe-area-inset-top))] pb-14 sm:pt-[calc(6rem+env(safe-area-inset-top))] sm:pb-20 scroll-mt-28"
             >
-              <GlassmorphismTrustHero
-                tagline={tb.tagline}
-                titleStart={tb.hero.titleStart}
-                titleAccent={tb.hero.titleAccent}
-                titleEnd={tb.hero.titleEnd}
-                subtitle={tb.hero.subtitle}
-                ctaPrimary={tb.hero.ctaPrimary}
-                ctaSecondary={tb.hero.ctaSecondary}
-                createAd={tb.createAd}
-                siteOrigin={SITE_ORIGIN}
-                heroAdProfiles={tb.heroAdProfiles}
-              />
-            </motion.div>
-          </section>
+              <motion.div
+                initial={reducesMotion ? false : { opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={sectionView}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <GlassmorphismTrustHero
+                  tagline={tb.tagline}
+                  titleStart={tb.hero.titleStart}
+                  titleAccent={tb.hero.titleAccent}
+                  titleEnd={tb.hero.titleEnd}
+                  subtitle={tb.hero.subtitle}
+                  ctaPrimary={tb.hero.ctaPrimary}
+                  ctaSecondary={tb.hero.ctaSecondary}
+                  createAd={tb.createAd}
+                  siteOrigin={SITE_ORIGIN}
+                  heroAdProfiles={tb.heroAdProfiles}
+                />
+              </motion.div>
+            </section>
+          </div>
 
           <Marquee />
 
