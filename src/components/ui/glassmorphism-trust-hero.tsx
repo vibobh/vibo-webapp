@@ -49,10 +49,11 @@ function StatItem({ value, label }: { value: string; label: string }) {
 }
 
 export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProps) {
-  const clients = props.heroAdProfiles.map((p, i) => ({
-    ...p,
-    icon: ICONS[i % ICONS.length],
-  }));
+  // TEMP: For this Vibo landing page we only show one trusted advertiser.
+  // (User requested: remove all companies and keep only sirati.bh)
+  const clients = [
+    { name: "Sirati", icon: Cpu as LucideIcon, href: "https://sirati.bh/" },
+  ];
 
   return (
     <div className="relative w-full text-neutral-900 overflow-hidden font-sans">
@@ -219,14 +220,17 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
                 {[...clients, ...clients, ...clients].map((client, i) => {
                   const Icon = client.icon;
                   return (
-                    <div
-                      key={`${client.name}-${i}`}
-                      className="flex items-center gap-2 opacity-70 transition-all hover:opacity-100 hover:scale-[1.02] cursor-default grayscale hover:grayscale-0"
-                    >
-                      {/* Brand Icon */}
-                      <Icon className="h-6 w-6 text-neutral-900/80 fill-current" />
-                      <span className="text-lg font-bold text-neutral-900 tracking-tight">{client.name}</span>
-                    </div>
+                      <a
+                        key={`${client.name}-${i}`}
+                        href={client.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-2 opacity-70 transition-all hover:opacity-100 hover:scale-[1.02] cursor-pointer grayscale hover:grayscale-0"
+                      >
+                        {/* Brand Icon */}
+                        <Icon className="h-6 w-6 text-neutral-900/80 fill-current" />
+                        <span className="text-lg font-bold text-neutral-900 tracking-tight">{client.name}</span>
+                      </a>
                   );
                 })}
               </div>
