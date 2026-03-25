@@ -12,6 +12,7 @@ import BoostFlowPhone from "@/components/businesses/BoostFlowPhone";
 import BusinessesReelShowcase from "@/components/businesses/BusinessesReelShowcase";
 import LazyVideo from "@/components/LazyVideo";
 import { videoUrl } from "@/lib/videoUrls";
+import GlassmorphismTrustHero from "@/components/ui/glassmorphism-trust-hero";
 
 const SITE_ORIGIN = "https://joinvibo.com";
 
@@ -217,89 +218,25 @@ export default function BusinessesPage() {
             id="get-started"
             className="max-w-[1400px] mx-auto section-padding pt-[calc(5.5rem+env(safe-area-inset-top))] pb-14 sm:pt-[calc(6rem+env(safe-area-inset-top))] sm:pb-20 scroll-mt-28"
           >
-            <div className="grid lg:grid-cols-2 gap-10 items-center">
-              <motion.div
-                initial={reducesMotion ? false : { opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={sectionView}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <p className="text-[0.7rem] font-medium uppercase tracking-[0.14em] text-vibo-primary mb-3">
-                  {tb.tagline}
-                </p>
-                <h1 className="text-[clamp(2.1rem,5vw,3.75rem)] leading-[1.06] tracking-[-0.035em] font-bold text-neutral-900 max-w-[560px]">
-                  {tb.hero.titleStart}
-                  <span className="text-vibo-primary">{tb.hero.titleAccent}</span>
-                  {tb.hero.titleEnd}
-                </h1>
-                <p className="mt-5 text-neutral-600 max-w-[520px] text-[1.02rem] leading-relaxed">
-                  {tb.hero.subtitle}
-                </p>
-                <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <a
-                    href="#objectives"
-                    className="inline-flex h-11 px-6 items-center justify-center rounded-full bg-vibo-primary text-white text-[0.8rem] font-medium hover:bg-vibo-primary-light transition-colors shadow-md shadow-vibo-primary/20"
-                  >
-                    {tb.hero.ctaPrimary}
-                  </a>
-                  <a
-                    href="#creative"
-                    className="inline-flex h-11 px-6 items-center justify-center rounded-full bg-neutral-900 text-white text-[0.8rem] font-medium hover:bg-neutral-800 transition-colors"
-                  >
-                    {tb.hero.ctaSecondary}
-                  </a>
-                  <a
-                    href={`${SITE_ORIGIN}/`}
-                    className="inline-flex h-11 px-5 items-center justify-center rounded-full border border-vibo-primary/25 text-[0.8rem] font-semibold text-vibo-primary hover:bg-vibo-rose/60 transition-colors"
-                  >
-                    {tb.createAd}
-                  </a>
-                </div>
-              </motion.div>
-
-              <motion.div
-                className="relative mx-auto flex w-full max-w-[20.5rem] flex-col items-center gap-8 overflow-visible sm:max-w-[23rem] md:flex-row md:items-center md:justify-end md:gap-0 md:pe-2 lg:mx-0 lg:max-w-none lg:justify-end lg:pe-2"
-                initial={reducesMotion ? false : { opacity: 0, scale: 0.96 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={sectionView}
-                transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="relative z-20 shrink-0 md:-translate-y-1">
-                  <AdPreviewCard
-                    key={heroMain.label}
-                    variant={heroMain.variant}
-                    label={heroMain.label}
-                    profileName={heroMain.profile.name}
-                    adBadge={heroMain.profile.adBadge}
-                    videoFile={heroMain.videoFile}
-                    className="h-[288px] w-[200px] sm:h-[308px] sm:w-[214px] md:h-[340px] md:w-[232px]"
-                    floatClass={heroMain.float}
-                  />
-                </div>
-                <div className="relative z-10 flex w-full max-w-[19rem] shrink-0 flex-row items-start justify-center gap-4 sm:max-w-none sm:gap-5 md:max-w-none md:-translate-x-4 md:flex-col md:items-stretch md:gap-5 md:pt-2 md:rtl:translate-x-4">
-                  <AdPreviewCard
-                    key={heroTop.label}
-                    variant={heroTop.variant}
-                    label={heroTop.label}
-                    profileName={heroTop.profile.name}
-                    adBadge={heroTop.profile.adBadge}
-                    videoFile={heroTop.videoFile}
-                    className="h-[210px] w-[136px] sm:h-[224px] sm:w-[144px] md:h-[248px] md:w-[152px]"
-                    floatClass={heroTop.float}
-                  />
-                  <AdPreviewCard
-                    key={heroBottom.label}
-                    variant={heroBottom.variant}
-                    label={heroBottom.label}
-                    profileName={heroBottom.profile.name}
-                    adBadge={heroBottom.profile.adBadge}
-                    videoFile={heroBottom.videoFile}
-                    className="h-[178px] w-[148px] sm:h-[190px] sm:w-[156px] md:mt-1 md:h-[200px] md:w-[168px]"
-                    floatClass={heroBottom.float}
-                  />
-                </div>
-              </motion.div>
-            </div>
+            <motion.div
+              initial={reducesMotion ? false : { opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={sectionView}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <GlassmorphismTrustHero
+                tagline={tb.tagline}
+                titleStart={tb.hero.titleStart}
+                titleAccent={tb.hero.titleAccent}
+                titleEnd={tb.hero.titleEnd}
+                subtitle={tb.hero.subtitle}
+                ctaPrimary={tb.hero.ctaPrimary}
+                ctaSecondary={tb.hero.ctaSecondary}
+                createAd={tb.createAd}
+                siteOrigin={SITE_ORIGIN}
+                heroAdProfiles={tb.heroAdProfiles}
+              />
+            </motion.div>
           </section>
 
           <Marquee />
