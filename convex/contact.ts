@@ -86,6 +86,15 @@ async function sendResendEmail(args: {
   }
 }
 
+/** Resend test/sandbox: only your account email may receive mail until a domain is verified. */
+function isResendUnverifiedDomainError(message: string): boolean {
+  const m = message.toLowerCase();
+  return (
+    m.includes("resend error 403") &&
+    (m.includes("verify a domain") || m.includes("only send testing emails"))
+  );
+}
+
 export const submitBusinessInquiry = action({
   args: {
     firstName: v.string(),
@@ -143,14 +152,40 @@ export const submitBusinessInquiry = action({
       <p style="font-family:system-ui,sans-serif;line-height:1.5;color:#333;">${safe.message}</p>
     `;
 
-    await sendResendEmail({
-      apiKey,
-      from,
-      to: [ADMIN_TO, TEAM_TO],
-      subject: internalSubject,
-      html: internalHtml,
-      replyTo: companyEmail,
-    });
+    const teamSandboxBanner = `
+      <div style="margin:20px 0;padding:14px 16px;background:#fff8e6;border:1px solid #e6c200;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;line-height:1.5;color:#5c4a00;">
+        <strong>Resend is in test mode.</strong> Only <code>${escapeHtml(ADMIN_TO)}</code> can receive mail until you
+        <a href="https://resend.com/domains" style="color:#4b0415;">verify a sending domain</a>
+        and set <code>RESEND_FROM_EMAIL</code> in Convex to an address on that domain.
+        Forward this to <strong>${escapeHtml(TEAM_TO)}</strong> if needed.
+      </div>
+    `;
+
+    let usedResendSandboxFallback = false;
+    try {
+      await sendResendEmail({
+        apiKey,
+        from,
+        to: [ADMIN_TO, TEAM_TO],
+        subject: internalSubject,
+        html: internalHtml,
+        replyTo: companyEmail,
+      });
+    } catch (e) {
+      const errMsg = e instanceof Error ? e.message : String(e);
+      if (!isResendUnverifiedDomainError(errMsg)) {
+        throw e;
+      }
+      usedResendSandboxFallback = true;
+      await sendResendEmail({
+        apiKey,
+        from,
+        to: [ADMIN_TO],
+        subject: `${internalSubject} [sandbox: forward to ${TEAM_TO}]`,
+        html: teamSandboxBanner + internalHtml,
+        replyTo: companyEmail,
+      });
+    }
 
     const logoUrl = "https://joinvibo.com/Vibo%20App%20icon%20version-01.png";
     const confirmSubject = "We received your message — Vibo for Business";
@@ -174,18 +209,23 @@ export const submitBusinessInquiry = action({
       </div>
     `;
 
-    try {
-      await sendResendEmail({
-        apiKey,
-        from,
-        to: [companyEmail],
-        subject: confirmSubject,
-        html: confirmHtml,
-      });
-    } catch {
-      /** Confirmation is best-effort; inquiry already reached the team. */
+    if (!usedResendSandboxFallback) {
+      try {
+        await sendResendEmail({
+          apiKey,
+          from,
+          to: [companyEmail],
+          subject: confirmSubject,
+          html: confirmHtml,
+        });
+      } catch {
+        /** Confirmation is best-effort; inquiry already reached the team. */
+      }
     }
 
-    return { ok: true as const };
+    return {
+      ok: true as const,
+      resendSandboxFallback: usedResendSandboxFallback,
+    };
   },
 });

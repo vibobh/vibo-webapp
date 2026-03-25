@@ -299,6 +299,7 @@
       "sendAnother": "Send another message",
       "successTitle": "You’re all set",
       "successBody": "We sent a confirmation to your company email. Our team also received your details and will follow up soon.",
+      "successBodySandbox": "Your message was delivered to our team inbox. A confirmation email could not be sent yet (our email provider is in test mode until our domain is verified). We’ll still reply to you at the address you entered.",
       "errorGeneric": "Something went wrong. Please try again or email businesses@joinvibo.com.",
       "errorCompanyEmail": "Please use your company email address, not a personal inbox."
     },

@@ -31,6 +31,8 @@ export type BusinessContactCopy = {
   sending: string;
   successTitle: string;
   successBody: string;
+  /** Shown when Resend test mode only delivered to admin inbox (no confirmation email). */
+  successBodySandbox: string;
   errorGeneric: string;
   errorCompanyEmail: string;
   sendAnother: string;
@@ -52,6 +54,7 @@ export default function BusinessContactSection({ copy, siteOrigin }: Props) {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successBodyText, setSuccessBodyText] = useState<string | null>(null);
 
   const reset = useCallback(() => {
     setFirstName("");
@@ -75,13 +78,16 @@ export default function BusinessContactSection({ copy, siteOrigin }: Props) {
 
     setStatus("loading");
     try {
-      await submitInquiry({
+      const result = await submitInquiry({
         firstName,
         lastName,
         companyName,
         companyEmail: companyEmail.trim().toLowerCase(),
         message,
       });
+      setSuccessBodyText(
+        result.resendSandboxFallback ? copy.successBodySandbox : copy.successBody,
+      );
       setStatus("success");
     } catch (err) {
       setStatus("error");
@@ -160,7 +166,9 @@ export default function BusinessContactSection({ copy, siteOrigin }: Props) {
                   </svg>
                 </div>
                 <h3 className="text-xl font-bold text-neutral-900">{copy.successTitle}</h3>
-                <p className="mt-2 text-sm text-neutral-600 leading-relaxed max-w-md mx-auto">{copy.successBody}</p>
+                <p className="mt-2 text-sm text-neutral-600 leading-relaxed max-w-md mx-auto">
+                  {successBodyText ?? copy.successBody}
+                </p>
                 <Button type="button" variant="outline" className="mt-8" onClick={reset}>
                   {copy.sendAnother}
                 </Button>
