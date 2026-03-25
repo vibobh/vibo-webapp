@@ -37,8 +37,8 @@ const BLOCKED_EMAIL_DOMAINS = new Set([
   "inbox.com",
 ]);
 
+/** Full form details go here only (from address = business inbox via RESEND_FROM_EMAIL). */
 const ADMIN_TO = "joinvibo@gmail.com";
-const TEAM_TO = "businesses@joinvibo.com";
 
 function escapeHtml(s: string): string {
   return s
@@ -109,8 +109,9 @@ export const submitBusinessInquiry = action({
       throw new Error("Email is not configured (missing RESEND_API_KEY in Convex).");
     }
 
+    /** Must be a verified sender in Resend (e.g. businesses@joinvibo.com on joinvibo.com). */
     const from =
-      process.env.RESEND_FROM_EMAIL?.trim() || "Vibo Business <onboarding@resend.dev>";
+      process.env.RESEND_FROM_EMAIL?.trim() || "Vibo Business <businesses@joinvibo.com>";
 
     const firstName = args.firstName.trim().slice(0, 80);
     const lastName = args.lastName.trim().slice(0, 80);
@@ -156,8 +157,7 @@ export const submitBusinessInquiry = action({
       <div style="margin:20px 0;padding:14px 16px;background:#fff8e6;border:1px solid #e6c200;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;line-height:1.5;color:#5c4a00;">
         <strong>Resend is in test mode.</strong> Only <code>${escapeHtml(ADMIN_TO)}</code> can receive mail until you
         <a href="https://resend.com/domains" style="color:#4b0415;">verify a sending domain</a>
-        and set <code>RESEND_FROM_EMAIL</code> in Convex to an address on that domain.
-        Forward this to <strong>${escapeHtml(TEAM_TO)}</strong> if needed.
+        and send from <code>businesses@joinvibo.com</code> (<code>RESEND_FROM_EMAIL</code> in Convex).
       </div>
     `;
 
@@ -166,7 +166,7 @@ export const submitBusinessInquiry = action({
       await sendResendEmail({
         apiKey,
         from,
-        to: [ADMIN_TO, TEAM_TO],
+        to: [ADMIN_TO],
         subject: internalSubject,
         html: internalHtml,
         replyTo: companyEmail,
@@ -181,7 +181,7 @@ export const submitBusinessInquiry = action({
         apiKey,
         from,
         to: [ADMIN_TO],
-        subject: `${internalSubject} [sandbox: forward to ${TEAM_TO}]`,
+        subject: `${internalSubject} [Resend sandbox]`,
         html: teamSandboxBanner + internalHtml,
         replyTo: companyEmail,
       });
