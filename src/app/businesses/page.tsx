@@ -258,7 +258,7 @@ export default function BusinessesPage() {
               </motion.div>
 
               <motion.div
-                className="relative mx-auto flex w-full max-w-[20.5rem] flex-col items-center gap-8 overflow-visible sm:max-w-[23rem] md:max-w-[min(100%,28rem)] md:flex-row md:items-center md:justify-center md:gap-0 lg:mx-0 lg:max-w-none lg:justify-end lg:pe-2"
+                className="relative mx-auto flex w-full max-w-[20.5rem] flex-col items-center gap-8 overflow-visible sm:max-w-[23rem] md:flex-row md:items-center md:justify-end md:gap-0 md:pe-2 lg:mx-0 lg:max-w-none lg:justify-end lg:pe-2"
                 initial={reducesMotion ? false : { opacity: 0, scale: 0.96 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={sectionView}
@@ -276,7 +276,7 @@ export default function BusinessesPage() {
                     floatClass={heroMain.float}
                   />
                 </div>
-                <div className="relative z-10 flex w-full max-w-[19rem] shrink-0 flex-row items-start justify-center gap-4 sm:max-w-none sm:gap-5 md:max-w-none md:-translate-x-7 md:flex-col md:items-stretch md:gap-5 md:pt-2 md:rtl:translate-x-7">
+                <div className="relative z-10 flex w-full max-w-[19rem] shrink-0 flex-row items-start justify-center gap-4 sm:max-w-none sm:gap-5 md:max-w-none md:-translate-x-4 md:flex-col md:items-stretch md:gap-5 md:pt-2 md:rtl:translate-x-4">
                   <AdPreviewCard
                     key={heroTop.label}
                     variant={heroTop.variant}
