@@ -54,6 +54,7 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
   const clients = [
     { name: "Sirati", icon: Cpu as LucideIcon, href: "https://sirati.bh/" },
   ];
+  const shouldMarquee = clients.length > 1;
 
   return (
     <div className="relative w-full text-neutral-900 overflow-hidden font-sans">
@@ -209,17 +210,18 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
           <div className="animate-fade-in delay-500 relative overflow-hidden rounded-3xl border border-vibo-primary/15 bg-white/70 py-8 backdrop-blur-xl">
             <h3 className="mb-6 px-8 text-sm font-medium text-neutral-500">Trusted by advertisers</h3>
 
-            <div
-              className="relative flex overflow-hidden"
-              style={{
-                maskImage: "linear-gradient(to right, transparent, black 20%, black 80%, transparent)",
-                WebkitMaskImage: "linear-gradient(to right, transparent, black 20%, black 80%, transparent)",
-              }}
-            >
-              <div className="animate-marquee flex gap-12 whitespace-nowrap px-4">
-                {[...clients, ...clients, ...clients].map((client, i) => {
-                  const Icon = client.icon;
-                  return (
+            {shouldMarquee ? (
+              <div
+                className="relative flex overflow-hidden"
+                style={{
+                  maskImage: "linear-gradient(to right, transparent, black 20%, black 80%, transparent)",
+                  WebkitMaskImage: "linear-gradient(to right, transparent, black 20%, black 80%, transparent)",
+                }}
+              >
+                <div className="animate-marquee flex gap-12 whitespace-nowrap px-4">
+                  {[...clients, ...clients, ...clients].map((client, i) => {
+                    const Icon = client.icon;
+                    return (
                       <a
                         key={`${client.name}-${i}`}
                         href={client.href}
@@ -231,10 +233,29 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
                         <Icon className="h-6 w-6 text-neutral-900/80 fill-current" />
                         <span className="text-lg font-bold text-neutral-900 tracking-tight">{client.name}</span>
                       </a>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center px-4">
+                {clients.map((client) => {
+                  const Icon = client.icon;
+                  return (
+                    <a
+                      key={client.name}
+                      href={client.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-2 opacity-90 transition-all hover:opacity-100 hover:scale-[1.02] cursor-pointer grayscale hover:grayscale-0"
+                    >
+                      <Icon className="h-6 w-6 text-neutral-900/80 fill-current" />
+                      <span className="text-lg font-bold text-neutral-900 tracking-tight">{client.name}</span>
+                    </a>
                   );
                 })}
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
