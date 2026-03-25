@@ -7,14 +7,6 @@ import {
   Target,
   Crown,
   Star,
-  // Brand icons
-  Hexagon,
-  Triangle,
-  Command,
-  Ghost,
-  Gem,
-  Cpu,
-  type LucideIcon,
 } from "lucide-react";
 
 type HeroProfile = {
@@ -35,9 +27,6 @@ export type GlassmorphismTrustHeroProps = {
   heroAdProfiles: HeroProfile[];
 };
 
-// Map each client to an icon to keep the marquee visually interesting.
-const ICONS: LucideIcon[] = [Hexagon, Triangle, Command, Ghost, Gem, Cpu];
-
 // --- SUB-COMPONENTS ---
 function StatItem({ value, label }: { value: string; label: string }) {
   return (
@@ -51,9 +40,7 @@ function StatItem({ value, label }: { value: string; label: string }) {
 export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProps) {
   // TEMP: For this Vibo landing page we only show one trusted advertiser.
   // (User requested: remove all companies and keep only sirati.bh)
-  const clients = [
-    { name: "Sirati", icon: Cpu as LucideIcon, href: "https://sirati.bh/" },
-  ];
+  const clients = [{ name: "Sirati", href: "https://sirati.bh/" }];
   const shouldMarquee = clients.length > 1;
 
   return (
@@ -220,17 +207,14 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
               >
                 <div className="animate-marquee flex gap-12 whitespace-nowrap px-4">
                   {[...clients, ...clients, ...clients].map((client, i) => {
-                    const Icon = client.icon;
                     return (
                       <a
                         key={`${client.name}-${i}`}
                         href={client.href}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-2 opacity-70 transition-all hover:opacity-100 hover:scale-[1.02] cursor-pointer grayscale hover:grayscale-0"
+                        className="flex items-center gap-2 opacity-70 transition-colors hover:opacity-100 cursor-pointer grayscale hover:grayscale-0"
                       >
-                        {/* Brand Icon */}
-                        <Icon className="h-6 w-6 text-neutral-900/80 fill-current" />
                         <span className="text-lg font-bold text-neutral-900 tracking-tight">{client.name}</span>
                       </a>
                     );
@@ -240,17 +224,17 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
             ) : (
               <div className="flex items-center justify-center px-4">
                 {clients.map((client) => {
-                  const Icon = client.icon;
                   return (
                     <a
                       key={client.name}
                       href={client.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-2 opacity-90 transition-all hover:opacity-100 hover:scale-[1.02] cursor-pointer grayscale hover:grayscale-0"
+                      className="flex items-center justify-center"
                     >
-                      <Icon className="h-6 w-6 text-neutral-900/80 fill-current" />
-                      <span className="text-lg font-bold text-neutral-900 tracking-tight">{client.name}</span>
+                      <span className="group inline-flex items-center justify-center text-lg font-bold tracking-tight text-neutral-900 transition-colors duration-300 hover:text-[#0A84FF]">
+                        {client.name}
+                      </span>
                     </a>
                   );
                 })}
