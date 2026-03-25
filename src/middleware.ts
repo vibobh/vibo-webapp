@@ -3,13 +3,11 @@ import { NextResponse, type NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const host = request.headers.get("host")?.toLowerCase() || "";
 
-  // Route businesses.joinvibo.com to the business landing page.
+  // Send legacy subdomain to the main site path (avoids extra DNS/hosting on businesses.*).
   if (host.startsWith("businesses.joinvibo.com")) {
-    const { pathname, search } = request.nextUrl;
-
-    if (pathname === "/") {
-      return NextResponse.rewrite(new URL(`/businesses${search}`, request.url));
-    }
+    const dest = new URL("https://joinvibo.com/businesses");
+    dest.search = request.nextUrl.search;
+    return NextResponse.redirect(dest, 308);
   }
 
   return NextResponse.next();
