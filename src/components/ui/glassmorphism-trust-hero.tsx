@@ -150,14 +150,14 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
                 </div>
                 <div>
                   <div className="text-3xl font-bold tracking-tight text-neutral-900">150+</div>
-                  <div className="text-sm text-neutral-500">Projects delivered</div>
+                  <div className="text-sm text-neutral-500">Ad campaigns boosted</div>
                 </div>
               </div>
 
               {/* Progress Bar Section */}
               <div className="space-y-3 mb-8">
                 <div className="flex justify-between text-sm">
-                  <span className="text-neutral-500">Client satisfaction</span>
+                  <span className="text-neutral-500">Campaign success rate</span>
                   <span className="text-neutral-900 font-medium">98%</span>
                 </div>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-200/70">
@@ -169,11 +169,11 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
 
               {/* Mini Stats Grid */}
               <div className="grid grid-cols-3 gap-4 text-center">
-                <StatItem value="5+" label="Years" />
+                <StatItem value="5+" label="Creative tools" />
                 <div className="w-px h-full bg-neutral-200 mx-auto" />
-                <StatItem value="24/7" label="Support" />
+                <StatItem value="24/7" label="Smart help" />
                 <div className="w-px h-full bg-neutral-200 mx-auto" />
-                <StatItem value="100%" label="Quality" />
+                <StatItem value="100%" label="Quality checks" />
               </div>
 
               {/* Tag Pills */}
@@ -183,11 +183,11 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
                   </span>
-                  ACTIVE
+                  LIVE ADS
                 </div>
                 <div className="inline-flex items-center gap-1.5 rounded-full border border-vibo-primary/15 bg-white/60 px-3 py-1 text-[10px] font-medium tracking-wide text-neutral-700">
                   <Crown className="w-3 h-3 text-vibo-gold" />
-                  PREMIUM
+                  SMART TOOLS
                 </div>
               </div>
             </div>
