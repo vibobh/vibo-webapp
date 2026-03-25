@@ -16,6 +16,10 @@
     "vercel:prod": "npx --yes vercel deploy --prod"
   },
   "dependencies": {
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "convex": "^1.34.0",
     "framer-motion": "^11.0.0",
     "isomorphic-dompurify": "^3.6.0",
@@ -25,7 +29,8 @@
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "react-quill": "^2.0.0",
-    "sanitize-html": "^2.17.2"
+    "sanitize-html": "^2.17.2",
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

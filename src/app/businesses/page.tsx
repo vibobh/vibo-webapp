@@ -10,91 +10,12 @@ import Footer from "@/components/Footer";
 import Marquee from "@/components/Marquee";
 import BoostFlowPhone from "@/components/businesses/BoostFlowPhone";
 import BusinessesReelShowcase from "@/components/businesses/BusinessesReelShowcase";
-import LazyVideo from "@/components/LazyVideo";
-import { videoUrl } from "@/lib/videoUrls";
+import BusinessContactSection from "@/components/businesses/BusinessContactSection";
 import GlassmorphismTrustHero from "@/components/ui/glassmorphism-trust-hero";
 
 const SITE_ORIGIN = "https://joinvibo.com";
 
 const sectionView = { once: true, margin: "-70px" as const };
-
-type HeroAdVariant = "main" | "top" | "bottom";
-
-function AdPreviewCard({
-  label,
-  profileName,
-  adBadge,
-  videoFile,
-  variant,
-  className,
-  floatClass,
-}: {
-  label: string;
-  profileName: string;
-  adBadge: string;
-  videoFile: string;
-  variant: HeroAdVariant;
-  className?: string;
-  floatClass: string;
-}) {
-  const src = videoUrl(`/videos/${videoFile}`);
-  const initial = profileName.trim().charAt(0).toUpperCase() || "V";
-  const radius = variant === "main" ? "rounded-[30px]" : "rounded-[22px]";
-  const shadow =
-    variant === "main"
-      ? "shadow-[0_22px_60px_rgba(0,0,0,0.12),0_4px_16px_rgba(0,0,0,0.06)]"
-      : "shadow-[0_16px_40px_rgba(0,0,0,0.1),0_2px_8px_rgba(0,0,0,0.05)]";
-
-  return (
-    <div
-      className={`relative overflow-hidden border border-black/[0.08] bg-neutral-900 ${radius} ${shadow} ${floatClass} ${className ?? ""}`}
-    >
-      <LazyVideo
-        src={src}
-        className="absolute inset-0 h-full w-full"
-        videoClassName="h-full w-full object-cover"
-      />
-      <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/25"
-        aria-hidden
-      />
-      <div
-        className={`pointer-events-none absolute start-2.5 top-2.5 flex items-start gap-2 ${variant === "main" ? "end-16" : "end-2"}`}
-      >
-        <span
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/95 text-[10px] font-bold text-vibo-primary shadow-md ring-1 ring-black/5"
-          aria-hidden
-        >
-          {initial}
-        </span>
-        <div className="min-w-0 pt-0.5">
-          <p className="max-w-[8.5rem] truncate text-[11px] font-semibold leading-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.65)] sm:max-w-[10rem]">
-            {profileName}
-          </p>
-          <p className="text-[9px] font-medium leading-tight text-white/85 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-            {adBadge}
-          </p>
-        </div>
-      </div>
-
-      {variant === "main" ? (
-        <span className="pointer-events-none absolute end-0 top-1/2 z-20 -translate-y-1/2 translate-x-[18%] rounded-full bg-[#1877f2] px-3.5 py-2 text-[10px] font-bold uppercase tracking-wide text-white shadow-[0_4px_14px_rgba(24,119,242,0.45)] sm:px-4 sm:text-[11px] rtl:translate-x-[-18%]">
-          {label}
-        </span>
-      ) : variant === "bottom" ? (
-        <span className="pointer-events-none absolute start-2.5 bottom-2.5 max-w-[calc(100%-1rem)] rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-semibold text-neutral-900 shadow-md ring-1 ring-black/5 sm:text-[11px]">
-          {label}
-        </span>
-      ) : (
-        <div className="pointer-events-none absolute inset-x-2 bottom-2.5 flex justify-center">
-          <span className="inline-flex rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold text-vibo-primary shadow-md ring-1 ring-black/5 sm:px-3 sm:text-[11px]">
-            {label}
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function BusinessesPage() {
   const { lang, switchLang } = useViboLang();
@@ -168,29 +89,6 @@ export default function BusinessesPage() {
     return () => clearTimeout(id);
   }, [boostStep, boostFlowVisible, reducesMotion]);
 
-  const heroProfiles = tb.heroAdProfiles;
-  const heroMain = {
-    variant: "main" as const,
-    label: tb.cards.boost,
-    profile: heroProfiles[0],
-    videoFile: "vid1.mp4",
-    float: "motion-safe:animate-float-slow",
-  };
-  const heroTop = {
-    variant: "top" as const,
-    label: tb.cards.product,
-    profile: heroProfiles[1],
-    videoFile: "vid2.mp4",
-    float: "motion-safe:animate-float-medium",
-  };
-  const heroBottom = {
-    variant: "bottom" as const,
-    label: tb.cards.learn,
-    profile: heroProfiles[2],
-    videoFile: "vid3.mp4",
-    float: "motion-safe:animate-float-fast",
-  };
-
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -210,6 +108,7 @@ export default function BusinessesPage() {
             { id: "get-started", href: "#get-started", label: tb.anchors.getStarted },
             { id: "objectives", href: "#objectives", label: tb.anchors.ads },
             { id: "creative", href: "#creative", label: tb.anchors.creative },
+            { id: "contact", href: "#contact", label: tb.anchors.contact },
             { id: "faq", href: "#faq", label: tb.anchors.faq },
           ]}
         />
@@ -470,6 +369,8 @@ export default function BusinessesPage() {
               </motion.div>
             </div>
           </section>
+
+          <BusinessContactSection copy={tb.contact} siteOrigin={SITE_ORIGIN} />
 
           <section id="faq" className="max-w-[1400px] mx-auto section-padding py-16 sm:py-24 scroll-mt-28">
             <motion.h2

@@ -189,7 +189,8 @@
       "getStarted": "Get started",
       "ads": "Ads on Vibo",
       "creative": "Creative tools",
-      "faq": "Help"
+      "faq": "Help",
+      "contact": "Contact"
     },
     "createAd": "Create an ad",
     "hero": {
@@ -280,6 +281,27 @@
     "faqTitleBefore": "Frequently asked ",
     "faqTitleAccent": "questions",
     "faqSub": "Got questions about Vibo ads? We've got answers.",
+    "contact": {
+      "title": "Contact us",
+      "description": "Tell us about your brand and how you want to advertise on Vibo. Our team reads every message.",
+      "detailsTitle": "Business inquiries",
+      "teamLabel": "Vibo for Business",
+      "teamEmail": "businesses@joinvibo.com",
+      "teamBlurb": "For partnerships, advertising, and business questions, email us or use the form. We reply from our business inbox.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "company": "Company name",
+      "companyEmail": "Company email",
+      "companyEmailHelp": "Use a work email on your company domain. Personal addresses (Gmail, Yahoo, etc.) cannot be used.",
+      "message": "Message",
+      "submit": "Send message",
+      "sending": "Sending…",
+      "sendAnother": "Send another message",
+      "successTitle": "You’re all set",
+      "successBody": "We sent a confirmation to your company email. Our team also received your details and will follow up soon.",
+      "errorGeneric": "Something went wrong. Please try again or email businesses@joinvibo.com.",
+      "errorCompanyEmail": "Please use your company email address, not a personal inbox."
+    },
     "faqs": [
       {
         "q": "How can I make the best possible ad?",
