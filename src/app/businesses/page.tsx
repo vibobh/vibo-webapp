@@ -492,11 +492,13 @@ export default function BusinessesPage() {
               {tb.faqSub}
             </motion.p>
 
-            <div className="mt-8 grid md:grid-cols-2 gap-x-12 gap-y-1">
+            <div className="mt-8 grid md:grid-cols-2 gap-x-12 gap-y-3">
               {tb.faqs.map((item: { q: string; a: string }, i: number) => (
                 <motion.div
                   key={item.q}
-                  className="border-b border-neutral-200/90"
+                  className={`border border-neutral-200/90 rounded-2xl bg-white/70 backdrop-blur-sm transition-colors ${
+                    openFaq === i ? "bg-vibo-rose/10 border-vibo-primary/20" : "hover:bg-white/90"
+                  }`}
                   initial={reducesMotion ? false : { opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={sectionView}
@@ -505,14 +507,20 @@ export default function BusinessesPage() {
                   <button
                     type="button"
                     aria-expanded={openFaq === i}
+                    aria-controls={`faq-panel-${i}`}
+                    id={`faq-button-${i}`}
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full text-left py-4 flex items-start justify-between gap-4 group"
+                    className="w-full text-start py-5 px-5 flex items-start justify-between gap-4 group focus:outline-none focus-visible:ring-2 focus-visible:ring-vibo-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                   >
-                    <span className="text-[1.12rem] sm:text-[1.2rem] leading-snug font-medium text-neutral-900 group-hover:text-vibo-primary transition-colors">
+                    <span className="text-[1.08rem] sm:text-[1.18rem] leading-snug font-medium text-neutral-900 group-hover:text-vibo-primary transition-colors">
                       {item.q}
                     </span>
                     <span
-                      className={`mt-1 shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-full border border-vibo-primary/15 text-vibo-primary transition-transform duration-200 ${
+                      className={`mt-0.5 shrink-0 inline-flex h-9 w-9 items-center justify-center rounded-full border transition-transform duration-200 ${
+                        openFaq === i
+                          ? "border-vibo-primary/30 bg-vibo-primary/10"
+                          : "border-vibo-primary/15 bg-white/60"
+                      } text-vibo-primary ${
                         openFaq === i ? "rotate-180" : ""
                       }`}
                       aria-hidden
@@ -525,13 +533,18 @@ export default function BusinessesPage() {
                   <AnimatePresence initial={false}>
                     {openFaq === i && (
                       <motion.div
+                        id={`faq-panel-${i}`}
+                        role="region"
+                        aria-labelledby={`faq-button-${i}`}
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                         className="overflow-hidden"
                       >
-                        <p className="pb-4 text-[0.92rem] text-neutral-600 leading-relaxed pe-2">{item.a}</p>
+                        <p className="pb-5 px-5 text-[0.92rem] text-neutral-600 leading-relaxed">
+                          {item.a}
+                        </p>
                       </motion.div>
                     )}
                   </AnimatePresence>
