@@ -11,6 +11,7 @@ import Marquee from "@/components/Marquee";
 import BoostFlowPhone from "@/components/businesses/BoostFlowPhone";
 import BusinessesReelShowcase from "@/components/businesses/BusinessesReelShowcase";
 import BusinessContactSection from "@/components/businesses/BusinessContactSection";
+import BusinessGrowthContactSection from "@/components/businesses/BusinessGrowthContactSection";
 import GlassmorphismTrustHero from "@/components/ui/glassmorphism-trust-hero";
 
 const SITE_ORIGIN = "https://joinvibo.com";
@@ -295,80 +296,7 @@ export default function BusinessesPage() {
             </div>
           </section>
 
-          <section className="max-w-[1400px] mx-auto section-padding py-14 sm:py-20">
-            <div className="grid lg:grid-cols-2 gap-10 items-center">
-              <motion.div
-                initial={reducesMotion ? false : { opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={sectionView}
-                transition={{ duration: 0.55 }}
-              >
-                <p className="text-[11px] uppercase tracking-[0.16em] text-vibo-primary font-semibold">
-                  {tb.insightsLabel}
-                </p>
-                <h2 className="mt-2 text-[clamp(1.75rem,3.4vw,2.85rem)] font-bold tracking-[-0.03em] text-neutral-900">
-                  {tb.insightsTitleBefore}
-                  <span className="text-vibo-primary">{tb.insightsTitleAccent}</span>
-                </h2>
-                <p className="mt-4 text-neutral-600 leading-relaxed max-w-[520px]">{tb.insightsBody}</p>
-              </motion.div>
-              <motion.div
-                className="rounded-[30px] border border-vibo-primary/15 bg-white/90 aspect-[9/16] max-w-[360px] mx-auto shadow-[0_16px_40px_rgba(75,4,21,0.08)]"
-                initial={reducesMotion ? false : { opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={sectionView}
-                transition={{ duration: 0.55, delay: 0.05 }}
-              />
-            </div>
-          </section>
-
-          <section className="relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-vibo-primary via-vibo-primary-light to-vibo-primary-dark" />
-            <div className="absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_20%_50%,rgba(255,255,255,.35),transparent_50%)]" />
-            <div className="relative max-w-[1400px] mx-auto section-padding py-16 sm:py-20 text-center">
-              <motion.h2
-                className="text-[clamp(1.6rem,3vw,2.4rem)] font-bold tracking-[-0.03em] text-white"
-                initial={reducesMotion ? false : { opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={sectionView}
-                transition={{ duration: 0.5 }}
-              >
-                {tb.ctaBandHeading}
-              </motion.h2>
-              <motion.p
-                className="mt-3 text-white/85 max-w-xl mx-auto text-[0.95rem] leading-relaxed"
-                initial={reducesMotion ? false : { opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={sectionView}
-                transition={{ duration: 0.5, delay: 0.05 }}
-              >
-                {tb.ctaBandBody}
-              </motion.p>
-              <motion.div
-                className="mt-8 flex flex-wrap justify-center gap-3"
-                initial={reducesMotion ? false : { opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={sectionView}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <a
-                  href="#"
-                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-white px-6 text-[0.85rem] font-semibold text-vibo-primary hover:bg-vibo-cream transition-colors"
-                >
-                  {tb.ctaBandButton}
-                  <svg className="h-4 w-4 rtl:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                </a>
-                <a
-                  href={`${SITE_ORIGIN}/newsroom?lang=${lang}`}
-                  className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/40 px-6 text-[0.85rem] font-semibold text-white hover:bg-white/10 transition-colors"
-                >
-                  {t.nav.newsroom}
-                </a>
-              </motion.div>
-            </div>
-          </section>
+          <BusinessGrowthContactSection copy={tb} siteOrigin={SITE_ORIGIN} lang={lang} rtl={rtl} />
 
           <BusinessContactSection copy={tb.contact} siteOrigin={SITE_ORIGIN} />
 

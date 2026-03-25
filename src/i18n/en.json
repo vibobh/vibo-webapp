@@ -275,9 +275,25 @@
     "insightsTitleBefore": "Go deeper to understand your ",
     "insightsTitleAccent": "ad performance.",
     "insightsBody": "Performance insights can help you unlock your ad's success. Then use what you learn to make more effective ads.",
-    "ctaBandHeading": "Ready to grow with Vibo?",
-    "ctaBandBody": "Download the app to run campaigns, engage your community, and measure results in one place.",
-    "ctaBandButton": "Download Vibo",
+    "growthCards": [
+      {
+        "title": "Measure what matters",
+        "body": "Track reach, engagement, and results so you can see what resonates—and scale the creative and audiences that work."
+      },
+      {
+        "title": "Campaigns in one flow",
+        "body": "Run boosts and manage creative from the Vibo app: pick a post, define your audience, set budget, and launch without juggling extra tools."
+      },
+      {
+        "title": "Talk to our business team",
+        "body": "Partnerships, media plans, or product questions? Reach us through the contact form below—we reply from businesses@joinvibo.com."
+      }
+    ],
+    "growthCtaHeading": "Ready to grow with Vibo?",
+    "growthCtaBody": "Download the app to run campaigns and measure performance—or message our team and we’ll help you plan your next step.",
+    "growthCtaContact": "Contact us",
+    "growthCtaNewsroom": "Newsroom",
+    "growthCtaDownload": "Download Vibo",
     "faqTitleBefore": "Frequently asked ",
     "faqTitleAccent": "questions",
     "faqSub": "Got questions about Vibo ads? We've got answers.",
