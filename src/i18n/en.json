@@ -197,7 +197,7 @@
       "titleStart": "Captivate new ",
       "titleAccent": "customers",
       "titleEnd": " with Vibo ads.",
-      "subtitle": "Grow your business, push creative boundaries, and build lasting connections — all in one place.",
+      "subtitle": "Grow your business, push creative boundaries, and build lasting connections, all in one place.",
       "ctaPrimary": "Get started",
       "ctaSecondary": "Learn more"
     },
@@ -230,13 +230,13 @@
     ],
     "creativeHeading": "Experiment with Vibo's creative tools to find what resonates with your community.",
     "creativeKicker": "Reels",
-    "creativeLead": "Use features like short-form video, Remix, and product tags to put your spin on trends.",
+    "creativeLead": "Use features like short form video, Remix, and product tags to put your spin on trends.",
     "creativeBody": "Start your own momentum and reach people who are most likely to be interested in your business.",
     "reelComment": {
       "badge": "Reels",
       "username": "Maya K.",
       "handle": "@maya.creates",
-      "message": "This collab is everything ✨ Love the energy — already shared with my friends!",
+      "message": "This collab is everything ✨ Love the energy, already shared with my friends!",
       "likesLabel": "2.4k likes",
       "heartCount": "2.4k",
       "reply": "Reply"
@@ -248,10 +248,10 @@
       "Step 4: Review and launch your ad."
     ],
     "stepDetails": [
-      "Pick a post that shows your product or story well — it becomes the creative people see in the feed.",
+      "Pick a post that shows your product or story well. It becomes the creative people see in the feed.",
       "Reach people similar to your best customers, or build a custom audience by interests, age, and location.",
       "Choose a comfortable daily or total spend and how long the campaign runs. You can adjust anytime.",
-      "Double-check your creative, audience, and budget, then go live — pause or edit whenever you need."
+      "Double check your creative, audience, and budget, then go live. Pause or edit whenever you need."
     ],
     "phoneUi": {
       "boostHeader": "Boost post",
@@ -278,7 +278,7 @@
     "growthCards": [
       {
         "title": "Measure what matters",
-        "body": "Track reach, engagement, and results so you can see what resonates—and scale the creative and audiences that work."
+        "body": "Track reach, engagement, and results so you can see what resonates, and scale the creative and audiences that work."
       },
       {
         "title": "Campaigns in one flow",
@@ -286,11 +286,11 @@
       },
       {
         "title": "Talk to our business team",
-        "body": "Partnerships, media plans, or product questions? Reach us through the contact form below—we reply from businesses@joinvibo.com."
+        "body": "Partnerships, media plans, or product questions? Reach us through the contact form below. We reply from businesses@joinvibo.com."
       }
     ],
     "growthCtaHeading": "Ready to grow with Vibo?",
-    "growthCtaBody": "Download the app to run campaigns and measure performance—or message our team and we’ll help you plan your next step.",
+    "growthCtaBody": "Download the app to run campaigns and measure performance, or message our team and we’ll help you plan your next step.",
     "growthCtaContact": "Contact us",
     "growthCtaNewsroom": "Newsroom",
     "growthCtaDownload": "Download Vibo",
@@ -322,7 +322,7 @@
     "faqs": [
       {
         "q": "How can I make the best possible ad?",
-        "a": "Lead with a clear hook in the first seconds, show real product or service benefits, and use high-quality visuals. Test variations in creative and audience, then scale what performs best."
+        "a": "Lead with a clear hook in the first seconds, show real product or service benefits, and use high quality visuals. Test variations in creative and audience, then scale what performs best."
       },
       {
         "q": "How do I find my target audience?",
@@ -334,7 +334,7 @@
       },
       {
         "q": "How can I get started advertising on Vibo?",
-        "a": "Install Vibo, set up your business profile, pick a post or creative to promote, choose your goal and budget, then launch. Our team is expanding self-serve tools — stay tuned for updates."
+        "a": "Install Vibo, set up your business profile, pick a post or creative to promote, choose your goal and budget, then launch. Our team is expanding self serve tools. Stay tuned for updates."
       }
     ]
   },

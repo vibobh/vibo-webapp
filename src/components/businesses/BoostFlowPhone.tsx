@@ -130,7 +130,7 @@ function ScreenAudience({ ui }: { ui: BusinessesPhoneUi }) {
       <div className="mt-auto rounded-xl bg-white p-2 shadow-sm ring-1 ring-neutral-200/80">
         <div className="flex justify-between text-[10px] text-neutral-500">
           <span>{ui.estReach}</span>
-          <span className="font-semibold text-vibo-primary">12k – 48k</span>
+          <span className="font-semibold text-vibo-primary">12k to 48k</span>
         </div>
         <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-neutral-100">
           <motion.div
