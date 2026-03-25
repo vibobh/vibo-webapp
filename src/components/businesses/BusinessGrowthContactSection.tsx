@@ -112,7 +112,7 @@ export default function BusinessGrowthContactSection({ copy, siteOrigin, lang, r
               <h3 className="text-[clamp(1.5rem,2.8vw,2.25rem)] font-bold tracking-[-0.03em] text-white">
                 {copy.growthCtaHeading}
               </h3>
-              <p className="mx-auto mt-3 max-w-2xl text-[0.95rem] leading-relaxed text-white/88">
+              <p className="mx-auto mt-3 max-w-2xl text-[0.95rem] leading-relaxed font-medium text-vibo-gold [text-shadow:0_1px_18px_rgba(0,0,0,0.25)]">
                 {copy.growthCtaBody}
               </p>
               <div
