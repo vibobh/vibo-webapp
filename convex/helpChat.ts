@@ -39,28 +39,19 @@ RULES:
 - Never make up features that are not listed above.
 - Do not discuss competitors or other apps.`;
 
-const DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
+const OPENROUTER_CHAT_URL = "https://openrouter.ai/api/v1/chat/completions";
+/** OpenRouter model id, e.g. openai/gpt-4o-mini, google/gemini-2.0-flash-001 — see https://openrouter.ai/models */
+const DEFAULT_OPENROUTER_MODEL = "openai/gpt-4o-mini";
 
-function geminiApiKey(): string | null {
-  const key =
-    process.env.GEMINI_API_KEY?.trim() ||
-    process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim() ||
-    "";
-  return key || null;
-}
-
-/** Gemini expects roles `user` and `model` (not assistant). Strip leading assistant bubbles (UI greeting). */
-function toGeminiContents(
+/** Drop UI greeting so the thread starts with a user turn (better for some providers). */
+function stripLeadingAssistant(
   messages: { role: "user" | "assistant"; content: string }[],
-): { role: string; parts: { text: string }[] }[] {
+): { role: "user" | "assistant"; content: string }[] {
   let slice = messages;
   while (slice.length > 0 && slice[0].role === "assistant") {
     slice = slice.slice(1);
   }
-  return slice.map((m) => ({
-    role: m.role === "assistant" ? "model" : "user",
-    parts: [{ text: m.content }],
-  }));
+  return slice;
 }
 
 export const askHelpQuestion = action({
@@ -73,7 +64,7 @@ export const askHelpQuestion = action({
     ),
   },
   handler: async (_ctx, args) => {
-    const apiKey = geminiApiKey();
+    const apiKey = process.env.OPENROUTER_API_KEY?.trim();
     if (!apiKey) {
       return {
         reply:
@@ -81,9 +72,8 @@ export const askHelpQuestion = action({
       };
     }
 
-    const recent = args.messages.slice(-6);
-    const contents = toGeminiContents(recent);
-    if (contents.length === 0 || contents[0].role !== "user") {
+    const recent = stripLeadingAssistant(args.messages.slice(-6));
+    if (recent.length === 0 || recent[0].role !== "user") {
       return {
         reply:
           "Please type your question in the box below, then send it so I can help.",
@@ -91,28 +81,37 @@ export const askHelpQuestion = action({
     }
 
     const model =
-      process.env.GEMINI_MODEL?.trim().replace(/^models\//, "") ||
-      DEFAULT_GEMINI_MODEL;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      process.env.OPENROUTER_MODEL?.trim() || DEFAULT_OPENROUTER_MODEL;
+    const referer =
+      process.env.OPENROUTER_HTTP_REFERER?.trim() || "https://joinvibo.com";
+    const title =
+      process.env.OPENROUTER_APP_TITLE?.trim() || "Vibo Help Center";
 
-    const res = await fetch(url, {
+    const res = await fetch(OPENROUTER_CHAT_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": referer,
+        "X-Title": title,
+      },
       body: JSON.stringify({
-        systemInstruction: {
-          parts: [{ text: VIBO_SYSTEM_PROMPT }],
-        },
-        contents,
-        generationConfig: {
-          temperature: 0.4,
-          maxOutputTokens: 500,
-        },
+        model,
+        messages: [
+          { role: "system", content: VIBO_SYSTEM_PROMPT },
+          ...recent.map((m) => ({
+            role: m.role,
+            content: m.content,
+          })),
+        ],
+        max_tokens: 500,
+        temperature: 0.4,
       }),
     });
 
     if (!res.ok) {
       const text = await res.text();
-      console.error("Gemini error:", res.status, text.slice(0, 400));
+      console.error("OpenRouter error:", res.status, text.slice(0, 400));
       return {
         reply:
           "Sorry, I could not process your question right now. Please try again or browse the help articles.",
@@ -120,19 +119,14 @@ export const askHelpQuestion = action({
     }
 
     const data = (await res.json()) as {
-      candidates?: Array<{
-        content?: { parts?: Array<{ text?: string }> };
-      }>;
+      choices?: Array<{ message?: { content?: string | null } }>;
       error?: { message?: string };
     };
 
-    const parts = data.candidates?.[0]?.content?.parts;
-    const raw =
-      parts?.map((p) => p.text ?? "").join("")?.trim() ?? "";
-
+    const raw = data.choices?.[0]?.message?.content?.trim() ?? "";
     if (!raw) {
       console.error(
-        "Gemini empty response:",
+        "OpenRouter empty response:",
         JSON.stringify(data).slice(0, 500),
       );
       return {
