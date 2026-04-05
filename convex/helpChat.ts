@@ -39,6 +39,30 @@ RULES:
 - Never make up features that are not listed above.
 - Do not discuss competitors or other apps.`;
 
+const DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
+
+function geminiApiKey(): string | null {
+  const key =
+    process.env.GEMINI_API_KEY?.trim() ||
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim() ||
+    "";
+  return key || null;
+}
+
+/** Gemini expects roles `user` and `model` (not assistant). Strip leading assistant bubbles (UI greeting). */
+function toGeminiContents(
+  messages: { role: "user" | "assistant"; content: string }[],
+): { role: string; parts: { text: string }[] }[] {
+  let slice = messages;
+  while (slice.length > 0 && slice[0].role === "assistant") {
+    slice = slice.slice(1);
+  }
+  return slice.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content }],
+  }));
+}
+
 export const askHelpQuestion = action({
   args: {
     messages: v.array(
@@ -49,7 +73,7 @@ export const askHelpQuestion = action({
     ),
   },
   handler: async (_ctx, args) => {
-    const apiKey = process.env.OPENAI_API_KEY?.trim();
+    const apiKey = geminiApiKey();
     if (!apiKey) {
       return {
         reply:
@@ -58,38 +82,65 @@ export const askHelpQuestion = action({
     }
 
     const recent = args.messages.slice(-6);
+    const contents = toGeminiContents(recent);
+    if (contents.length === 0 || contents[0].role !== "user") {
+      return {
+        reply:
+          "Please type your question in the box below, then send it so I can help.",
+      };
+    }
 
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const model =
+      process.env.GEMINI_MODEL?.trim().replace(/^models\//, "") ||
+      DEFAULT_GEMINI_MODEL;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+    const res = await fetch(url, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: VIBO_SYSTEM_PROMPT },
-          ...recent,
-        ],
-        max_tokens: 500,
-        temperature: 0.4,
+        systemInstruction: {
+          parts: [{ text: VIBO_SYSTEM_PROMPT }],
+        },
+        contents,
+        generationConfig: {
+          temperature: 0.4,
+          maxOutputTokens: 500,
+        },
       }),
     });
 
     if (!res.ok) {
       const text = await res.text();
-      console.error("OpenAI error:", res.status, text.slice(0, 400));
+      console.error("Gemini error:", res.status, text.slice(0, 400));
       return {
         reply:
           "Sorry, I could not process your question right now. Please try again or browse the help articles.",
       };
     }
 
-    const data = await res.json();
-    const reply: string =
-      data.choices?.[0]?.message?.content?.trim() ??
-      "I could not generate a response. Please try rephrasing your question.";
+    const data = (await res.json()) as {
+      candidates?: Array<{
+        content?: { parts?: Array<{ text?: string }> };
+      }>;
+      error?: { message?: string };
+    };
 
-    return { reply };
+    const parts = data.candidates?.[0]?.content?.parts;
+    const raw =
+      parts?.map((p) => p.text ?? "").join("")?.trim() ?? "";
+
+    if (!raw) {
+      console.error(
+        "Gemini empty response:",
+        JSON.stringify(data).slice(0, 500),
+      );
+      return {
+        reply:
+          "Sorry, I could not generate an answer for that. Please try rephrasing or browse the help articles.",
+      };
+    }
+
+    return { reply: raw };
   },
 });
