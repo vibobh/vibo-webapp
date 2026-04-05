@@ -349,5 +349,17 @@
     "legalLinks": ["Terms of Service", "Privacy Policy", "Cookie Policy"],
     "copyright": "© 2026 Vibo. All rights reserved.",
     "switchLang": "العربية"
+  },
+  "help": {
+    "heroTitle": "How can we help you?",
+    "heroSubtitle": "Search for topics or browse categories below.",
+    "searchPlaceholder": "Search help articles...",
+    "categoriesHeading": "Browse by topic",
+    "backToHelp": "Help Center",
+    "notFound": "Page not found.",
+    "chatTitle": "Vibo Help Assistant",
+    "chatGreeting": "Hi! I'm Vibo's help assistant. Ask me anything about using Vibo.",
+    "chatPlaceholder": "Type your question...",
+    "chatError": "Sorry, something went wrong. Please try again."
   }
 }
