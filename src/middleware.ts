@@ -6,6 +6,16 @@ export function middleware(request: NextRequest) {
 
   // Serve help center on the subdomain (rewrite keeps help.joinvibo.com in the URL bar).
   if (host.startsWith("help.joinvibo.com")) {
+    // Do not rewrite public assets: /help/images/... would 404 (images live at /images/...).
+    const isPublicAsset =
+      pathname.startsWith("/images/") ||
+      pathname.startsWith("/videos/") ||
+      /\.(ico|png|jpg|jpeg|gif|webp|svg|mp4|webm|woff2?|txt|xml)$/i.test(
+        pathname,
+      );
+    if (isPublicAsset) {
+      return NextResponse.next();
+    }
     const url = request.nextUrl.clone();
     url.pathname = `/help${pathname === "/" ? "" : pathname}`;
     url.search = search;
