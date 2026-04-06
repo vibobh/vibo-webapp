@@ -50,16 +50,17 @@ export default function HelpPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5] flex flex-col" dir={rtl ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-[#fdfcf9] flex flex-col" dir={rtl ? "rtl" : "ltr"}>
       <Navbar t={t} lang={lang} onSwitchLang={switchLang} siteOrigin={SITE_ORIGIN} />
 
-      {/* Hero */}
+      {/* Hero — same cream + soft rose wash as main marketing pages */}
       <section className="relative overflow-hidden pt-32 pb-10 sm:pt-40 sm:pb-14 px-4">
+        <div className="absolute inset-0 bg-gradient-to-b from-vibo-rose/50 to-transparent pointer-events-none" />
         <div className="relative max-w-3xl mx-auto text-center space-y-6">
           <h1 className="text-3xl sm:text-5xl font-bold text-neutral-900 tracking-tight">
             {th.heroTitle || "How can we help you?"}
           </h1>
-          <p className="text-neutral-600 text-base sm:text-lg max-w-xl mx-auto">
+          <p className="text-neutral-600 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
             {th.heroSubtitle || "Ask a question below or browse categories."}
           </p>
           <HelpAiSearch lang={lang} copy={aiCopy} helpBasePath="/help" />
@@ -68,7 +69,7 @@ export default function HelpPage() {
 
       {/* Categories grid */}
       <section className="flex-1 px-4 pb-20 max-w-5xl mx-auto w-full">
-        <h2 className="text-xl font-semibold text-neutral-800 mb-6 text-center">
+        <h2 className="text-xl font-semibold text-vibo-primary mb-6 text-center">
           {th.categoriesHeading || "Browse by topic"}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
