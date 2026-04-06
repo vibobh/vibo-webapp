@@ -352,14 +352,23 @@
   },
   "help": {
     "heroTitle": "How can we help you?",
-    "heroSubtitle": "Search for topics or browse categories below.",
-    "searchPlaceholder": "Search help articles...",
+    "heroSubtitle": "Ask a question below or browse categories.",
     "categoriesHeading": "Browse by topic",
     "backToHelp": "Help Center",
     "notFound": "Page not found.",
-    "chatTitle": "Vibo Help Assistant",
-    "chatGreeting": "Hi! I'm Vibo's help assistant. Ask me anything about using Vibo.",
-    "chatPlaceholder": "Type your question...",
-    "chatError": "Sorry, something went wrong. Please try again."
+    "aiSearchPlaceholder": "Try asking: How can I…",
+    "aiDisclaimerBefore": "AI search uses Gen AI, so verify results and avoid sharing sensitive info. For more info, ",
+    "aiDisclaimerLink": "go here",
+    "aiDisclaimerLinkHref": "https://joinvibo.com",
+    "aiChips": [
+      "How do I use Add Yours on stories?",
+      "How do I switch between accounts?",
+      "What are Vibes?"
+    ],
+    "aiAnswerTitle": "AI Answer",
+    "aiAnswerFooter": "AI search uses Gen AI to summarise answers to common questions about Vibo.",
+    "aiSourcesTitle": "Sources",
+    "aiLoading": "Thinking…",
+    "aiError": "Sorry, something went wrong. Please try again."
   }
 }

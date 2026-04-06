@@ -7,7 +7,6 @@ import { useViboLang } from "@/i18n/useViboLang";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HelpArticleView from "@/components/help/HelpArticleView";
-import HelpChatWidget from "@/components/help/HelpChatWidget";
 import { getArticleById, getCategoryBySlug } from "@/data/helpArticles";
 
 const SITE_ORIGIN = "https://joinvibo.com";
@@ -60,20 +59,6 @@ export default function HelpArticlePage() {
       </main>
 
       <Footer t={t} lang={lang} onSwitchLang={switchLang} siteOrigin={SITE_ORIGIN} />
-
-      <HelpChatWidget
-        lang={lang}
-        labels={{
-          title: th.chatTitle || "Vibo Help Assistant",
-          greeting:
-            th.chatGreeting ||
-            "Hi! I'm Vibo's help assistant. Ask me anything about using Vibo.",
-          placeholder: th.chatPlaceholder || "Type your question...",
-          errorRetry:
-            th.chatError ||
-            "Sorry, something went wrong. Please try again.",
-        }}
-      />
     </div>
   );
 }
