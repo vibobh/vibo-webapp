@@ -61,17 +61,30 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
         .delay-500 { animation-delay: 0.5s; }
       `}</style>
 
-      <div className="flex flex-col gap-10 lg:gap-12">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 items-start">
-          {/* --- LEFT COLUMN --- */}
-          <div className="lg:col-span-7 flex flex-col justify-center space-y-6 pt-2 order-2 lg:order-1">
-            {/* Description */}
-            <p className="animate-fade-in delay-100 max-w-xl text-base sm:text-lg text-neutral-600 leading-relaxed lg:mx-0 mx-auto text-center lg:text-start">
-              {props.subtitle}
-            </p>
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 items-start">
+        {/* --- LEFT COLUMN --- */}
+        <div className="lg:col-span-7 flex flex-col justify-center space-y-8 pt-2">
+          {/* Keeps headline vertical rhythm similar to when the pill badge was above */}
+          <div className="h-9 sm:h-10 shrink-0" aria-hidden />
 
-            {/* CTA Buttons */}
-            <div className="animate-fade-in delay-200 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          {/* Heading — three lines, smaller type than before */}
+          <h1
+            className="animate-fade-in delay-200 text-[1.65rem] sm:text-4xl lg:text-5xl xl:text-6xl font-semibold tracking-tighter leading-[1.05] text-neutral-900"
+          >
+            {props.titleStart.trim()}
+            <br />
+            <span className="bg-gradient-to-br from-vibo-primary via-vibo-primary to-vibo-gold bg-clip-text text-transparent">
+              {props.titleAccent.trim()}
+            </span>
+            <br />
+            {props.titleEnd.trim()}
+          </h1>
+
+          {/* Description */}
+          <p className="animate-fade-in delay-300 max-w-xl text-lg text-neutral-600 leading-relaxed">{props.subtitle}</p>
+
+          {/* CTA Buttons */}
+          <div className="animate-fade-in delay-400 flex flex-col sm:flex-row gap-4">
             <a
               href="#objectives"
               className="group inline-flex items-center justify-center gap-2 rounded-full bg-vibo-primary px-8 py-4 text-sm font-semibold text-white transition-all hover:scale-[1.02] hover:bg-vibo-primary-light active:scale-[0.98]"
@@ -94,11 +107,11 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
             >
               {props.createAd}
             </a>
-            </div>
           </div>
+        </div>
 
-          {/* --- RIGHT COLUMN --- */}
-          <div className="lg:col-span-5 space-y-6 lg:mt-6 order-1 lg:order-2">
+        {/* --- RIGHT COLUMN --- */}
+        <div className="lg:col-span-5 space-y-6 lg:mt-6">
           {/* Stats Card */}
           <div className="animate-fade-in delay-500 relative overflow-hidden rounded-3xl border border-vibo-primary/15 bg-white/75 p-8 backdrop-blur-xl shadow-[0_16px_40px_rgba(75,4,21,0.08)]">
             <div className="relative z-10">
@@ -199,20 +212,6 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
               </div>
             )}
           </div>
-        </div>
-        </div>
-
-        {/* --- HEADLINE: bottom, centered, three lines --- */}
-        <div className="w-full flex justify-center px-2 pb-1">
-          <h1
-            className="animate-fade-in delay-300 text-center text-[1.5rem] sm:text-2xl md:text-[1.85rem] lg:text-3xl xl:text-[2.15rem] font-semibold tracking-tighter leading-snug text-neutral-900 max-w-[20ch] sm:max-w-none"
-          >
-            <span className="block">{props.titleStart.trim()}</span>
-            <span className="block bg-gradient-to-br from-vibo-primary via-vibo-primary to-vibo-gold bg-clip-text text-transparent">
-              {props.titleAccent}
-            </span>
-            <span className="block">{props.titleEnd.trim()}</span>
-          </h1>
         </div>
       </div>
     </div>
