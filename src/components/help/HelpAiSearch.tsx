@@ -135,7 +135,7 @@ export default function HelpAiSearch({ lang, copy, helpBasePath }: Props) {
           </a>
         </p>
 
-        <div className="flex flex-wrap gap-2 pt-1 border-t border-vibo-gold/25">
+        <div className="flex flex-wrap gap-2 justify-center pt-1 border-t border-vibo-gold/25">
           {copy.chips.map((chip, i) => (
             <button
               key={i}
