@@ -127,7 +127,6 @@ export default function BusinessesPage() {
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               >
                 <GlassmorphismTrustHero
-                  tagline={tb.tagline}
                   titleStart={tb.hero.titleStart}
                   titleAccent={tb.hero.titleAccent}
                   titleEnd={tb.hero.titleEnd}

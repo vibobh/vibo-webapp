@@ -1,13 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  ArrowRight,
-  Play,
-  Target,
-  Crown,
-  Star,
-} from "lucide-react";
+import { ArrowRight, Play, Target, Crown } from "lucide-react";
 
 type HeroProfile = {
   name: string;
@@ -15,7 +9,6 @@ type HeroProfile = {
 };
 
 export type GlassmorphismTrustHeroProps = {
-  tagline: string;
   titleStart: string;
   titleAccent: string;
   titleEnd: string;
@@ -70,20 +63,10 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 items-start">
         {/* --- LEFT COLUMN --- */}
-        <div className="lg:col-span-7 flex flex-col justify-center space-y-8 pt-2">
-          {/* Badge */}
-          <div className="animate-fade-in delay-100">
-            <div className="inline-flex items-center gap-2 rounded-full border border-vibo-primary/15 bg-white/70 px-3 py-1.5 backdrop-blur-md transition-colors hover:bg-white/85">
-              <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-700 flex items-center gap-2">
-                {props.tagline}
-                <Star className="w-3.5 h-3.5 text-vibo-gold fill-vibo-gold" />
-              </span>
-            </div>
-          </div>
-
+        <div className="lg:col-span-7 flex flex-col justify-center space-y-6 pt-2">
           {/* Heading */}
           <h1
-            className="animate-fade-in delay-200 text-[2.6rem] sm:text-6xl lg:text-7xl xl:text-8xl font-semibold tracking-tighter leading-[0.95] text-neutral-900"
+            className="animate-fade-in delay-100 text-[1.875rem] sm:text-4xl md:text-[2.25rem] lg:text-5xl xl:text-6xl font-semibold tracking-tighter leading-[1.05] text-neutral-900"
           >
             {props.titleStart}
             <br />
@@ -94,10 +77,10 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
           </h1>
 
           {/* Description */}
-          <p className="animate-fade-in delay-300 max-w-xl text-lg text-neutral-600 leading-relaxed">{props.subtitle}</p>
+          <p className="animate-fade-in delay-200 max-w-xl text-base sm:text-lg text-neutral-600 leading-relaxed">{props.subtitle}</p>
 
           {/* CTA Buttons */}
-          <div className="animate-fade-in delay-400 flex flex-col sm:flex-row gap-4">
+          <div className="animate-fade-in delay-300 flex flex-col sm:flex-row gap-4">
             <a
               href="#objectives"
               className="group inline-flex items-center justify-center gap-2 rounded-full bg-vibo-primary px-8 py-4 text-sm font-semibold text-white transition-all hover:scale-[1.02] hover:bg-vibo-primary-light active:scale-[0.98]"
