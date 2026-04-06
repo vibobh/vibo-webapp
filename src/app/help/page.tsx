@@ -31,9 +31,6 @@ export default function HelpPage() {
 
   const aiCopy: HelpAiSearchCopy = {
     placeholder: th.aiSearchPlaceholder ?? "Try asking: How can I…",
-    disclaimerBefore: th.aiDisclaimerBefore ?? "",
-    disclaimerLink: th.aiDisclaimerLink ?? "go here",
-    disclaimerLinkHref: th.aiDisclaimerLinkHref ?? "https://joinvibo.com",
     chips: Array.isArray(th.aiChips) ? th.aiChips : [],
     answerTitle: th.aiAnswerTitle ?? "AI Answer",
     answerFooter: th.aiAnswerFooter ?? "",

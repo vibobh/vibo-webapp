@@ -357,9 +357,6 @@
     "backToHelp": "Help Center",
     "notFound": "Page not found.",
     "aiSearchPlaceholder": "Try asking: How can I…",
-    "aiDisclaimerBefore": "AI search uses Gen AI, so verify results and avoid sharing sensitive info. For more info, ",
-    "aiDisclaimerLink": "go here",
-    "aiDisclaimerLinkHref": "https://joinvibo.com",
     "aiChips": [
       "How do I use Add Yours on stories?",
       "How do I switch between accounts?",

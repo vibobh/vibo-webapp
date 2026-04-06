@@ -13,9 +13,6 @@ const MAX_LEN = 90;
 
 export type HelpAiSearchCopy = {
   placeholder: string;
-  disclaimerBefore: string;
-  disclaimerLink: string;
-  disclaimerLinkHref: string;
   chips: string[];
   answerTitle: string;
   answerFooter: string;
@@ -113,16 +110,6 @@ export default function HelpAiSearch({ lang, copy, helpBasePath }: Props) {
             {query.length}/{MAX_LEN}
           </div>
         </div>
-
-        <p className="text-[13px] leading-snug text-neutral-700 px-0.5">
-          {copy.disclaimerBefore}
-          <a
-            href={copy.disclaimerLinkHref}
-            className="text-vibo-primary hover:text-vibo-primary-light font-medium underline-offset-2 hover:underline"
-          >
-            {copy.disclaimerLink}
-          </a>
-        </p>
 
         <div className="flex flex-wrap gap-2 justify-center pt-1 border-t border-vibo-gold/25">
           {copy.chips.map((chip, i) => (
