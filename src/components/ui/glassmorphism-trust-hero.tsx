@@ -37,7 +37,7 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
   const shouldMarquee = clients.length > 1;
 
   return (
-    <div className="relative w-full text-neutral-900 overflow-hidden font-sans">
+    <div className="relative w-full text-neutral-900 overflow-x-hidden overflow-y-visible font-sans">
       <style>{`
         @keyframes fadeSlideIn {
           from { opacity: 0; transform: translateY(20px); }
@@ -63,17 +63,19 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 items-start">
         {/* --- LEFT COLUMN --- */}
-        <div className="lg:col-span-7 flex flex-col justify-center space-y-8 pt-2">
+        <div className="lg:col-span-7 flex min-w-0 flex-col justify-center space-y-8 pt-2">
           {/* Keeps headline vertical rhythm similar to when the pill badge was above */}
           <div className="h-9 sm:h-10 shrink-0" aria-hidden />
 
           {/* Heading — three lines, smaller type than before */}
           <h1
-            className="animate-fade-in delay-200 text-[1.65rem] sm:text-4xl lg:text-5xl xl:text-6xl font-semibold tracking-tighter leading-[1.05] text-neutral-900"
+            className="animate-fade-in delay-200 text-[1.65rem] sm:text-4xl lg:text-5xl xl:text-6xl font-semibold tracking-tighter leading-[1.05] text-neutral-900 overflow-visible"
           >
             {props.titleStart.trim()}
             <br />
-            <span className="bg-gradient-to-br from-vibo-primary via-vibo-primary to-vibo-gold bg-clip-text text-transparent">
+            <span
+              className="inline-block bg-gradient-to-br from-vibo-primary via-vibo-primary to-vibo-gold bg-clip-text text-transparent tracking-tight pr-[0.28em] pb-[0.06em]"
+            >
               {props.titleAccent.trim()}
             </span>
             <br />
