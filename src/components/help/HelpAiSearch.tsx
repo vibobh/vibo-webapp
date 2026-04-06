@@ -1,15 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef, type FormEvent } from "react";
-import {
-  ChevronDown,
-  Loader2,
-  Search,
-  Sparkles,
-  ThumbsDown,
-  ThumbsUp,
-  X,
-} from "lucide-react";
+import { ChevronDown, Loader2, ThumbsDown, ThumbsUp, X } from "lucide-react";
+import HelpAiSearchIcon from "@/components/help/HelpAiSearchIcon";
 import { useAction } from "convex/react";
 import { api } from "@convex/_generated/api";
 import type { Lang } from "@/i18n";
@@ -89,12 +82,8 @@ export default function HelpAiSearch({ lang, copy, helpBasePath }: Props) {
           className="relative rounded-2xl border-2 border-vibo-gold/70 bg-white shadow-sm focus-within:border-vibo-primary focus-within:ring-2 focus-within:ring-vibo-primary/15 transition-all"
         >
           <div className="flex items-start gap-2 pl-3 pr-2 pt-3 pb-8 sm:pl-4">
-            <div
-              className="mt-0.5 shrink-0 flex items-center gap-1 text-vibo-primary"
-              aria-hidden
-            >
-              <Sparkles className="h-4 w-4 text-vibo-gold shrink-0" />
-              <Search className="h-7 w-7 stroke-[2] shrink-0" />
+            <div className="mt-0.5 shrink-0" aria-hidden>
+              <HelpAiSearchIcon size="field" />
             </div>
             <input
               type="text"
@@ -155,7 +144,7 @@ export default function HelpAiSearch({ lang, copy, helpBasePath }: Props) {
       {(loading || answer) && (
         <div className="rounded-2xl border border-vibo-gold/40 bg-white shadow-md overflow-hidden text-left">
           <div className="px-4 sm:px-5 pt-4 pb-2 flex items-center gap-2 border-b border-vibo-gold/25 bg-gradient-to-r from-vibo-rose/40 to-white">
-            <Sparkles className="h-4 w-4 text-vibo-gold shrink-0" aria-hidden />
+            <HelpAiSearchIcon size="compact" />
             <span className="font-semibold text-vibo-primary">{copy.answerTitle}</span>
           </div>
           <div className="px-4 sm:px-5 py-4">
