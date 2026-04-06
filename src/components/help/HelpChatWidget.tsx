@@ -82,9 +82,9 @@ export default function HelpChatWidget({ lang, labels }: HelpChatWidgetProps) {
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 bg-vibo-primary text-white shrink-0">
             <img
-              src="/vibo-app-icon.png"
+              src="/images/vibo-icon-maroon.png"
               alt="Vibo"
-              className="h-8 w-8 rounded-full bg-white/20"
+              className="h-[30px] w-auto shrink-0 brightness-0 invert"
             />
             <span className="font-semibold text-sm">{labels.title}</span>
           </div>
