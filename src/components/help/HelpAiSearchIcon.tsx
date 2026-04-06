@@ -1,25 +1,33 @@
 /**
- * AI search mark: line-art asset shipped at `public/icons/help-ai-search.png`.
+ * AI search mark from `public/icons/help-ai-search.png`, tinted with Vibo primary via mask.
  */
 type Props = {
   className?: string;
   size?: "field" | "compact";
 };
 
+const MASK = "url(/icons/help-ai-search.png)";
+
 export default function HelpAiSearchIcon({
   className = "",
   size = "field",
 }: Props) {
-  const dim = size === "field" ? "h-8 w-8" : "h-5 w-5";
-  const px = size === "field" ? 32 : 20;
+  const px = size === "field" ? 22 : 16;
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- small static UI icon
-    <img
-      src="/icons/help-ai-search.png"
-      alt=""
-      width={px}
-      height={px}
-      className={`shrink-0 object-contain ${dim} opacity-[0.92] ${className}`}
+    <span
+      className={`inline-block shrink-0 bg-vibo-primary ${className}`}
+      style={{
+        width: px,
+        height: px,
+        WebkitMaskImage: MASK,
+        maskImage: MASK,
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+      }}
       aria-hidden
     />
   );

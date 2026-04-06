@@ -79,10 +79,10 @@ export default function HelpAiSearch({ lang, copy, helpBasePath }: Props) {
     <div className="w-full max-w-2xl mx-auto space-y-4" dir={isAr ? "rtl" : "ltr"}>
       <form onSubmit={onSubmit} className="space-y-3">
         <div
-          className="relative rounded-2xl border-2 border-vibo-gold/70 bg-white shadow-sm focus-within:border-vibo-primary focus-within:ring-2 focus-within:ring-vibo-primary/15 transition-all"
+          className="relative rounded-2xl border-2 border-vibo-gold/70 bg-white shadow-sm focus-within:border-vibo-primary focus-within:ring-2 focus-within:ring-vibo-primary/15 transition-all pb-7"
         >
-          <div className="flex items-start gap-2 pl-3 pr-2 pt-3 pb-8 sm:pl-4">
-            <div className="mt-0.5 shrink-0" aria-hidden>
+          <div className="flex items-center gap-2.5 pl-3 pr-2 py-2.5 sm:pl-4 sm:py-3">
+            <div className="flex shrink-0 items-center" aria-hidden>
               <HelpAiSearchIcon size="field" />
             </div>
             <input
@@ -91,7 +91,7 @@ export default function HelpAiSearch({ lang, copy, helpBasePath }: Props) {
               maxLength={MAX_LEN}
               onChange={(e) => setQuery(e.target.value.slice(0, MAX_LEN))}
               placeholder={copy.placeholder}
-              className="flex-1 min-w-0 bg-transparent border-0 py-1 text-[15px] text-neutral-900 placeholder:text-neutral-400 outline-none"
+              className="flex-1 min-w-0 bg-transparent border-0 py-0.5 text-[15px] text-neutral-900 placeholder:text-neutral-400 outline-none"
               autoComplete="off"
             />
             {query ? (
