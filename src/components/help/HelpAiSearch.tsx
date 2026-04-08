@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, type FormEvent } from "react";
-import { ChevronDown, Loader2, ThumbsDown, ThumbsUp, X } from "lucide-react";
+import { ChevronDown, Loader2, X } from "lucide-react";
 import HelpAiSearchIcon from "@/components/help/HelpAiSearchIcon";
 import { useAction } from "convex/react";
 import { api } from "@convex/_generated/api";
@@ -145,22 +145,6 @@ export default function HelpAiSearch({ lang, copy, helpBasePath }: Props) {
                 <p className="text-[15px] leading-relaxed text-neutral-800 whitespace-pre-wrap">
                   {answer}
                 </p>
-                <div className="flex justify-center gap-6 mt-5 pt-2">
-                  <button
-                    type="button"
-                    className="p-2 rounded-full text-vibo-gold hover:text-vibo-primary hover:bg-vibo-rose/60"
-                    aria-label="Helpful"
-                  >
-                    <ThumbsUp className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    className="p-2 rounded-full text-vibo-gold hover:text-vibo-primary hover:bg-vibo-rose/60"
-                    aria-label="Not helpful"
-                  >
-                    <ThumbsDown className="h-5 w-5" />
-                  </button>
-                </div>
 
                 {topSources.length > 0 && (
                   <div className="mt-4 border-t border-vibo-gold/20 pt-3">
