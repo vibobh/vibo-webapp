@@ -116,7 +116,7 @@ function UsersRow({ names, tone }: { names: string[]; tone: keyof typeof toneCla
   return (
     <div className="mt-5 flex items-center gap-2">
       {peopleByTone.gold.map((person) =>
-        person.href ? (
+        "href" in person ? (
           <a
             key={person.name}
             href={person.href}
