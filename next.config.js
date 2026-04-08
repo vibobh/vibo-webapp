@@ -22,6 +22,8 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
+      { protocol: "https", hostname: "joinvibo.com" },
+      { protocol: "https", hostname: "www.joinvibo.com" },
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "images.pexels.com" },
       // News article thumbnails (NewsAPI) use <img> in newsroom; these help if you switch to next/image.

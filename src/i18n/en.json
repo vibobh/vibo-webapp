@@ -5,6 +5,8 @@
     "about": "About",
     "blog": "Blog",
     "newsroom": "Newsroom",
+    "businesses": "Businesses",
+    "helpCenter": "Help Center",
     "careers": "Careers",
     "download": "Download Vibo"
   },
@@ -87,8 +89,22 @@
     "publicUrl": "Public URL"
   },
   "hero": {
-    "headline": "Real people. Real moments.",
-    "subtitle": "A global social platform born in the Middle East, connecting creators worldwide."
+    "headline": "Vibo (فايبو)",
+    "subtitle": "Vibo is a social media platform for short video, photos, and real moments. Download the Vibo app to share Vibo videos and posts with people around the world."
+  },
+  "home": {
+    "seo": {
+      "whatHeading": "What is Vibo?",
+      "whatBody": "Vibo (فايبو) is a social media platform where you share videos and posts, discover creators, and stay in touch with friends. Use the Vibo app on your phone to scroll a personalized feed, post stories, and join conversations — built for authentic expression.",
+      "whyHeading": "Why Vibo is different",
+      "whyBody": "Vibo blends short video, stories, and messaging in one experience designed for creators and everyday users. The platform emphasizes discovery, safety, and community — so your Vibo videos and posts reach people who care about your niche.",
+      "featuresHeading": "Vibo features",
+      "features": [
+        "Short-form video and a dynamic For You experience",
+        "Stories, messaging, and creator tools in one app",
+        "Privacy controls and reporting to help keep the community safe"
+      ]
+    }
   },
   "about": {
     "statement": "Vibo is where creativity meets community. A space for everyone to share their story, discover new perspectives, connect with the world, and find the things that truly move them. We believe every person has something worth sharing."

@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import "./globals.css";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
+import JsonLd from "@/components/seo/JsonLd";
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+  DEFAULT_PAGE_TITLE,
+  OG_IMAGE_PATH,
+  SITE_URL,
+} from "@/lib/seo";
 
 /** Arabic UI — Medium as default; 600/700 for semibold/bold in RTL */
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
@@ -12,18 +20,58 @@ const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://joinvibo.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Vibo",
+    default: DEFAULT_PAGE_TITLE,
     template: "%s | Vibo",
   },
-  description:
-    "Vibo is a global social media platform where creativity meets connection. Share short videos, stories, and messages with a community that celebrates authenticity.",
-  /** Favicons: 128×128 from `public/vibo-app-icon.png` (tight crop, transparent bg). Regenerate: `npm run generate:favicon` */
+  description: DEFAULT_DESCRIPTION,
+  keywords: [...DEFAULT_KEYWORDS],
+  alternates: {
+    canonical: "/",
+    languages: {
+      en: `${SITE_URL}/`,
+      ar: `${SITE_URL}/`,
+      "x-default": `${SITE_URL}/`,
+    },
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
-    title: "Vibo",
-    url: "https://joinvibo.com",
+    type: "website",
+    locale: "en_US",
+    url: SITE_URL,
     siteName: "Vibo",
+    title: "Vibo",
+    description: DEFAULT_DESCRIPTION,
+    images: [
+      {
+        url: OG_IMAGE_PATH,
+        width: 1200,
+        height: 630,
+        alt: "Vibo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vibo",
+    description: DEFAULT_DESCRIPTION,
+    images: [OG_IMAGE_PATH],
   },
 };
 
@@ -35,6 +83,7 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr">
       <body className={`${ibmPlexSansArabic.variable} font-en antialiased`}>
+        <JsonLd />
         <ConvexClientProvider>{children}</ConvexClientProvider>
       </body>
     </html>

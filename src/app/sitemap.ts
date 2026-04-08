@@ -1,7 +1,21 @@
 import type { MetadataRoute } from "next";
 import { api, getConvexClient } from "@/lib/convexServer";
+import { SITE_URL } from "@/lib/seo";
 
-const SITE_URL = "https://joinvibo.com";
+/**
+ * When public profile routes exist (e.g. /u/[username]), return their canonical URLs here.
+ * Do not emit URLs that 404 — wait until the route and data source are live.
+ */
+export function getProfileSitemapEntries(): MetadataRoute.Sitemap {
+  return [];
+}
+
+/**
+ * When public post permalinks exist (e.g. /post/[id]), return them here with lastModified from your API.
+ */
+export function getPostSitemapEntries(): MetadataRoute.Sitemap {
+  return [];
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base: MetadataRoute.Sitemap = [
@@ -48,9 +62,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.8,
     }));
-    return [...base, ...postUrls];
+    return [
+      ...base,
+      ...postUrls,
+      ...getProfileSitemapEntries(),
+      ...getPostSitemapEntries(),
+    ];
   } catch {
-    return base;
+    return [...base, ...getProfileSitemapEntries(), ...getPostSitemapEntries()];
   }
 }
 

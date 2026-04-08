@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import type { Lang } from "@/i18n";
+
+const HELP_ORIGIN = "https://help.joinvibo.com";
+const WWW_JOINVIBO_HOST = "www.joinvibo.com";
 
 export type HeaderAnchorItem = { id: string; href: string; label: string };
 
@@ -30,13 +33,27 @@ export default function Navbar({
   const pathname = usePathname();
   const origin = siteOrigin?.replace(/\/$/, "") ?? "";
 
+  const [isWwwJoinvibo, setIsWwwJoinvibo] = useState(false);
+  useEffect(() => {
+    setIsWwwJoinvibo(window.location.hostname === WWW_JOINVIBO_HOST);
+  }, []);
+
   const q = `?lang=${lang}`;
-  const defaultNavItems: HeaderAnchorItem[] = [
-    { href: `${origin}/#about`, label: t.nav.about, id: "about" },
-    { href: `${origin}/blogs${q}`, label: t.nav.blog, id: "blog" },
-    { href: `${origin}/newsroom${q}`, label: t.nav.newsroom, id: "newsroom" },
-    { href: `${origin}/#careers`, label: t.nav.careers, id: "careers" },
-  ];
+  const defaultNavItems: HeaderAnchorItem[] = useMemo(() => {
+    const base: HeaderAnchorItem[] = [
+      { href: `${origin}/#about`, label: t.nav.about, id: "about" },
+      { href: `${origin}/blogs${q}`, label: t.nav.blog, id: "blog" },
+      { href: `${origin}/newsroom${q}`, label: t.nav.newsroom, id: "newsroom" },
+    ];
+    if (isWwwJoinvibo) {
+      base.push(
+        { href: `${origin}/businesses`, label: t.nav.businesses, id: "businesses" },
+        { href: `${HELP_ORIGIN}/${q}`, label: t.nav.helpCenter, id: "help" },
+      );
+    }
+    base.push({ href: `${origin}/#careers`, label: t.nav.careers, id: "careers" });
+    return base;
+  }, [origin, q, t.nav, isWwwJoinvibo]);
 
   const navItems = headerAnchorNav ?? defaultNavItems;
 
@@ -44,6 +61,8 @@ export default function Navbar({
     if (headerAnchorNav) return false;
     if (id === "newsroom") return pathname === "/newsroom" || pathname?.startsWith("/newsroom/");
     if (id === "blog") return pathname === "/blogs" || pathname?.startsWith("/blogs/");
+    if (id === "businesses")
+      return pathname === "/businesses" || pathname?.startsWith("/businesses/");
     return false;
   };
 

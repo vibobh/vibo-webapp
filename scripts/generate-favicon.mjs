@@ -1,4 +1,7 @@
 /**
+ * Legacy 128×128 icon outputs (app + public PNGs). For full SEO pack (og.png, 512 icon, apple-touch, favicon.ico) run:
+ *   npm run generate:seo-assets
+ *
  * Builds favicons from public/vibo-app-icon.png:
  * 128×128 px square (sharp when browsers scale down), minimal padding so the mark reads larger.
  * Run: node scripts/generate-favicon.mjs

@@ -7,6 +7,7 @@ import { useViboLang } from "@/i18n/useViboLang";
 import GradientBg from "@/components/GradientBg";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import HomeSeoSection from "@/components/HomeSeoSection";
 import Marquee from "@/components/Marquee";
 import About from "@/components/About";
 import PhoneShowcase from "@/components/PhoneShowcase";
@@ -41,6 +42,7 @@ export default function Home() {
         <Navbar t={t} lang={lang} onSwitchLang={switchLang} />
         <main className="relative z-[1]">
           <Hero t={t} />
+          <HomeSeoSection t={t} />
           <Marquee />
           <About t={t} />
           <PhoneShowcase t={t} />

@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "generate:favicon": "node scripts/generate-favicon.mjs",
+    "generate:seo-assets": "node scripts/generate-seo-assets.mjs",
     "generate:news-placeholder": "node scripts/transparent-news-placeholder.mjs",
     "convex:dev": "convex dev",
     "convex:deploy": "convex deploy",
@@ -44,6 +45,7 @@
     "postcss": "^8.4.0",
     "sharp": "^0.34.5",
     "tailwindcss": "^3.4.0",
+    "to-ico": "^1.1.5",
     "typescript": "^5.4.0"
   }
 }
