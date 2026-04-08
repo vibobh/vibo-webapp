@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { getTranslations, isRTL } from "@/i18n";
 import { useViboLang } from "@/i18n/useViboLang";
@@ -8,11 +8,9 @@ import GradientBg from "@/components/GradientBg";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Marquee from "@/components/Marquee";
-import BoostFlowPhone from "@/components/businesses/BoostFlowPhone";
-import BusinessesReelShowcase from "@/components/businesses/BusinessesReelShowcase";
 import BusinessContactSection from "@/components/businesses/BusinessContactSection";
-import BusinessGrowthContactSection from "@/components/businesses/BusinessGrowthContactSection";
 import GlassmorphismTrustHero from "@/components/ui/glassmorphism-trust-hero";
+import Pricing from "@/components/ui/pricing";
 
 const SITE_ORIGIN = "https://joinvibo.com";
 
@@ -25,14 +23,6 @@ export default function BusinessesPage() {
   const reducesMotion = useReducedMotion();
   const tb = t.businesses;
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [boostStep, setBoostStep] = useState(0);
-  const [boostFlowVisible, setBoostFlowVisible] = useState(false);
-  const boostStepRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const boostFlowSectionRef = useRef<HTMLElement | null>(null);
-  const pauseBoostAutoUntil = useRef(0);
-  const boostFlowWasVisible = useRef(false);
-  /** Skip one mobile auto-scroll after the user taps a step (they already scroll explicitly). */
-  const skipMobileStepScrollRef = useRef(false);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -40,55 +30,6 @@ export default function BusinessesPage() {
     document.body.classList.toggle("font-ar", rtl);
     document.body.classList.toggle("font-en", !rtl);
   }, [lang, rtl]);
-
-  const stepCount = tb.steps.length;
-
-  useEffect(() => {
-    const el = boostFlowSectionRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([e]) => setBoostFlowVisible(e.isIntersecting),
-      { threshold: [0, 0.08, 0.14, 0.22], rootMargin: "0px 0px -5% 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (boostFlowVisible && !boostFlowWasVisible.current) {
-      setBoostStep(0);
-    }
-    boostFlowWasVisible.current = boostFlowVisible;
-  }, [boostFlowVisible]);
-
-  useEffect(() => {
-    if (!boostFlowVisible || reducesMotion || stepCount < 1) return;
-    const intervalMs = 3200;
-    const id = window.setInterval(() => {
-      if (Date.now() < pauseBoostAutoUntil.current) return;
-      setBoostStep((s) => (s + 1) % stepCount);
-    }, intervalMs);
-    return () => clearInterval(id);
-  }, [boostFlowVisible, reducesMotion, stepCount]);
-
-  const pauseBoostAutoplay = (ms = 14000) => {
-    pauseBoostAutoUntil.current = Date.now() + ms;
-  };
-
-  useEffect(() => {
-    if (!boostFlowVisible || reducesMotion) return;
-    if (typeof window === "undefined" || window.matchMedia("(min-width: 1024px)").matches) return;
-    if (skipMobileStepScrollRef.current) {
-      skipMobileStepScrollRef.current = false;
-      return;
-    }
-    const el = boostStepRefs.current[boostStep];
-    if (!el) return;
-    const id = window.setTimeout(() => {
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 120);
-    return () => clearTimeout(id);
-  }, [boostStep, boostFlowVisible, reducesMotion]);
 
   return (
     <AnimatePresence mode="wait">
@@ -169,136 +110,7 @@ export default function BusinessesPage() {
             <StaggerGoals goals={tb.goals} reducesMotion={!!reducesMotion} />
           </section>
 
-          <section id="creative" className="max-w-[1400px] mx-auto section-padding py-14 sm:py-20 scroll-mt-28">
-            <motion.h2
-              className="text-[clamp(1.6rem,3vw,2.45rem)] font-bold tracking-[-0.03em] max-w-[960px] text-neutral-900"
-              initial={reducesMotion ? false : { opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={sectionView}
-              transition={{ duration: 0.55 }}
-            >
-              {tb.creativeHeading}
-            </motion.h2>
-            <div className="mt-10 grid lg:grid-cols-[0.95fr_1.05fr] gap-10 items-center">
-              <motion.div
-                className="flex justify-center lg:justify-start"
-                initial={reducesMotion ? false : { opacity: 0, x: rtl ? 24 : -24 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={sectionView}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <BusinessesReelShowcase copy={tb.reelComment} />
-              </motion.div>
-              <motion.div
-                initial={reducesMotion ? false : { opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={sectionView}
-                transition={{ duration: 0.55, delay: 0.08 }}
-              >
-                <p className="text-[11px] uppercase tracking-[0.16em] text-vibo-primary font-semibold">
-                  {tb.creativeKicker}
-                </p>
-                <p className="mt-2 text-[1.35rem] leading-snug font-semibold text-neutral-900">{tb.creativeLead}</p>
-                <p className="mt-4 text-neutral-600 leading-relaxed">{tb.creativeBody}</p>
-              </motion.div>
-            </div>
-          </section>
-
-          <section
-            ref={boostFlowSectionRef}
-            id="boost-flow"
-            className="max-w-[1400px] mx-auto section-padding max-lg:py-8 max-lg:pt-5 sm:py-14 lg:py-20 scroll-mt-28"
-          >
-            <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12 lg:items-start">
-              <motion.div
-                className="relative z-30 mx-auto w-full max-lg:max-w-[320px] max-lg:sticky max-lg:top-[4.65rem] max-lg:-mt-1 max-lg:bg-[#fdfcf9]/88 max-lg:backdrop-blur-md max-lg:py-2 max-lg:rounded-3xl lg:sticky lg:top-[5.75rem] lg:z-auto lg:mx-0 lg:bg-transparent lg:py-0 lg:backdrop-blur-none"
-                initial={reducesMotion ? false : { opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={sectionView}
-                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-br from-vibo-gold/35 via-vibo-primary/12 to-vibo-cream blur-2xl opacity-90 max-lg:opacity-75" aria-hidden />
-                <BoostFlowPhone
-                  activeStep={Math.min(boostStep, stepCount - 1)}
-                  reducesMotion={!!reducesMotion}
-                  phoneUi={tb.phoneUi}
-                />
-              </motion.div>
-              <div className="space-y-3 max-lg:scroll-mt-[calc(4.65rem+140px)]">
-                {tb.steps.map((stepTitle: string, i: number) => (
-                  <motion.div
-                    key={stepTitle}
-                    ref={(el) => {
-                      boostStepRefs.current[i] = el;
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    layout="position"
-                    onClick={() => {
-                      pauseBoostAutoplay();
-                      skipMobileStepScrollRef.current = true;
-                      setBoostStep(i);
-                      boostStepRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        pauseBoostAutoplay();
-                        skipMobileStepScrollRef.current = true;
-                        setBoostStep(i);
-                        boostStepRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
-                      }
-                    }}
-                    animate={
-                      reducesMotion
-                        ? undefined
-                        : { scale: boostStep === i ? 1 : 0.993 }
-                    }
-                    className={`cursor-pointer rounded-2xl border-2 px-5 py-4 text-start transition-[border-color,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-vibo-primary/40 ${
-                      boostStep === i
-                        ? "border-vibo-primary bg-vibo-rose/45 shadow-lg shadow-vibo-primary/[0.12]"
-                        : "border-neutral-200/80 bg-white/70 hover:border-vibo-primary/22 hover:bg-white"
-                    }`}
-                    initial={reducesMotion ? false : { opacity: 0, x: rtl ? -22 : 22 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={sectionView}
-                    transition={{
-                      layout: { type: "spring", stiffness: 320, damping: 34 },
-                      opacity: reducesMotion
-                        ? { duration: 0 }
-                        : { duration: 0.52, delay: i * 0.045, ease: [0.16, 1, 0.3, 1] },
-                      x: reducesMotion
-                        ? { duration: 0 }
-                        : { type: "spring", stiffness: 210, damping: 27, mass: 0.72, delay: i * 0.05 },
-                      scale: { type: "spring", stiffness: 280, damping: 30, mass: 0.55 },
-                    }}
-                  >
-                    <div className="flex items-start gap-3.5">
-                      <motion.span
-                        layout
-                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-                          boostStep === i ? "bg-vibo-primary text-white" : "bg-neutral-200/95 text-neutral-600"
-                        }`}
-                        transition={{ type: "spring", stiffness: 320, damping: 24 }}
-                      >
-                        {i + 1}
-                      </motion.span>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="text-[1.2rem] sm:text-[1.42rem] font-semibold tracking-[-0.02em] text-neutral-900">
-                          {stepTitle}
-                        </h3>
-                        <p className="mt-2 text-[0.9rem] sm:text-[0.95rem] leading-relaxed text-neutral-600">
-                          {tb.stepDetails[i]}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <BusinessGrowthContactSection copy={tb} siteOrigin={SITE_ORIGIN} lang={lang} rtl={rtl} />
+          <Pricing copy={tb.verifiedUsers} siteOrigin={SITE_ORIGIN} />
 
           <BusinessContactSection copy={tb.contact} siteOrigin={SITE_ORIGIN} />
 

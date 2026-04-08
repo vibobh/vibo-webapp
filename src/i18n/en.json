@@ -227,6 +227,34 @@
         "text": "Grow your community by encouraging conversations through messages and comments."
       }
     ],
+    "verifiedUsers": {
+      "heading": "Vibo verification",
+      "subtitle": "Pick the right verified account for individuals, businesses, and government.",
+      "individualsLabel": "Individuals",
+      "businessLabel": "Business",
+      "governmentLabel": "Government",
+      "individuals": {
+        "title": "Verified Individuals",
+        "description": "Creators and personal profiles that want stronger credibility and safer community interactions.",
+        "cta": "Join as individual",
+        "features": ["Identity confirmation", "Profile trust badge", "Priority safety review"],
+        "users": ["Maya K.", "Ali H.", "Lina P."]
+      },
+      "business": {
+        "title": "Verified Businesses",
+        "description": "Brands and companies that need trusted presence for campaigns, commerce, and customer communication.",
+        "cta": "Join as business",
+        "features": ["Brand verification", "Ad account trust", "Business support channel"],
+        "users": ["Sirati", "Dezi Co.", "Mangata"]
+      },
+      "government": {
+        "title": "Verified Government",
+        "description": "Public institutions that share official updates, awareness campaigns, and service announcements.",
+        "cta": "Join as government",
+        "features": ["Official authority checks", "Public notice integrity", "High-assurance account security"],
+        "users": ["Health Unit", "City Office", "Civil Services"]
+      }
+    },
     "creativeHeading": "Experiment with Vibo's creative tools to find what resonates with your community.",
     "creativeKicker": "Reels",
     "creativeLead": "Use features like short form video, Remix, and product tags to put your spin on trends.",
