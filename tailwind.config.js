@@ -15,7 +15,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        en: ['"InstagramSans"', "system-ui", "-apple-system", "sans-serif"],
+        en: ["var(--font-en)", "system-ui", "-apple-system", "sans-serif"],
         /** IBM Plex Sans Arabic — loaded via next/font in layout (`--font-arabic`) */
         ar: [
           "var(--font-arabic)",
@@ -45,6 +45,15 @@ module.exports = {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-8px)" },
         },
+        /** Auth showcase: seamless vertical loops (duplicate content = 2× height) */
+        "showcase-scroll-up": {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-50%)" },
+        },
+        "showcase-scroll-down": {
+          "0%": { transform: "translateY(-50%)" },
+          "100%": { transform: "translateY(0)" },
+        },
       },
       animation: {
         "marquee-left": "marquee-left 40s linear infinite",
@@ -52,6 +61,8 @@ module.exports = {
         "float-slow": "float-slow 6s ease-in-out infinite",
         "float-medium": "float-medium 5s ease-in-out infinite",
         "float-fast": "float-fast 4s ease-in-out infinite",
+        "showcase-scroll-up": "showcase-scroll-up 55s linear infinite",
+        "showcase-scroll-down": "showcase-scroll-down 55s linear infinite",
       },
     },
   },

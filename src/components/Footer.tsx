@@ -55,10 +55,10 @@ export default function Footer({ t, lang, onSwitchLang, siteOrigin }: FooterProp
             <ul className="space-y-2.5">
               {t.footer.companyLinks.map((link: string, i: number) => {
                 const hrefs = [
-                  `${origin}/#about`,
+                  `${origin}/about${q}`,
                   `${origin}/blogs${q}`,
                   `${origin}/newsroom${q}`,
-                  `${origin}/#careers`,
+                  `${origin}/careers${q}`,
                 ];
                 return (
                   <li key={i}>

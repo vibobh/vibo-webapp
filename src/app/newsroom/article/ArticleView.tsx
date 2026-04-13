@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { readStoredLang, writeStoredLang } from "@/i18n/useViboLang";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import GradientBg from "@/components/GradientBg";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { decodeArticleFromSearchParam } from "@/lib/newsArticleUrl";
@@ -13,6 +14,7 @@ import {
   looksLikeHtml,
   sanitizeNewsArticleHtml,
 } from "@/lib/sanitizeNewsHtml";
+import { useNewsArticleAutoAr } from "@/hooks/useNewsAutoTranslate";
 
 function stripNewsApiTruncation(s: string) {
   return s.replace(/\s*\[\+?\d+\s*chars?\]\s*$/i, "").trim();
@@ -71,28 +73,32 @@ export default function ArticleView() {
     const raw = article.content?.trim()
       ? stripNewsApiTruncation(article.content!)
       : article.description;
-    return raw.trim();
+    return stripNewsApiTruncation(String(raw)).trim();
   }, [article]);
-
-  const paragraphs = useMemo(() => {
-    if (!bodyText) return [];
-    const parts = bodyText.split(/\n\n+/).map((p) => p.trim()).filter(Boolean);
-    return parts.length > 0 ? parts : [bodyText];
-  }, [bodyText]);
 
   const bodyIsHtml = useMemo(
     () => looksLikeHtml(bodyText),
     [bodyText],
   );
 
+  const autoAr = useNewsArticleAutoAr(article, lang, bodyIsHtml, bodyText);
+
+  const paragraphs = useMemo(() => {
+    const text = autoAr.displayBodyText;
+    if (!text) return [];
+    const parts = text.split(/\n\n+/).map((p) => p.trim()).filter(Boolean);
+    return parts.length > 0 ? parts : [text];
+  }, [autoAr.displayBodyText]);
+
   const sanitizedHtml = useMemo(
-    () => (bodyIsHtml ? sanitizeNewsArticleHtml(bodyText) : ""),
-    [bodyIsHtml, bodyText],
+    () => (bodyIsHtml ? sanitizeNewsArticleHtml(autoAr.displayBodyText) : ""),
+    [bodyIsHtml, autoAr.displayBodyText],
   );
 
   if (!article) {
     return (
-      <div className="min-h-screen bg-white text-neutral-900">
+      <div className="min-h-screen text-neutral-900">
+        <GradientBg />
         <Navbar t={t} lang={lang} onSwitchLang={switchLang} />
         <main className="relative z-[1] pt-[72px] lg:pt-[80px]">
           <div className="max-w-[720px] mx-auto section-padding py-16 text-center">
@@ -111,10 +117,11 @@ export default function ArticleView() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-neutral-900">
+    <div className="min-h-screen text-neutral-900">
+      <GradientBg />
       <Navbar t={t} lang={lang} onSwitchLang={switchLang} />
       <main className="relative z-[1] pt-[72px] lg:pt-[80px]">
-        <article className="max-w-[800px] mx-auto section-padding py-8 sm:py-12 lg:py-14">
+        <article className="max-w-[800px] mx-auto section-padding py-8 sm:py-12 lg:py-14 text-start">
           <Link
             href={`/newsroom?lang=${lang}`}
             className={`inline-flex items-center justify-center h-10 w-10 rounded-full border border-neutral-200 bg-white text-neutral-700 shadow-sm hover:border-vibo-primary/40 hover:text-vibo-primary transition-colors mb-8 ${
@@ -133,9 +140,21 @@ export default function ArticleView() {
             <span>{article.sourceName}</span>
           </p>
 
-          <h1 className="text-[1.65rem] sm:text-[2rem] lg:text-[2.25rem] font-bold text-neutral-900 leading-[1.15] tracking-[-0.03em] mb-8">
-            {article.title}
+          {autoAr.loading && lang === "ar" && (
+            <p className="text-xs text-neutral-400 mb-2">{na.translating}</p>
+          )}
+          <h1
+            className={`text-[1.65rem] sm:text-[2rem] lg:text-[2.25rem] font-bold text-neutral-900 leading-[1.15] tracking-[-0.03em] ${
+              autoAr.usedAutoTranslation ? "mb-3" : "mb-8"
+            }`}
+          >
+            {autoAr.displayTitle}
           </h1>
+          {autoAr.usedAutoTranslation && (
+            <p className="text-[0.8125rem] text-neutral-400 mb-8" dir={rtl ? "rtl" : "ltr"}>
+              {na.autoTranslatedHint}
+            </p>
+          )}
 
           {article.urlToImage ? (
             <div className="rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-100 mb-10">

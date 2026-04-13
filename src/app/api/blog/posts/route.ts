@@ -93,6 +93,9 @@ export async function POST(request: Request) {
     const excerpt = String(body.excerpt ?? "").trim();
     const authorName = String(body.authorName ?? "").trim();
     const bodyHtml = sanitizeBlogHtml(String(body.bodyHtml ?? ""));
+    const titleAr = String(body.titleAr ?? "").trim();
+    const excerptAr = String(body.excerptAr ?? "").trim();
+    const bodyHtmlAr = sanitizeBlogHtml(String(body.bodyHtmlAr ?? ""));
     const published = body.published === true;
 
     if (!title || !excerpt || !authorName || !bodyHtml) {
@@ -114,6 +117,9 @@ export async function POST(request: Request) {
       slug,
       title,
       excerpt,
+      titleAr,
+      excerptAr,
+      bodyHtmlAr,
       category,
       authorName,
       coverImageId,
@@ -163,6 +169,9 @@ export async function PATCH(request: Request) {
     const excerpt = String(body.excerpt ?? "").trim();
     const authorName = String(body.authorName ?? "").trim();
     const bodyHtml = sanitizeBlogHtml(String(body.bodyHtml ?? ""));
+    const titleAr = String(body.titleAr ?? "").trim();
+    const excerptAr = String(body.excerptAr ?? "").trim();
+    const bodyHtmlAr = sanitizeBlogHtml(String(body.bodyHtmlAr ?? ""));
     const published = body.published === true;
 
     if (!title || !excerpt || !authorName || !bodyHtml) {
@@ -185,6 +194,9 @@ export async function PATCH(request: Request) {
       slug,
       title,
       excerpt,
+      titleAr,
+      excerptAr,
+      bodyHtmlAr,
       category,
       authorName,
       coverImageId,

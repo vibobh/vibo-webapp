@@ -41,7 +41,7 @@ export default function Navbar({
   const q = `?lang=${lang}`;
   const defaultNavItems: HeaderAnchorItem[] = useMemo(() => {
     const base: HeaderAnchorItem[] = [
-      { href: `${origin}/#about`, label: t.nav.about, id: "about" },
+      { href: `${origin}/about${q}`, label: t.nav.about, id: "about" },
       { href: `${origin}/blogs${q}`, label: t.nav.blog, id: "blog" },
       { href: `${origin}/newsroom${q}`, label: t.nav.newsroom, id: "newsroom" },
     ];
@@ -51,7 +51,7 @@ export default function Navbar({
         { href: `${HELP_ORIGIN}/${q}`, label: t.nav.helpCenter, id: "help" },
       );
     }
-    base.push({ href: `${origin}/#careers`, label: t.nav.careers, id: "careers" });
+    base.push({ href: `${origin}/careers${q}`, label: t.nav.careers, id: "careers" });
     return base;
   }, [origin, q, t.nav, isWwwJoinvibo]);
 
@@ -59,8 +59,10 @@ export default function Navbar({
 
   const linkActive = (id: string) => {
     if (headerAnchorNav) return false;
+    if (id === "about") return pathname === "/about";
     if (id === "newsroom") return pathname === "/newsroom" || pathname?.startsWith("/newsroom/");
     if (id === "blog") return pathname === "/blogs" || pathname?.startsWith("/blogs/");
+    if (id === "careers") return pathname === "/careers";
     if (id === "businesses")
       return pathname === "/businesses" || pathname?.startsWith("/businesses/");
     return false;
@@ -68,26 +70,33 @@ export default function Navbar({
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [pathname]);
 
-  const navSolid =
-    scrolled ||
-    pathname === "/newsroom" ||
-    pathname?.startsWith("/newsroom/") ||
+  /** Same shells that use `GradientBg` — header stays clear at top, frosted when scrolled (like home). */
+  const gradientShell =
+    pathname === "/" ||
+    pathname === "/about" ||
     pathname === "/blogs" ||
     pathname?.startsWith("/blogs/") ||
-    pathname === "/businesses";
+    pathname === "/newsroom" ||
+    pathname?.startsWith("/newsroom/") ||
+    pathname === "/careers" ||
+    pathname === "/businesses" ||
+    pathname?.startsWith("/businesses/");
+
+  const navBarClass = gradientShell
+    ? scrolled
+      ? "bg-[#fdfcf9]/80 backdrop-blur-xl shadow-[0_1px_0_rgba(75,4,21,0.06)] supports-[backdrop-filter]:bg-[#fdfcf9]/60"
+      : "bg-transparent"
+    : scrolled
+      ? "bg-white/[0.97] shadow-[0_1px_0_rgba(0,0,0,0.04)]"
+      : "bg-transparent";
 
   return (
-    <nav
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
-        navSolid
-          ? "bg-white/[0.97] shadow-[0_1px_0_rgba(0,0,0,0.04)]"
-          : "bg-transparent"
-      }`}
-    >
+    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${navBarClass}`}>
       <div className="max-w-[1400px] mx-auto section-padding">
         <div className="flex items-center justify-between h-[60px] lg:h-[68px]">
           <a href={origin ? `${origin}/` : "/"} className="flex items-center">
@@ -171,7 +180,11 @@ export default function Navbar({
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden bg-white border-t border-neutral-100"
+            className={`lg:hidden border-t ${
+              gradientShell
+                ? "bg-[#fdfcf9]/95 backdrop-blur-xl border-vibo-primary/[0.08]"
+                : "bg-white border-neutral-100"
+            }`}
           >
             <div className="section-padding py-5 space-y-1">
               {navItems.map((item, i) => (

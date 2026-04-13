@@ -14,6 +14,8 @@ type AdminPost = {
   slug: string;
   title: string;
   excerpt: string;
+  titleAr?: string | null;
+  excerptAr?: string | null;
   category: BlogCategory;
   authorName: string;
   authorImageId: string | null;
@@ -21,6 +23,7 @@ type AdminPost = {
   authorImageUrl: string | null;
   coverImageUrl: string | null;
   bodyHtml: string;
+  bodyHtmlAr?: string | null;
   published: boolean;
   publishedAt?: number;
   updatedAt: number;
@@ -99,6 +102,11 @@ export type BlogManagementUi = {
   authorImage: string;
   body: string;
   bodyHint: string;
+  arabicSection: string;
+  postTitleAr: string;
+  excerptAr: string;
+  bodyAr: string;
+  bodyHintAr: string;
   publish: string;
   saveDraft: string;
   update: string;
@@ -131,9 +139,12 @@ export default function BlogManagement({ ui }: Props) {
   const [slug, setSlug] = useState("");
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
+  const [titleAr, setTitleAr] = useState("");
+  const [excerptAr, setExcerptAr] = useState("");
   const [category, setCategory] = useState<BlogCategory>("article");
   const [authorName, setAuthorName] = useState("");
   const [bodyHtml, setBodyHtml] = useState("");
+  const [bodyHtmlAr, setBodyHtmlAr] = useState("");
   const [coverImageId, setCoverImageId] = useState<string | null>(null);
   const [authorImageId, setAuthorImageId] = useState<string | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
@@ -175,9 +186,12 @@ export default function BlogManagement({ ui }: Props) {
     setSlug("");
     setTitle("");
     setExcerpt("");
+    setTitleAr("");
+    setExcerptAr("");
     setCategory("article");
     setAuthorName("");
     setBodyHtml("");
+    setBodyHtmlAr("");
     setCoverImageId(null);
     setAuthorImageId(null);
     setCoverPreview(null);
@@ -189,9 +203,12 @@ export default function BlogManagement({ ui }: Props) {
     setSlug(p.slug);
     setTitle(p.title);
     setExcerpt(p.excerpt);
+    setTitleAr(p.titleAr ?? "");
+    setExcerptAr(p.excerptAr ?? "");
     setCategory(p.category);
     setAuthorName(p.authorName);
     setBodyHtml(p.bodyHtml ?? "");
+    setBodyHtmlAr(p.bodyHtmlAr ?? "");
     setCoverImageId(p.coverImageId);
     setAuthorImageId(p.authorImageId);
     setCoverPreview(p.coverImageUrl);
@@ -266,9 +283,12 @@ export default function BlogManagement({ ui }: Props) {
         slug: slug.trim(),
         title: title.trim(),
         excerpt: excerpt.trim(),
+        titleAr: titleAr.trim(),
+        excerptAr: excerptAr.trim(),
         category,
         authorName: authorName.trim(),
         bodyHtml,
+        bodyHtmlAr,
         published: wantPublished,
         coverImageId: coverImageId ?? undefined,
         authorImageId: authorImageId ?? undefined,
@@ -477,6 +497,45 @@ export default function BlogManagement({ ui }: Props) {
                 modules={quillModules}
                 formats={quillFormats}
               />
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-vibo-primary/15 bg-vibo-cream/40 p-5 space-y-5">
+            <p className="text-xs font-semibold text-vibo-primary uppercase tracking-wide">{ui.arabicSection}</p>
+            <div>
+              <label className="block text-xs font-medium text-neutral-500 mb-1">{ui.postTitleAr}</label>
+              <input
+                value={titleAr}
+                onChange={(e) => setTitleAr(e.target.value)}
+                dir="rtl"
+                className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-500 mb-1">{ui.excerptAr}</label>
+              <textarea
+                value={excerptAr}
+                onChange={(e) => setExcerptAr(e.target.value)}
+                dir="rtl"
+                rows={3}
+                className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-500 mb-2">{ui.bodyAr}</label>
+              <p className="text-[0.7rem] text-neutral-500 mb-2">{ui.bodyHintAr}</p>
+              <div
+                dir="rtl"
+                className="rounded-lg border border-neutral-200 overflow-hidden bg-white [&_.ql-editor]:min-h-[200px] [&_.ql-container]:text-sm"
+              >
+                <ReactQuill
+                  theme="snow"
+                  value={bodyHtmlAr}
+                  onChange={setBodyHtmlAr}
+                  modules={quillModules}
+                  formats={quillFormats}
+                />
+              </div>
             </div>
           </div>
 

@@ -10,6 +10,9 @@ type LayoutMode = "grid" | "list";
 
 type Props = {
   article: NewsArticle;
+  /** Arabic display (link still uses `article` for stable `d=` payload). */
+  titleOverride?: string;
+  descriptionOverride?: string;
   readMore: string;
   layout: LayoutMode;
   lang: Lang;
@@ -27,9 +30,18 @@ function formatDate(iso: string, locale: string) {
   }
 }
 
-export default function NewsroomCard({ article, readMore, layout, lang }: Props) {
+export default function NewsroomCard({
+  article,
+  titleOverride,
+  descriptionOverride,
+  readMore,
+  layout,
+  lang,
+}: Props) {
   const locale = lang === "ar" ? "ar" : "en";
   const articleHref = `/newsroom/article?d=${encodeURIComponent(encodeArticleForSearchParam(article))}&lang=${lang}`;
+  const title = titleOverride ?? article.title;
+  const description = descriptionOverride ?? article.description;
 
   if (layout === "list") {
     return (
@@ -54,9 +66,9 @@ export default function NewsroomCard({ article, readMore, layout, lang }: Props)
             {article.sourceName}
           </p>
           <h2 className="text-base sm:text-lg font-bold text-neutral-900 leading-snug mb-2 line-clamp-2">
-            {article.title}
+            {title}
           </h2>
-          <p className="text-[0.85rem] text-neutral-600 line-clamp-2 mb-4 flex-1">{article.description}</p>
+          <p className="text-[0.85rem] text-neutral-600 line-clamp-2 mb-4 flex-1">{description}</p>
           <Link
             href={articleHref}
             className="inline-flex items-center gap-2 text-[0.85rem] font-medium text-neutral-900 hover:text-vibo-primary w-fit"
@@ -94,7 +106,7 @@ export default function NewsroomCard({ article, readMore, layout, lang }: Props)
         {article.sourceName}
       </p>
       <h2 className="text-[0.95rem] sm:text-base font-bold text-neutral-900 leading-snug mb-2 line-clamp-3 flex-1">
-        {article.title}
+        {title}
       </h2>
       <Link
         href={articleHref}

@@ -1,6 +1,6 @@
 # Convex backend
 
-1. Log in (use account **abdullahilal888@gmail.com** or invite this email to the team project):
+1. Log in with the Google account that owns or has access to this Convex project:
 
    ```bash
    npx convex login

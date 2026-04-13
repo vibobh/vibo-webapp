@@ -5,6 +5,8 @@ export type BlogListItem = {
   slug: string;
   title: string;
   excerpt: string;
+  titleAr?: string | null;
+  excerptAr?: string | null;
   category: BlogCategory;
   authorName: string;
   authorImageUrl: string | null;
@@ -15,4 +17,5 @@ export type BlogListItem = {
 
 export type BlogPost = BlogListItem & {
   bodyHtml: string;
+  bodyHtmlAr?: string | null;
 };

@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import type { BlogListItem } from "@/types/blog";
+import { pickBlogExcerpt, pickBlogTitle } from "@/lib/blogLocale";
+import { useBlogListAutoAr } from "@/hooks/useBlogAutoTranslate";
 import type { Lang } from "@/i18n";
 
 type Props = {
@@ -56,12 +58,13 @@ export default function BlogSection({
 
   const locale = lang === "ar" ? "ar" : "en";
   const q = `?lang=${lang}`;
+  const { mergeOne } = useBlogListAutoAr(posts, lang);
 
   return (
     <section id="blog" className="bg-transparent scroll-mt-24">
       <div className="max-w-[1200px] mx-auto section-padding py-16 sm:py-24">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10 sm:mb-12">
-          <div>
+          <div className="min-w-0 text-start -ms-2 sm:-ms-4 lg:-ms-6 xl:-ms-8">
             <p className="text-xs uppercase tracking-[0.15em] text-vibo-primary font-medium mb-3">
               {label}
             </p>
@@ -112,9 +115,11 @@ export default function BlogSection({
                     </span>
                   </p>
                   <h3 className="text-lg font-bold text-neutral-900 leading-snug mb-2 line-clamp-2 group-hover:text-vibo-primary transition-colors">
-                    {post.title}
+                    {pickBlogTitle(mergeOne(post), lang)}
                   </h3>
-                  <p className="text-[0.9rem] text-neutral-600 line-clamp-2 mb-4 flex-1">{post.excerpt}</p>
+                  <p className="text-[0.9rem] text-neutral-600 line-clamp-2 mb-4 flex-1">
+                    {pickBlogExcerpt(mergeOne(post), lang)}
+                  </p>
                   <span className="inline-flex items-center gap-2 text-[0.85rem] font-medium text-neutral-900">
                     <span className="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-200 bg-white">
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

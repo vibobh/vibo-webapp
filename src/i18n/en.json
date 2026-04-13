@@ -10,6 +10,129 @@
     "careers": "Careers",
     "download": "Download Vibo"
   },
+  "login": {
+    "brand": "Vibo",
+    "metaTitle": "Log in",
+    "metaDescription": "Sign in to Vibo or create an account to join our community.",
+    "metaTitleSignup": "Sign up",
+    "metaDescriptionSignup": "Create a Vibo account to join our community and connect with creators.",
+    "signInTitle": "Log in to your Vibo account",
+    "signInSubtitle": "Sign in to your account to continue",
+    "signUpTitle": "Create your Vibo account",
+    "signUpSubtitle": "Join Vibo and connect with creators worldwide",
+    "email": "Email address",
+    "identifier": "Username, email or mobile number",
+    "password": "Password",
+    "username": "Username",
+    "confirmPassword": "Confirm password",
+    "placeholderEmail": "name@example.com",
+    "placeholderIdentifier": "username, email, or mobile number",
+    "placeholderPassword": "••••••••",
+    "placeholderUsername": "johndoe",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your full name",
+    "phone": "Phone number",
+    "phonePlaceholder": "+1 234 567 890",
+    "countryCode": "Country code",
+    "countryCodePlaceholder": "US",
+    "dob": "Date of birth",
+    "dobPlaceholder": "YYYY-MM-DD",
+    "dobYear": "Year",
+    "dobMonth": "Month",
+    "dobDay": "Day",
+    "gender": "Gender",
+    "genderPlaceholder": "Select",
+    "genderOptions": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "preferNotToSay": "Prefer not to say"
+    },
+    "country": "Country",
+    "countryPlaceholder": "Your country",
+    "stepNext": "Next",
+    "stepBack": "Back",
+    "step1of2": "Step 1 of 2",
+    "step2of2": "Step 2 of 2",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "createAccount": "Create account",
+    "creatingAccount": "Creating account…",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "signUpLink": "Sign up",
+    "signInLink": "Sign in",
+    "forgotPassword": "Forgot password?",
+    "rememberMe": "Stay signed in for 7 days",
+    "termsLabel": "I agree to the terms and conditions",
+    "termsHint": "By creating an account, you agree to our Terms of Service and Privacy Policy.",
+    "genericError": "Something went wrong. Please try again.",
+    "testimonialQuote": "Vibo has changed how I share moments and discover creators. It feels authentic, global, and built for real connection.",
+    "testimonialFooter": "— Vibo creator",
+    "backHome": "Home",
+    "errors": {
+      "email": "Please enter a valid email address",
+      "passwordMin": "Password must be at least 8 characters",
+      "usernameMin": "Username must be at least 3 characters",
+      "terms": "You must agree to the terms and conditions",
+      "passwordMismatch": "Passwords don't match",
+      "fullNameRequired": "Full name is required",
+      "dobRequired": "Date of birth is required",
+      "dobInvalid": "Please enter a valid date (YYYY-MM-DD)",
+      "dobTooYoung": "You must be at least 13 years old",
+      "genderRequired": "Please select your gender",
+      "countryRequired": "Please enter your country",
+      "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Enter your local number (digits only, at least 6 digits)"
+    }
+  },
+  "onboarding": {
+    "title": "Complete your profile",
+    "subtitle": "Tell us a bit about yourself to personalize your experience.",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your name",
+    "fullNameRequired": "Full name is required",
+    "gender": "Gender",
+    "genderPlaceholder": "Select gender",
+    "genderOptions": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "preferNotToSay": "Prefer not to say"
+    },
+    "dob": "Date of birth",
+    "dobPlaceholder": "YYYY-MM-DD",
+    "country": "Country",
+    "countryPlaceholder": "Your country",
+    "phone": "Phone number (optional)",
+    "phonePlaceholder": "+1 234 567 890",
+    "bio": "Bio (optional)",
+    "bioPlaceholder": "Tell the world about yourself…",
+    "interests": "Interests",
+    "interestsHint": "Select topics that interest you.",
+    "interestOptions": [
+      "Art",
+      "Music",
+      "Sports",
+      "Technology",
+      "Travel",
+      "Food",
+      "Fashion",
+      "Gaming",
+      "Photography",
+      "Fitness",
+      "Comedy",
+      "Education",
+      "Business",
+      "Nature",
+      "Science"
+    ],
+    "privateAccount": "Private account",
+    "privateAccountHint": "Only approved followers can see your content.",
+    "continue": "Continue",
+    "saving": "Saving…",
+    "skip": "Skip for now"
+  },
   "newsroom": {
     "title": "Newsroom",
     "description": "Updates, announcements, and stories from Vibo and around the world.",
@@ -31,8 +154,15 @@
       "back": "Back to Newsroom",
       "readOriginal": "Read original article",
       "notFound": "We couldn't load this article.",
-      "notFoundCta": "Return to Newsroom"
+      "notFoundCta": "Return to Newsroom",
+      "translating": "Translating…",
+      "autoTranslatedHint": "Parts of this story were machine-translated from English. The original source may read differently."
     }
+  },
+  "careersPage": {
+    "title": "Careers at Vibo",
+    "description": "We're building a social platform for short video, photos, and real moments. When we have open roles, we'll list them here. Until then, follow Vibo for updates.",
+    "footnote": "Thank you for your interest in joining the team."
   },
   "blog": {
     "title": "Blog",
@@ -49,6 +179,10 @@
     "sectionHeading": "Stories, guides, and updates from Vibo.",
     "viewAll": "View all posts",
     "sectionEmpty": "Stories will appear here once published from the blog management area.",
+    "translating": "Translating…",
+    "translateNotConfigured": "Arabic copy for this post is not available yet. Add LIBRETRANSLATE_API_KEY to your server environment (see .env.example) and restart the dev server so English posts can be machine-translated when Arabic fields are empty in the CMS.",
+    "translateFailedShort": "Machine translation is temporarily unavailable. Try again later, or add Arabic text in blog management.",
+    "autoTranslatedHint": "Parts of this post were machine-translated from English. Official Arabic copy may differ.",
     "categories": {
       "article": "Article",
       "case_study": "Case study",
@@ -86,16 +220,21 @@
     "loginError": "Could not sign in.",
     "saveError": "Could not save.",
     "configuredHint": "Admin login uses server environment variables (never commit passwords to Git).",
-    "publicUrl": "Public URL"
+    "publicUrl": "Public URL",
+    "arabicSection": "Arabic (optional)",
+    "postTitleAr": "Title (Arabic)",
+    "excerptAr": "Excerpt (Arabic)",
+    "bodyAr": "Body (Arabic)",
+    "bodyHintAr": "Shown when visitors choose Arabic on the site. Leave empty to use the English version."
   },
   "hero": {
-    "headline": "Vibo (فايبو)",
+    "headline": "Vibo",
     "subtitle": "Vibo is a social media platform for short video, photos, and real moments. Download the Vibo app to share Vibo videos and posts with people around the world."
   },
   "home": {
     "seo": {
       "whatHeading": "What is Vibo?",
-      "whatBody": "Vibo (فايبو) is a social media platform where you share videos and posts, discover creators, and stay in touch with friends. Use the Vibo app on your phone to scroll a personalized feed, post stories, and join conversations — built for authentic expression.",
+      "whatBody": "Vibo is a social media platform where you share videos and posts, discover creators, and stay in touch with friends. Use the Vibo app on your phone to scroll a personalized feed, post stories, and join conversations — built for authentic expression.",
       "whyHeading": "Why Vibo is different",
       "whyBody": "Vibo blends short video, stories, and messaging in one experience designed for creators and everyday users. The platform emphasizes discovery, safety, and community — so your Vibo videos and posts reach people who care about your niche.",
       "featuresHeading": "Vibo features",
@@ -107,7 +246,40 @@
     }
   },
   "about": {
-    "statement": "Vibo is where creativity meets community. A space for everyone to share their story, discover new perspectives, connect with the world, and find the things that truly move them. We believe every person has something worth sharing."
+    "statement": "Vibo is where creativity meets community. A space for everyone to share their story, discover new perspectives, connect with the world, and find the things that truly move them. We believe every person has something worth sharing.",
+    "page": {
+      "kicker": "About Vibo",
+      "title": "Where creativity meets community.",
+      "lede": "We are building a social home for short video, photos, and real moments—a feed that feels personal, tools that respect your voice, and a community culture grounded in safety and care.",
+      "quoteLabel": "What we believe",
+      "pillarsTitle": "What guides the product",
+      "pillars": [
+        {
+          "title": "Real stories first",
+          "body": "We design for honest moments, not endless polish—so posting feels natural whether you are a creator or sharing with friends."
+        },
+        {
+          "title": "Discovery that feels yours",
+          "body": "Short-form video, stories, and messaging live in one flow so you can explore, reply, and stay close to the niches you love."
+        },
+        {
+          "title": "Safety you can feel",
+          "body": "Thoughtful policies, reporting, and privacy controls help keep the space brave for expression and respectful for everyone."
+        }
+      ],
+      "storyTitle": "Why we are building Vibo",
+      "storyBody": "Creators and everyday sharers deserve a platform that highlights their voice instead of burying it. Vibo brings together a dynamic For You experience, lightweight publishing, and conversation—built for authentic expression and lasting connection.",
+      "featuresTitle": "What you will find in the app",
+      "features": [
+        "Short-form video with a feed tuned to your interests",
+        "Stories, messaging, and creator tools in one experience",
+        "Privacy settings and reporting designed for a healthier community"
+      ],
+      "ctaTitle": "Experience it yourself",
+      "ctaBody": "Download Vibo, scroll your feed, and share a moment that matters to you.",
+      "ctaPrimary": "Get the app",
+      "ctaSecondary": "Read the blog"
+    }
   },
   "phone": {
     "label": "The App Experience",

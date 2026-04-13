@@ -49,6 +49,8 @@ export const listPublished = query({
           slug: b.slug,
           title: b.title,
           excerpt: b.excerpt,
+          titleAr: b.titleAr,
+          excerptAr: b.excerptAr,
           category: b.category,
           authorName: b.authorName,
           authorImageUrl,
@@ -72,20 +74,37 @@ export const getBySlug = query({
       .withIndex("by_slug", (q) => q.eq("slug", slug))
       .unique();
     if (!b || !b.published) return null;
+
+    let authorImageUrl: string | null = null;
+    let coverImageUrl: string | null = null;
+    try {
+      if (b.authorImageId) {
+        authorImageUrl = await ctx.storage.getUrl(b.authorImageId);
+      }
+    } catch {
+      authorImageUrl = null;
+    }
+    try {
+      if (b.coverImageId) {
+        coverImageUrl = await ctx.storage.getUrl(b.coverImageId);
+      }
+    } catch {
+      coverImageUrl = null;
+    }
+
     return {
       _id: b._id,
       slug: b.slug,
       title: b.title,
       excerpt: b.excerpt,
+      titleAr: b.titleAr,
+      excerptAr: b.excerptAr,
       category: b.category,
       authorName: b.authorName,
-      authorImageUrl: b.authorImageId
-        ? await ctx.storage.getUrl(b.authorImageId)
-        : null,
-      coverImageUrl: b.coverImageId
-        ? await ctx.storage.getUrl(b.coverImageId)
-        : null,
+      authorImageUrl,
+      coverImageUrl,
       bodyHtml: b.bodyHtml,
+      bodyHtmlAr: b.bodyHtmlAr,
       publishedAt: b.publishedAt ?? b.updatedAt,
       updatedAt: b.updatedAt,
     };
@@ -116,6 +135,9 @@ export const listAll = query({
           ? await ctx.storage.getUrl(b.coverImageId)
           : null,
         bodyHtml: b.bodyHtml,
+        titleAr: b.titleAr,
+        excerptAr: b.excerptAr,
+        bodyHtmlAr: b.bodyHtmlAr,
         published: b.published,
         publishedAt: b.publishedAt,
         updatedAt: b.updatedAt,
@@ -143,6 +165,9 @@ export const createBlog = mutation({
     authorImageId: v.optional(v.id("_storage")),
     coverImageId: v.optional(v.id("_storage")),
     bodyHtml: v.string(),
+    titleAr: v.optional(v.string()),
+    excerptAr: v.optional(v.string()),
+    bodyHtmlAr: v.optional(v.string()),
     published: v.boolean(),
   },
   handler: async (ctx, args) => {
@@ -159,6 +184,9 @@ export const createBlog = mutation({
       slug: args.slug,
       title: args.title,
       excerpt: args.excerpt,
+      titleAr: (args.titleAr ?? "").trim(),
+      excerptAr: (args.excerptAr ?? "").trim(),
+      bodyHtmlAr: (args.bodyHtmlAr ?? "").trim(),
       category: args.category,
       authorName: args.authorName,
       authorImageId: args.authorImageId,
@@ -183,6 +211,9 @@ export const updateBlog = mutation({
     authorImageId: v.optional(v.id("_storage")),
     coverImageId: v.optional(v.id("_storage")),
     bodyHtml: v.string(),
+    titleAr: v.optional(v.string()),
+    excerptAr: v.optional(v.string()),
+    bodyHtmlAr: v.optional(v.string()),
     published: v.boolean(),
   },
   handler: async (ctx, args) => {
@@ -210,6 +241,9 @@ export const updateBlog = mutation({
       slug: args.slug,
       title: args.title,
       excerpt: args.excerpt,
+      titleAr: (args.titleAr ?? "").trim(),
+      excerptAr: (args.excerptAr ?? "").trim(),
+      bodyHtmlAr: (args.bodyHtmlAr ?? "").trim(),
       category: args.category,
       authorName: args.authorName,
       authorImageId: args.authorImageId,

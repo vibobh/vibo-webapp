@@ -5,7 +5,7 @@ Use these accounts:
 | Service | Email / user |
 |--------|----------------|
 | **GitHub** | `joinvibo@gmail.com` · username **`vibobh`** |
-| **Convex** | `abdullahilal888@gmail.com` |
+| **Convex** | The Google account you use at [dashboard.convex.dev](https://dashboard.convex.dev) (team members can be invited in the project settings) |
 | **Vercel** | `joinvibo@gmail.com` |
 
 ---
@@ -40,7 +40,7 @@ git push -u origin main
 
 ## 2. Convex — database / backend
 
-1. Go to [dashboard.convex.dev](https://dashboard.convex.dev) and sign in with **abdullahilal888@gmail.com** (or invite that email to your team).
+1. Go to [dashboard.convex.dev](https://dashboard.convex.dev) and sign in with your team’s Google account (invite collaborators under the project **Settings** if needed).
 
 2. **Local dev** (generates `convex/_generated` and `.env.local`):
 

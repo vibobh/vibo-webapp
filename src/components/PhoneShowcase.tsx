@@ -52,9 +52,9 @@ export default function PhoneShowcase({ t }: PhoneShowcaseProps) {
               {t.phone.features.map((feat: string, i: number) => (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-500 px-4 py-2 rounded-full text-xs font-medium border border-neutral-100 hover:bg-neutral-200/70 hover:text-neutral-700 transition-colors duration-300"
+                  className="inline-flex items-center gap-1.5 bg-vibo-cream/80 text-vibo-primary px-4 py-2 rounded-full text-xs font-medium border border-vibo-gold/35 hover:bg-vibo-cream hover:text-vibo-primary-dark transition-colors duration-300"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-vibo-primary" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-vibo-gold" />
                   {feat}
                 </span>
               ))}
@@ -63,9 +63,9 @@ export default function PhoneShowcase({ t }: PhoneShowcaseProps) {
 
           <div className="relative flex justify-center">
             <div className="relative w-[260px] sm:w-[280px] lg:w-[300px]">
-              <div className="relative bg-neutral-900 rounded-[40px] p-3 shadow-2xl shadow-neutral-300/50 border border-neutral-200">
+              <div className="relative rounded-[40px] border border-vibo-gold/35 bg-vibo-primary-dark p-3 shadow-2xl shadow-vibo-primary/35">
                 <div className="absolute top-0 inset-x-0 flex justify-center z-20">
-                  <div className="w-[120px] h-[28px] bg-neutral-900 rounded-b-2xl" />
+                  <div className="w-[120px] h-[28px] rounded-b-2xl bg-vibo-primary-dark" />
                 </div>
                 <div className="relative rounded-[30px] overflow-hidden aspect-[9/19.5] bg-black">
                   <LazyVideo
@@ -76,7 +76,13 @@ export default function PhoneShowcase({ t }: PhoneShowcaseProps) {
                   <div className="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none">
                     <div className="flex items-center justify-between pt-6">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-white/35" />
+                        <div
+                          className="h-7 w-7 rounded-full border border-white/25 bg-center bg-cover"
+                          style={{
+                            backgroundImage:
+                              "url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face')",
+                          }}
+                        />
                         <div>
                           <div className="w-14 h-2 bg-white/30 rounded-full" />
                           <div className="w-8 h-1.5 bg-white/15 rounded-full mt-1" />
@@ -124,45 +130,47 @@ export default function PhoneShowcase({ t }: PhoneShowcaseProps) {
             </div>
 
             <motion.div
-              className="absolute -top-4 -start-4 sm:start-4 bg-white rounded-2xl px-4 py-3 shadow-lg shadow-neutral-200/50 border border-neutral-100"
+              className="absolute -top-4 -start-4 sm:start-4 rounded-2xl border border-vibo-gold/30 bg-vibo-cream px-4 py-3 shadow-lg shadow-vibo-primary/15"
               initial={{ opacity: 0, x: -20 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <div className="h-9 w-9 rounded-full bg-vibo-primary flex items-center justify-center">
+                  <svg className="w-4 h-4 text-vibo-gold" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                   </svg>
                 </div>
                 <div>
-                  <div className="text-neutral-900 text-xs font-semibold">+2.4M</div>
-                  <div className="text-neutral-400 text-[10px]">Likes today</div>
+                  <div className="text-vibo-primary text-xs font-semibold">+2.4M</div>
+                  <div className="text-vibo-primary/65 text-[10px]">Likes today</div>
                 </div>
               </div>
             </motion.div>
 
             <motion.div
-              className="absolute -bottom-2 -end-4 sm:end-4 bg-white rounded-2xl px-4 py-3 shadow-lg shadow-neutral-200/50 border border-neutral-100"
+              className="absolute -bottom-2 -end-4 sm:end-4 rounded-2xl border border-vibo-gold/30 bg-vibo-cream px-4 py-3 shadow-lg shadow-vibo-primary/15"
               initial={{ opacity: 0, x: 20 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
               <div className="flex items-center gap-2.5">
                 <div className="flex -space-x-2 rtl:space-x-reverse">
-                  {[0, 1, 2].map((j) => (
+                  {[
+                    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=face",
+                    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&h=64&fit=crop&crop=face",
+                    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face",
+                  ].map((avatarUrl, j) => (
                     <div
                       key={j}
-                      className="w-7 h-7 rounded-full border-2 border-white"
-                      style={{
-                        background: ["linear-gradient(135deg,#667eea,#764ba2)", "linear-gradient(135deg,#f093fb,#f5576c)", "linear-gradient(135deg,#4facfe,#00f2fe)"][j],
-                      }}
+                      className="h-7 w-7 rounded-full border-2 border-vibo-cream bg-cover bg-center"
+                      style={{ backgroundImage: `url('${avatarUrl}')` }}
                     />
                   ))}
                 </div>
                 <div>
-                  <div className="text-neutral-900 text-xs font-semibold">Active now</div>
-                  <div className="text-neutral-400 text-[10px]">12.8k online</div>
+                  <div className="text-vibo-primary text-xs font-semibold">Active now</div>
+                  <div className="text-vibo-primary/65 text-[10px]">12.8k online</div>
                 </div>
               </div>
             </motion.div>

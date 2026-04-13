@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_Arabic } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import "./globals.css";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
 import JsonLd from "@/components/seo/JsonLd";
@@ -16,6 +16,14 @@ const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   weight: ["500", "600", "700"],
   subsets: ["arabic"],
   variable: "--font-arabic",
+  display: "swap",
+});
+
+/** Latin UI — replaces missing self-hosted “Instagram Sans” files under `/fonts` */
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-en",
   display: "swap",
 });
 
@@ -82,7 +90,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" dir="ltr">
-      <body className={`${ibmPlexSansArabic.variable} font-en antialiased`}>
+      <body className={`${inter.variable} ${ibmPlexSansArabic.variable} font-en antialiased`}>
         <JsonLd />
         <ConvexClientProvider>{children}</ConvexClientProvider>
       </body>

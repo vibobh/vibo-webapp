@@ -11,13 +11,17 @@
     "generate:favicon": "node scripts/generate-favicon.mjs",
     "generate:seo-assets": "node scripts/generate-seo-assets.mjs",
     "generate:news-placeholder": "node scripts/transparent-news-placeholder.mjs",
+    "migrate:blogs": "node scripts/migrate-blogs-from-convex.mjs",
     "convex:dev": "convex dev",
     "convex:deploy": "convex deploy",
     "vercel:deploy": "npx --yes vercel deploy",
     "vercel:prod": "npx --yes vercel deploy --prod"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -25,14 +29,17 @@
     "convex": "^1.34.0",
     "framer-motion": "^11.0.0",
     "isomorphic-dompurify": "^3.6.0",
+    "jose": "^6.2.2",
     "lucide-react": "^1.6.0",
     "next": "^14.2.0",
     "quill": "^2.0.3",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
+    "react-hook-form": "^7.72.1",
     "react-quill": "^2.0.0",
     "sanitize-html": "^2.17.2",
-    "tailwind-merge": "^3.5.0"
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

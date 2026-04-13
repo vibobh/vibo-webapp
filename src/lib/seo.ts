@@ -4,7 +4,7 @@ export const SITE_URL = "https://joinvibo.com" as const;
 export const DEFAULT_PAGE_TITLE = "Vibo – The Next Generation Social Media Platform";
 
 export const DEFAULT_DESCRIPTION =
-  "Vibo (فايبو) is a next-generation social media app for sharing videos, photos, and connecting with the world.";
+  "Vibo is a next-generation social media app for sharing videos, photos, and connecting with the world.";
 
 /** Target brand + discovery keywords (metadata keywords) */
 export const DEFAULT_KEYWORDS = [

@@ -24,6 +24,10 @@ yarn-error.log*
 *.swp
 *.swo
 
+# Auth keys (never commit)
+auth-private.pem
+auth-public.pem
+
 # OS
 .DS_Store
 Thumbs.db

@@ -8,6 +8,8 @@ import NewsImageFallback from "@/components/newsroom/NewsImageFallback";
 
 type Props = {
   article: NewsArticle | null;
+  titleOverride?: string;
+  descriptionOverride?: string;
   readMore: string;
   lang: Lang;
 };
@@ -24,11 +26,19 @@ function formatDate(iso: string, locale: string) {
   }
 }
 
-export default function NewsroomHero({ article, readMore, lang }: Props) {
+export default function NewsroomHero({
+  article,
+  titleOverride,
+  descriptionOverride,
+  readMore,
+  lang,
+}: Props) {
   if (!article) return null;
 
   const locale = lang === "ar" ? "ar" : "en";
   const articleHref = `/newsroom/article?d=${encodeURIComponent(encodeArticleForSearchParam(article))}&lang=${lang}`;
+  const title = titleOverride ?? article.title;
+  const description = descriptionOverride ?? article.description;
 
   return (
     <section className="mb-10 sm:mb-14 lg:mb-16">
@@ -56,10 +66,10 @@ export default function NewsroomHero({ article, readMore, lang }: Props) {
             <span>{article.sourceName}</span>
           </p>
           <h1 className="text-[1.35rem] sm:text-[1.65rem] lg:text-[1.85rem] font-bold text-neutral-900 leading-[1.2] tracking-[-0.02em] mb-4">
-            {article.title}
+            {title}
           </h1>
           <p className="text-[0.9rem] sm:text-[0.95rem] text-neutral-600 leading-relaxed line-clamp-4 mb-6">
-            {article.description}
+            {description}
           </p>
           <Link
             href={articleHref}
