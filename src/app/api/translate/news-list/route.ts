@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { translateStringsEnToAr, isLibreTranslateConfigured } from "@/lib/libreTranslateServer";
+import {
+  isEnToArTranslationConfigured,
+  translateStringsEnToAr,
+} from "@/lib/translateEnToArServer";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +14,7 @@ type Item = {
 };
 
 export async function POST(request: Request) {
-  if (!isLibreTranslateConfigured()) {
+  if (!isEnToArTranslationConfigured()) {
     return NextResponse.json({ ok: false as const, reason: "no_api_key" });
   }
 

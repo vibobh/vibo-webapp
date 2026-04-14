@@ -14,7 +14,7 @@ function listCacheKey(items: { slug: string; updatedAt: number }[]): string {
 
 /**
  * When `lang === "ar"` and manual Arabic fields are missing, fetches machine translation
- * (requires LibreTranslate — see `.env.example`) and merges. Caches in sessionStorage.
+ * (LibreTranslate if configured, else OpenRouter on the Next server — see `.env.example`).
  */
 export type BlogTranslateIssue = "no_api_key" | "translate_error";
 

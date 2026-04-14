@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { translateStringsEnToAr, isLibreTranslateConfigured } from "@/lib/libreTranslateServer";
+import {
+  isEnToArTranslationConfigured,
+  translateStringsEnToAr,
+} from "@/lib/translateEnToArServer";
 import { sanitizeNewsArticleHtml } from "@/lib/sanitizeNewsHtml";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +18,7 @@ type Body = {
 };
 
 export async function POST(request: Request) {
-  if (!isLibreTranslateConfigured()) {
+  if (!isEnToArTranslationConfigured()) {
     return NextResponse.json({ ok: false as const, reason: "no_api_key" });
   }
 
