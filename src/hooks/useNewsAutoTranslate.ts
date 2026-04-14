@@ -41,40 +41,55 @@ export function useNewsListAutoAr(articles: NewsArticle[], lang: Lang) {
     }));
 
     let cancelled = false;
-    fetch("/api/translate/news-list", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items }),
-    })
-      .then((r) => r.json())
-      .then(
-        (d: {
-          ok?: boolean;
-          items?: { url: string; titleAr?: string; descriptionAr?: string }[];
-        }) => {
+    const ARTICLES_PER_REQUEST = 4;
+
+    (async () => {
+      const merged: Record<string, { title?: string; description?: string }> = {};
+      try {
+        for (let off = 0; off < items.length; off += ARTICLES_PER_REQUEST) {
           if (cancelled) return;
-          if (d.ok !== true || !d.items?.length) {
-            setByUrl({});
+          const slice = items.slice(off, off + ARTICLES_PER_REQUEST);
+          const r = await fetch("/api/translate/news-list", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ items: slice }),
+          });
+          let d: {
+            ok?: boolean;
+            items?: { url: string; titleAr?: string; descriptionAr?: string }[];
+          };
+          try {
+            d = (await r.json()) as typeof d;
+          } catch {
+            if (!cancelled) setByUrl({});
             return;
           }
-          const map: Record<string, { title?: string; description?: string }> = {};
+          if (cancelled) return;
+          if (d.ok !== true || !Array.isArray(d.items)) {
+            if (!cancelled) setByUrl({});
+            return;
+          }
           for (const row of d.items) {
-            map[row.url] = {
-              title: row.titleAr?.trim() || undefined,
-              description: row.descriptionAr?.trim() || undefined,
+            const cur = merged[row.url] ?? {};
+            const tAr = row.titleAr?.trim();
+            const dAr = row.descriptionAr?.trim();
+            merged[row.url] = {
+              title: tAr || cur.title,
+              description: dAr || cur.description,
             };
           }
-          setByUrl(map);
-          try {
-            sessionStorage.setItem(ck, JSON.stringify(map));
-          } catch {
-            /* ignore */
-          }
-        },
-      )
-      .catch(() => {
+        }
+        if (cancelled) return;
+        setByUrl(merged);
+        try {
+          sessionStorage.setItem(ck, JSON.stringify(merged));
+        } catch {
+          /* ignore */
+        }
+      } catch {
         if (!cancelled) setByUrl({});
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;

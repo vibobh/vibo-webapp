@@ -11,8 +11,8 @@ const OPENROUTER_CHAT_URL = "https://openrouter.ai/api/v1/chat/completions";
 const DEFAULT_MODEL = "openai/gpt-4o-mini";
 /** Single HTML segment cap (full post body). */
 const MAX_HTML_CHARS = 72_000;
-/** Max English strings per one OpenRouter JSON batch (list pages). */
-const MAX_TEXT_BATCH = 40;
+/** Max English strings per one OpenRouter JSON batch (keeps each model call short for Vercel limits). */
+const MAX_TEXT_BATCH = 10;
 
 export function isOpenRouterTranslateConfigured(): boolean {
   return Boolean(process.env.OPENROUTER_API_KEY?.trim());

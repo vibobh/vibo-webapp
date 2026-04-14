@@ -5,7 +5,8 @@ import {
 } from "@/lib/translateEnToArServer";
 
 export const dynamic = "force-dynamic";
-/** Allow batched OpenRouter calls on Vercel (default is often 10s). */
+export const runtime = "nodejs";
+/** Allow batched OpenRouter calls on Vercel (Hobby caps this; client also chunks requests). */
 export const maxDuration = 60;
 
 type Item = {

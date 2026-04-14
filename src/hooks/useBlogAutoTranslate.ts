@@ -207,48 +207,69 @@ export function useBlogListAutoAr(posts: BlogListItem[], lang: Lang) {
 
     let cancelled = false;
     setTranslateIssue(null);
-    fetch("/api/translate/blog-list", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items }),
-    })
-      .then((r) => r.json())
-      .then(
-        (d: {
-          ok?: boolean;
-          reason?: string;
-          items?: { slug: string; titleAr?: string; excerptAr?: string }[];
-        }) => {
+
+    /** Few posts per request so each serverless run stays under Vercel time limits (e.g. 10s). */
+    const POSTS_PER_REQUEST = 4;
+
+    (async () => {
+      const merged: Record<string, { titleAr?: string; excerptAr?: string }> = {};
+      try {
+        for (let off = 0; off < items.length; off += POSTS_PER_REQUEST) {
+          if (cancelled) return;
+          const slice = items.slice(off, off + POSTS_PER_REQUEST);
+          const r = await fetch("/api/translate/blog-list", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ items: slice }),
+          });
+          let d: {
+            ok?: boolean;
+            reason?: string;
+            items?: { slug: string; titleAr?: string; excerptAr?: string }[];
+          };
+          try {
+            d = (await r.json()) as typeof d;
+          } catch {
+            if (!cancelled) {
+              setExtraBySlug({});
+              setTranslateIssue("translate_error");
+            }
+            return;
+          }
           if (cancelled) return;
           if (d.ok === false) {
             setExtraBySlug({});
             setTranslateIssue(d.reason === "no_api_key" ? "no_api_key" : "translate_error");
             return;
           }
-          if (d.ok !== true || !Array.isArray(d.items)) {
+          if (!r.ok || d.ok !== true || !Array.isArray(d.items)) {
             setExtraBySlug({});
             setTranslateIssue("translate_error");
             return;
           }
-          const map: Record<string, { titleAr?: string; excerptAr?: string }> = {};
           for (const row of d.items) {
-            map[row.slug] = { titleAr: row.titleAr, excerptAr: row.excerptAr };
+            const cur = merged[row.slug] ?? {};
+            merged[row.slug] = {
+              titleAr: row.titleAr ?? cur.titleAr,
+              excerptAr: row.excerptAr ?? cur.excerptAr,
+            };
           }
-          setExtraBySlug(map);
-          setTranslateIssue(null);
-          try {
-            sessionStorage.setItem(ck, JSON.stringify(map));
-          } catch {
-            /* ignore */
-          }
-        },
-      )
-      .catch(() => {
+        }
+        if (cancelled) return;
+        setExtraBySlug(merged);
+        setTranslateIssue(null);
+        try {
+          sessionStorage.setItem(ck, JSON.stringify(merged));
+        } catch {
+          /* ignore */
+        }
+      } catch {
         if (!cancelled) {
           setExtraBySlug({});
           setTranslateIssue("translate_error");
         }
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;
