@@ -41,7 +41,7 @@ export function useNewsListAutoAr(articles: NewsArticle[], lang: Lang) {
     }));
 
     let cancelled = false;
-    const ARTICLES_PER_REQUEST = 4;
+    const ARTICLES_PER_REQUEST = 2;
 
     (async () => {
       const merged: Record<string, { title?: string; description?: string }> = {};

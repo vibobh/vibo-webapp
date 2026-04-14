@@ -156,11 +156,12 @@ async function translateManyPlainTextsOpenRouter(texts: string[]): Promise<strin
 
   const payload = JSON.stringify({ strings: texts });
   const system = `You translate UI strings from English to Modern Standard Arabic.
-You will receive JSON: {"strings":["..."]} with exactly ${texts.length} English strings (indices 0..${texts.length - 1}).
-Respond with ONLY valid JSON (no markdown fences): {"translations":["..."]} — exactly ${texts.length} Arabic strings in the same order.
-Each translation must be plain text (no HTML). Preserve meaning and tone suitable for a social app blog.`;
+You will receive JSON: {"strings":["..."]} with exactly ${texts.length} English strings.
+You MUST respond with a single JSON object only, with this exact shape: {"translations":["..."]}
+where "translations" is an array of exactly ${texts.length} Arabic strings in the same order as "strings".
+Each item is plain text (no HTML). Escape quotes inside strings as needed for valid JSON.`;
 
-  const raw = await openRouterChat(
+  const raw = await openRouterChatJson(
     [
       { role: "system", content: system },
       { role: "user", content: payload },
@@ -183,22 +184,146 @@ Each translation must be plain text (no HTML). Preserve meaning and tone suitabl
   }
 
   const tr = parsed.translations;
-  if (!Array.isArray(tr) || tr.length !== texts.length) {
-    throw new Error(
-      `OpenRouter batch: expected ${texts.length} translations, got ${Array.isArray(tr) ? tr.length : "invalid"}`,
-    );
+  if (!Array.isArray(tr)) {
+    throw new Error("OpenRouter batch: translations is not an array");
   }
-
-  return tr.map((s) => (typeof s === "string" ? s : String(s ?? "")));
+  if (tr.length < texts.length) {
+    throw new Error(`OpenRouter batch: got ${tr.length} translations, need ${texts.length}`);
+  }
+  const slice = tr.slice(0, texts.length);
+  return slice.map((s) => (typeof s === "string" ? s : String(s ?? "")));
 }
 
-/** Sequential single-string fallback if batch JSON fails. */
-async function translateManyPlainFallback(texts: string[]): Promise<string[]> {
-  const out: string[] = [];
-  for (const t of texts) {
-    out.push(t.trim() ? await translateOnePlain(t) : "");
+/** Like openRouterChat but requests JSON object mode when the model supports it (fewer parse failures). */
+async function openRouterChatJson(
+  messages: { role: "system" | "user"; content: string }[],
+  maxTokens: number,
+): Promise<string> {
+  const apiKey = process.env.OPENROUTER_API_KEY?.trim();
+  if (!apiKey) throw new Error("MISSING_OPENROUTER_KEY");
+
+  const model = getModel();
+  const referer = process.env.OPENROUTER_HTTP_REFERER?.trim() || "https://joinvibo.com";
+  const appTitle = process.env.OPENROUTER_APP_TITLE?.trim() || "Vibo";
+
+  const c = new AbortController();
+  const tid = setTimeout(() => c.abort(), 55_000);
+
+  try {
+    const buildBody = (withJsonMode: boolean): Record<string, unknown> => ({
+      model,
+      temperature: 0.1,
+      max_tokens: maxTokens,
+      messages,
+      ...(withJsonMode ? { response_format: { type: "json_object" } } : {}),
+    });
+
+    let res = await fetch(OPENROUTER_CHAT_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": referer,
+        "X-Title": `${appTitle} EN→AR JSON`,
+      },
+      body: JSON.stringify(buildBody(true)),
+      signal: c.signal,
+    });
+
+    if (!res.ok) {
+      let errText = await res.text().catch(() => res.statusText);
+      if (res.status === 400 && /response_format|json_object|json mode/i.test(errText)) {
+        res = await fetch(OPENROUTER_CHAT_URL, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": referer,
+            "X-Title": `${appTitle} EN→AR JSON`,
+          },
+          body: JSON.stringify(buildBody(false)),
+          signal: c.signal,
+        });
+        if (!res.ok) {
+          errText = await res.text().catch(() => res.statusText);
+          throw new Error(`OpenRouter translate failed: ${res.status} ${errText.slice(0, 500)}`);
+        }
+      } else {
+        throw new Error(`OpenRouter translate failed: ${res.status} ${errText.slice(0, 500)}`);
+      }
+    }
+
+    const data = (await res.json()) as {
+      choices?: Array<{
+        message?: { content?: string | null | Array<{ type?: string; text?: string }> };
+        finish_reason?: string | null;
+      }>;
+      error?: { message?: string };
+    };
+
+    if (data.error?.message) {
+      throw new Error(`OpenRouter: ${data.error.message}`);
+    }
+
+    const choice = data.choices?.[0];
+    const msg = choice?.message;
+    let raw = "";
+    const content = msg?.content;
+    if (typeof content === "string") {
+      raw = content.trim();
+    } else if (Array.isArray(content)) {
+      raw = content
+        .filter((p): p is { type?: string; text?: string } => p && typeof p === "object")
+        .filter((p) => p.type === "text" && typeof p.text === "string")
+        .map((p) => p.text)
+        .join("")
+        .trim();
+    }
+
+    if (!raw) {
+      const fr = choice?.finish_reason ?? "unknown";
+      console.error("[openRouterTranslate] empty JSON content", { finish_reason: fr, model });
+      throw new Error(`OpenRouter returned empty content (finish_reason=${fr})`);
+    }
+
+    return raw;
+  } finally {
+    clearTimeout(tid);
   }
-  return out;
+}
+
+/**
+ * Batch translate with split-on-failure (parallel halves). Avoids the old sequential fallback
+ * that could run dozens of OpenRouter calls and exceed Vercel time limits (502).
+ */
+async function translateManyPlainRobust(texts: string[]): Promise<string[]> {
+  if (texts.length === 0) return [];
+  if (texts.length === 1) {
+    return [texts[0].trim() ? await translateOnePlain(texts[0]) : ""];
+  }
+
+  try {
+    return await translateManyPlainTextsOpenRouter(texts);
+  } catch (e) {
+    console.warn("[openRouterTranslate] batch failed, splitting", texts.length, e);
+    if (texts.length === 2) {
+      return await Promise.all(
+        texts.map((t) => (t.trim() ? translateOnePlain(t) : Promise.resolve(""))),
+      );
+    }
+    const mid = Math.floor(texts.length / 2);
+    const safeMid = mid >= 1 ? mid : 1;
+    const left = texts.slice(0, safeMid);
+    const right = texts.slice(safeMid);
+    if (right.length === 0) {
+      return translateManyPlainRobust(left);
+    }
+    const [L, R] = await Promise.all([
+      translateManyPlainRobust(left),
+      translateManyPlainRobust(right),
+    ]);
+    return [...L, ...R];
+  }
 }
 
 /**
@@ -232,17 +357,9 @@ export async function translateStringsEnToArOpenRouter(
     }
     const len = i - start;
 
-    try {
-      const translated = await translateManyPlainTextsOpenRouter(batchTexts);
-      for (let k = 0; k < len; k++) {
-        result[start + k] = translated[k]?.trim() ?? "";
-      }
-    } catch (e) {
-      console.error("[openRouterTranslate] batch failed, falling back to sequential", e);
-      const fallback = await translateManyPlainFallback(batchTexts);
-      for (let k = 0; k < len; k++) {
-        result[start + k] = fallback[k] ?? "";
-      }
+    const translated = await translateManyPlainRobust(batchTexts);
+    for (let k = 0; k < len; k++) {
+      result[start + k] = translated[k]?.trim() ?? "";
     }
   }
 

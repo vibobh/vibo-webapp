@@ -209,7 +209,7 @@ export function useBlogListAutoAr(posts: BlogListItem[], lang: Lang) {
     setTranslateIssue(null);
 
     /** Few posts per request so each serverless run stays under Vercel time limits (e.g. 10s). */
-    const POSTS_PER_REQUEST = 4;
+    const POSTS_PER_REQUEST = 2;
 
     (async () => {
       const merged: Record<string, { titleAr?: string; excerptAr?: string }> = {};
