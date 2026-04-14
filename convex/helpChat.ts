@@ -43,6 +43,11 @@ const OPENROUTER_CHAT_URL = "https://openrouter.ai/api/v1/chat/completions";
 /** OpenRouter model id, e.g. openai/gpt-4o-mini, google/gemini-2.0-flash-001 — see https://openrouter.ai/models */
 const DEFAULT_OPENROUTER_MODEL = "openai/gpt-4o-mini";
 
+/** Request header values must be ByteString (0..255). */
+function toHeaderByteString(value: string): string {
+  return value.replace(/[^\u0000-\u00FF]/g, "-");
+}
+
 /** Drop UI greeting so the thread starts with a user turn (better for some providers). */
 function stripLeadingAssistant(
   messages: { role: "user" | "assistant"; content: string }[],
@@ -86,6 +91,7 @@ export const askHelpQuestion = action({
       process.env.OPENROUTER_HTTP_REFERER?.trim() || "https://joinvibo.com";
     const title =
       process.env.OPENROUTER_APP_TITLE?.trim() || "Vibo Help Center";
+    const safeTitle = toHeaderByteString(title);
 
     const res = await fetch(OPENROUTER_CHAT_URL, {
       method: "POST",
@@ -93,7 +99,7 @@ export const askHelpQuestion = action({
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": referer,
-        "X-Title": title,
+        "X-Title": safeTitle,
       },
       body: JSON.stringify({
         model,

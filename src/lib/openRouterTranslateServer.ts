@@ -39,6 +39,11 @@ function getModel(): string {
   );
 }
 
+/** Undici request headers require ByteString values (0..255). */
+function toHeaderByteString(value: string): string {
+  return value.replace(/[^\u0000-\u00FF]/g, "-");
+}
+
 async function openRouterChat(messages: { role: "system" | "user"; content: string }[], maxTokens: number) {
   const apiKey = process.env.OPENROUTER_API_KEY?.trim();
   if (!apiKey) throw new Error("MISSING_OPENROUTER_KEY");
@@ -46,6 +51,7 @@ async function openRouterChat(messages: { role: "system" | "user"; content: stri
   const model = getModel();
   const referer = process.env.OPENROUTER_HTTP_REFERER?.trim() || "https://joinvibo.com";
   const appTitle = process.env.OPENROUTER_APP_TITLE?.trim() || "Vibo";
+  const titleHeader = toHeaderByteString(`${appTitle} EN-AR`);
 
   const c = new AbortController();
   const tid = setTimeout(() => c.abort(), 110_000);
@@ -57,7 +63,7 @@ async function openRouterChat(messages: { role: "system" | "user"; content: stri
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": referer,
-        "X-Title": `${appTitle} EN→AR`,
+        "X-Title": titleHeader,
       },
       body: JSON.stringify({
         model,
@@ -205,6 +211,7 @@ async function openRouterChatJson(
   const model = getModel();
   const referer = process.env.OPENROUTER_HTTP_REFERER?.trim() || "https://joinvibo.com";
   const appTitle = process.env.OPENROUTER_APP_TITLE?.trim() || "Vibo";
+  const titleHeader = toHeaderByteString(`${appTitle} EN-AR JSON`);
 
   const c = new AbortController();
   const tid = setTimeout(() => c.abort(), 55_000);
@@ -224,7 +231,7 @@ async function openRouterChatJson(
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": referer,
-        "X-Title": `${appTitle} EN→AR JSON`,
+        "X-Title": titleHeader,
       },
       body: JSON.stringify(buildBody(true)),
       signal: c.signal,
@@ -239,7 +246,7 @@ async function openRouterChatJson(
             Authorization: `Bearer ${apiKey}`,
             "Content-Type": "application/json",
             "HTTP-Referer": referer,
-            "X-Title": `${appTitle} EN→AR JSON`,
+            "X-Title": titleHeader,
           },
           body: JSON.stringify(buildBody(false)),
           signal: c.signal,
