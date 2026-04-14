@@ -6,6 +6,7 @@ import {
 import { sanitizeNewsArticleHtml } from "@/lib/sanitizeNewsHtml";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 120;
 
 type Body = {
   url: string;

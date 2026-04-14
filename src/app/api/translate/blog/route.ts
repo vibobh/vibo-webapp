@@ -6,6 +6,7 @@ import {
 import { sanitizeBlogHtml } from "@/lib/sanitizeBlogHtml";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 120;
 
 type Body = {
   slug: string;

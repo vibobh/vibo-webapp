@@ -5,6 +5,7 @@ import {
 } from "@/lib/translateEnToArServer";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 type Item = {
   url: string;

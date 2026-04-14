@@ -5,6 +5,8 @@ import {
 } from "@/lib/translateEnToArServer";
 
 export const dynamic = "force-dynamic";
+/** Allow batched OpenRouter calls on Vercel (default is often 10s). */
+export const maxDuration = 60;
 
 type Item = {
   slug: string;
