@@ -1,6 +1,7 @@
 /**
- * Server-only: OpenRouter chat API for EN→AR when LibreTranslate is not configured.
- * Uses the same env vars as Convex help (OPENROUTER_API_KEY, optional model/referer/title).
+ * Server-only: OpenRouter chat API for EN→AR (blog / news auto-translate on Next.js).
+ * Env: OPENROUTER_API_KEY (required). Optional: OPENROUTER_TRANSLATE_MODEL, OPENROUTER_MODEL,
+ * OPENROUTER_HTTP_REFERER, OPENROUTER_APP_TITLE (same as Convex help).
  */
 
 const OPENROUTER_CHAT_URL = "https://openrouter.ai/api/v1/chat/completions";
@@ -28,7 +29,10 @@ async function translateOne(text: string, format: "text" | "html"): Promise<stri
   const apiKey = process.env.OPENROUTER_API_KEY?.trim();
   if (!apiKey) throw new Error("MISSING_OPENROUTER_KEY");
 
-  const model = process.env.OPENROUTER_MODEL?.trim() || DEFAULT_MODEL;
+  const model =
+    process.env.OPENROUTER_TRANSLATE_MODEL?.trim() ||
+    process.env.OPENROUTER_MODEL?.trim() ||
+    DEFAULT_MODEL;
   const referer = process.env.OPENROUTER_HTTP_REFERER?.trim() || "https://joinvibo.com";
   const appTitle = process.env.OPENROUTER_APP_TITLE?.trim() || "Vibo";
 
@@ -56,6 +60,7 @@ async function translateOne(text: string, format: "text" | "html"): Promise<stri
         { role: "user", content: `Translate to Arabic:\n\n${slice}` },
       ],
     }),
+    signal: AbortSignal.timeout(120_000),
   });
 
   if (!res.ok) {
@@ -64,7 +69,10 @@ async function translateOne(text: string, format: "text" | "html"): Promise<stri
   }
 
   const data = (await res.json()) as {
-    choices?: { message?: { content?: string | null } }[];
+    choices?: Array<{
+      message?: { content?: string | null | Array<{ type?: string; text?: string }> };
+      finish_reason?: string | null;
+    }>;
     error?: { message?: string };
   };
 
@@ -72,8 +80,30 @@ async function translateOne(text: string, format: "text" | "html"): Promise<stri
     throw new Error(`OpenRouter: ${data.error.message}`);
   }
 
-  let out = data.choices?.[0]?.message?.content?.trim() ?? "";
-  out = stripCodeFences(out, format);
+  const choice = data.choices?.[0];
+  const msg = choice?.message;
+  let raw = "";
+  const c = msg?.content;
+  if (typeof c === "string") {
+    raw = c.trim();
+  } else if (Array.isArray(c)) {
+    raw = c
+      .filter((p): p is { type?: string; text?: string } => p && typeof p === "object")
+      .filter((p) => p.type === "text" && typeof p.text === "string")
+      .map((p) => p.text)
+      .join("")
+      .trim();
+  }
+
+  if (!raw) {
+    const fr = choice?.finish_reason ?? "unknown";
+    console.error("[openRouterTranslate] empty content", { finish_reason: fr, model });
+    throw new Error(
+      `OpenRouter returned empty translation (finish_reason=${fr}). Try OPENROUTER_TRANSLATE_MODEL=openai/gpt-4o-mini or check credits at openrouter.ai.`,
+    );
+  }
+
+  let out = stripCodeFences(raw, format);
   return out;
 }
 

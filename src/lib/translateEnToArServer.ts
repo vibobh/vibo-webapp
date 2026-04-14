@@ -1,5 +1,6 @@
 /**
- * Blog / news auto-translation: prefers LibreTranslate when configured, otherwise OpenRouter.
+ * Blog / news auto-translation: uses OpenRouter when OPENROUTER_API_KEY is set (recommended on Vercel),
+ * otherwise LibreTranslate when configured.
  */
 
 import {
@@ -14,17 +15,17 @@ import {
 export type TranslateFormat = "text" | "html";
 
 export function isEnToArTranslationConfigured(): boolean {
-  return isLibreTranslateConfigured() || isOpenRouterTranslateConfigured();
+  return isOpenRouterTranslateConfigured() || isLibreTranslateConfigured();
 }
 
 export async function translateStringsEnToAr(
   parts: { text: string; format: TranslateFormat }[],
 ): Promise<string[]> {
-  if (isLibreTranslateConfigured()) {
-    return translateViaLibre(parts);
-  }
   if (isOpenRouterTranslateConfigured()) {
     return translateStringsEnToArOpenRouter(parts);
+  }
+  if (isLibreTranslateConfigured()) {
+    return translateViaLibre(parts);
   }
   throw new Error("MISSING_KEY");
 }
