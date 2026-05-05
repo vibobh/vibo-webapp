@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Bookmark, Heart, MessageCircle, Music2, Send } from "lucide-react";
+import { Bookmark, Heart, MessageCircle, Music2, Send } from "@/components/ui/icons";
 
 type AccountType = "individual" | "business" | "government";
 
@@ -275,3 +275,4 @@ export function ViboAuthShowcase({ variant = "posts" }: ViboAuthShowcaseProps) {
     </div>
   );
 }
+

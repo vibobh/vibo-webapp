@@ -1,13 +1,14 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AnimatePresence, motion } from "framer-motion";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { CheckCircle2, Eye, EyeOff, Loader2, X } from "@/components/ui/icons";
 import Link from "next/link";
+import { getCountries, getCountryCallingCode } from "libphonenumber-js/min";
 
 import type { Lang, Translations } from "@/i18n";
 import { useViboAuth } from "@/lib/auth/AuthProvider";
@@ -15,17 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-/* ------------------------------------------------------------------ */
-/*  Constants                                                          */
-/* ------------------------------------------------------------------ */
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { OnboardingForm } from "@/components/auth/OnboardingForm";
 
 export interface SignUpFormProps {
   t: Translations;
@@ -33,109 +25,79 @@ export interface SignUpFormProps {
   signInHref: string;
 }
 
-const COUNTRY_PHONE_CODES = [
-  { code: "BH", dial: "+973", name: "Bahrain" },
-  { code: "SA", dial: "+966", name: "Saudi Arabia" },
-  { code: "AE", dial: "+971", name: "UAE" },
-  { code: "KW", dial: "+965", name: "Kuwait" },
-  { code: "QA", dial: "+974", name: "Qatar" },
-  { code: "OM", dial: "+968", name: "Oman" },
-  { code: "EG", dial: "+20", name: "Egypt" },
-  { code: "JO", dial: "+962", name: "Jordan" },
-  { code: "LB", dial: "+961", name: "Lebanon" },
-  { code: "IQ", dial: "+964", name: "Iraq" },
-  { code: "US", dial: "+1", name: "United States" },
-  { code: "GB", dial: "+44", name: "United Kingdom" },
-  { code: "CA", dial: "+1", name: "Canada" },
-  { code: "DE", dial: "+49", name: "Germany" },
-  { code: "FR", dial: "+33", name: "France" },
-  { code: "IN", dial: "+91", name: "India" },
-  { code: "PK", dial: "+92", name: "Pakistan" },
-  { code: "TR", dial: "+90", name: "Turkey" },
-  { code: "MY", dial: "+60", name: "Malaysia" },
-  { code: "ID", dial: "+62", name: "Indonesia" },
-] as const;
+type CountryPhoneEntry = { code: string; dial: string; name: string };
 
-const COUNTRIES = [
-  "Bahrain",
-  "Saudi Arabia",
-  "UAE",
-  "Kuwait",
-  "Qatar",
-  "Oman",
-  "Egypt",
-  "Jordan",
-  "Lebanon",
-  "Iraq",
-  "United States",
-  "United Kingdom",
-  "Canada",
-  "Germany",
-  "France",
-  "India",
-  "Pakistan",
-  "Turkey",
-  "Malaysia",
-  "Indonesia",
-  "Other",
-] as const;
-
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                            */
-/* ------------------------------------------------------------------ */
-
-function daysInMonth(year: number, month: number): number {
-  return new Date(year, month, 0).getDate();
+/** ISO 3166-1 alpha-2 → regional indicator pair (flag emoji). */
+function flagEmojiFromIso2(iso: string): string {
+  const c = iso.toUpperCase();
+  if (c.length !== 2 || !/^[A-Z]{2}$/.test(c)) return "";
+  const base = 0x1f1e6;
+  return String.fromCodePoint(base + c.charCodeAt(0) - 65, base + c.charCodeAt(1) - 65);
 }
 
-function maxDayForDobPart(
-  yearStr: string,
-  monthStr: string,
-  boundaryISO: string,
-): number {
-  if (!yearStr || !monthStr) return 31;
-  const y = parseInt(yearStr, 10);
-  const m = parseInt(monthStr, 10);
-  const [by, bm, bd] = boundaryISO.split("-").map(Number);
-  const dim = daysInMonth(y, m);
-  if (y < by) return dim;
-  if (y > by) return dim;
-  if (m < bm) return dim;
-  if (m > bm) return dim;
-  return Math.min(dim, bd);
+function appleFlagEmojiUrl(iso: string): string {
+  const emoji = flagEmojiFromIso2(iso) || "🏳️";
+  return `https://emojicdn.elk.sh/${encodeURIComponent(emoji)}?style=apple`;
 }
 
-function getMinAgeDate(): string {
-  const d = new Date();
-  d.setFullYear(d.getFullYear() - 13);
-  return d.toISOString().split("T")[0];
+function passwordStrengthRefine(password: string) {
+  return (
+    password.length >= 8 &&
+    /[a-z]/.test(password) &&
+    /[A-Z]/.test(password) &&
+    /[0-9]/.test(password)
+  );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Component                                                          */
-/* ------------------------------------------------------------------ */
+function passwordChecks(password: string) {
+  return {
+    minLength: password.length >= 8,
+    hasUpper: /[A-Z]/.test(password),
+    hasLower: /[a-z]/.test(password),
+    hasNumber: /[0-9]/.test(password),
+  };
+}
 
 export function SignUpForm({ t, lang, signInHref }: SignUpFormProps) {
   const L = t.login;
   const router = useRouter();
-  const { setSession } = useViboAuth();
-  const [step, setStep] = useState<1 | 2>(1);
+  const searchParams = useSearchParams();
+  const { setSession, user } = useViboAuth();
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [resendSeconds, setResendSeconds] = useState(0);
+  const onboardingOnly =
+    searchParams.get("onboarding") === "1" || searchParams.get("onboarding") === "true";
 
-  /* ── Schema ── */
+  const countryPhoneCodes = useMemo<CountryPhoneEntry[]>(() => {
+    const locale = lang === "ar" ? "ar" : "en";
+    const dn = new Intl.DisplayNames([locale], { type: "region" });
+    const codes = getCountries().filter((code) => code !== "IL");
+    if (!codes.includes("PS")) {
+      codes.push("PS");
+    }
+    const entries = codes.map((code) => ({
+        code,
+        dial: `+${getCountryCallingCode(code)}`,
+        name: code === "PS" ? (locale === "ar" ? "فلسطين" : "Palestine") : (dn.of(code) ?? code),
+      }));
+    entries.sort((a, b) => a.name.localeCompare(b.name, locale));
+    return entries;
+  }, [lang]);
 
-  const signUpSchema = useMemo(() => {
-    const minAge = getMinAgeDate();
-    return z
-      .object({
+  const signUpSchema = useMemo(
+    () =>
+      z.object({
         fullName: z.string().min(1, { message: L.errors.fullNameRequired }),
         username: z.string().min(3, { message: L.errors.usernameMin }),
         email: z.string().email({ message: L.errors.email }),
-        password: z.string().min(8, { message: L.errors.passwordMin }),
-        confirmPassword: z.string().min(8, { message: L.errors.passwordMin }),
+        password: z
+          .string()
+          .min(8, { message: L.errors.passwordMin })
+          .refine(passwordStrengthRefine, { message: L.errors.passwordStrength }),
         phone: z
           .string()
           .min(1, { message: L.errors.phoneRequired })
@@ -143,47 +105,12 @@ export function SignUpForm({ t, lang, signInHref }: SignUpFormProps) {
             message: L.errors.phoneInvalid,
           }),
         countryCode: z.string().min(1, { message: L.errors.phoneRequired }),
-        dob: z
-          .string()
-          .min(1, { message: L.errors.dobRequired })
-          .refine((val) => /^\d{4}-\d{2}-\d{2}$/.test(val), {
-            message: L.errors.dobInvalid,
-          })
-          .refine(
-            (val) => {
-              if (!/^\d{4}-\d{2}-\d{2}$/.test(val)) return true;
-              const [y, m, d] = val.split("-").map(Number);
-              const dt = new Date(y, m - 1, d);
-              return (
-                dt.getFullYear() === y &&
-                dt.getMonth() === m - 1 &&
-                dt.getDate() === d
-              );
-            },
-            { message: L.errors.dobInvalid },
-          )
-          .refine(
-            (val) => {
-              if (!/^\d{4}-\d{2}-\d{2}$/.test(val)) return true;
-              return val <= minAge;
-            },
-            { message: L.errors.dobTooYoung },
-          ),
-        gender: z.string().min(1, { message: L.errors.genderRequired }),
-        country: z.string().min(1, { message: L.errors.countryRequired }),
-        terms: z
-          .boolean()
-          .refine((val) => val === true, { message: L.errors.terms }),
-      })
-      .refine((data) => data.password === data.confirmPassword, {
-        message: L.errors.passwordMismatch,
-        path: ["confirmPassword"],
-      });
-  }, [L.errors]);
+        terms: z.boolean().refine((val) => val === true, { message: L.errors.terms }),
+      }),
+    [L.errors],
+  );
 
   type SignUpFormValues = z.infer<typeof signUpSchema>;
-
-  /* ── Form ── */
 
   const {
     register,
@@ -200,164 +127,168 @@ export function SignUpForm({ t, lang, signInHref }: SignUpFormProps) {
       username: "",
       email: "",
       password: "",
-      confirmPassword: "",
       phone: "",
       countryCode: "BH",
-      dob: "",
-      gender: "",
-      country: "",
       terms: false,
     },
   });
 
   const termsValue = watch("terms");
-  const genderValue = watch("gender");
-  const countryValue = watch("country");
   const phoneCountryCodeValue = watch("countryCode");
+  const usernameValue = watch("username");
+  const fullNameValue = watch("fullName");
+  const emailValue = watch("email");
+  const passwordValue = watch("password");
+  const phoneValue = watch("phone");
+  const selectedPhoneEntry =
+    countryPhoneCodes.find((c) => c.code === phoneCountryCodeValue) ??
+    countryPhoneCodes[0] ??
+    ({ code: "BH", dial: "+973", name: "Bahrain" } satisfies CountryPhoneEntry);
+  const selectedFlagEmoji = flagEmojiFromIso2(selectedPhoneEntry.code) || "🏳️";
 
-  /* ── DOB logic ── */
+  useEffect(() => {
+    if (resendSeconds <= 0) return;
+    const tmr = window.setInterval(() => {
+      setResendSeconds((s) => (s <= 1 ? 0 : s - 1));
+    }, 1000);
+    return () => window.clearInterval(tmr);
+  }, [resendSeconds]);
 
-  const minAgeBoundary = getMinAgeDate();
-  const maxBirthYear = parseInt(minAgeBoundary.slice(0, 4), 10);
-  const maxBirthMonth = parseInt(minAgeBoundary.slice(5, 7), 10);
-
-  const [dobY, setDobY] = useState("");
-  const [dobM, setDobM] = useState("");
-  const [dobD, setDobD] = useState("");
-
-  const monthOptions = useMemo(() => {
-    const locale = lang === "ar" ? "ar" : "en-US";
-    return Array.from({ length: 12 }, (_, i) => {
-      const value = String(i + 1).padStart(2, "0");
-      const label = new Intl.DateTimeFormat(locale, { month: "long" }).format(
-        new Date(2024, i, 1),
-      );
-      return { value, label };
-    });
-  }, [lang]);
-
-  const visibleMonths = useMemo(() => {
-    if (!dobY || parseInt(dobY, 10) < maxBirthYear) return monthOptions;
-    return monthOptions.filter(
-      (item) => parseInt(item.value, 10) <= maxBirthMonth,
-    );
-  }, [dobY, maxBirthYear, maxBirthMonth, monthOptions]);
-
-  const birthYears = useMemo(() => {
-    const years: number[] = [];
-    for (let y = maxBirthYear; y >= maxBirthYear - 100; y--) years.push(y);
-    return years;
-  }, [maxBirthYear]);
-
-  const maxDayInMonth = dobM
-    ? maxDayForDobPart(dobY, dobM, minAgeBoundary)
-    : 31;
-  const dayOptions = useMemo(
-    () =>
-      Array.from({ length: maxDayInMonth }, (_, i) =>
-        String(i + 1).padStart(2, "0"),
-      ),
-    [maxDayInMonth],
-  );
-
-  useLayoutEffect(() => {
-    if (step !== 2) return;
-    const v = getValues("dob");
-    if (v && /^\d{4}-\d{2}-\d{2}$/.test(v)) {
-      const [y, m, d] = v.split("-");
-      setDobY(y);
-      setDobM(m);
-      setDobD(d);
-    } else {
-      setDobY("");
-      setDobM("");
-      setDobD("");
+  useEffect(() => {
+    if (onboardingOnly && user && !user.onboardingCompleted) {
+      setStep(3);
+      setError(null);
     }
-  }, [step, getValues]);
+  }, [onboardingOnly, user]);
 
-  const commitDob = (y: string, m: string, d: string) => {
-    if (!y || !m || !d) {
-      setDobY(y);
-      setDobM(m);
-      setDobD(d);
-      setValue("dob", "", { shouldValidate: true });
-      return;
-    }
-    const yi = parseInt(y, 10);
-    let mi = parseInt(m, 10);
-    if (yi === maxBirthYear && mi > maxBirthMonth) mi = maxBirthMonth;
-    const ms = String(mi).padStart(2, "0");
-    const cap = maxDayForDobPart(String(yi), ms, minAgeBoundary);
-    let di = parseInt(d, 10);
-    if (di > cap) di = cap;
-    const ds = String(di).padStart(2, "0");
-    setDobY(String(yi));
-    setDobM(ms);
-    setDobD(ds);
-    setValue("dob", `${yi}-${ms}-${ds}`, { shouldValidate: true });
-  };
+  const fieldCls = (hasError: boolean) =>
+    `auth-form-input-autofill h-16 rounded-2xl border bg-white px-5 text-[17px] text-neutral-700 transition-colors placeholder:text-neutral-400 focus-visible:border-neutral-400 focus-visible:ring-2 focus-visible:ring-vibo-primary/20 ${hasError ? "border-red-400" : "border-neutral-300"}`;
 
-  const setDobPart = (part: "y" | "m" | "d", value: string) => {
-    const y = part === "y" ? value : dobY;
-    const m = part === "m" ? value : dobM;
-    const d = part === "d" ? value : dobD;
-    commitDob(y, m, d);
-  };
+  const canContinueStep1 =
+    fullNameValue.trim().length > 0 &&
+    usernameValue.trim().length >= 3 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue.trim()) &&
+    passwordStrengthRefine(passwordValue) &&
+    phoneValue.replace(/\D/g, "").length >= 6 &&
+    Boolean(phoneCountryCodeValue) &&
+    termsValue === true;
+  const pwd = passwordChecks(passwordValue);
 
-  const goToStep2 = async () => {
+  const sendVerificationEmail = async () => {
     const ok = await trigger([
       "fullName",
       "username",
       "email",
       "password",
-      "confirmPassword",
+      "phone",
+      "countryCode",
+      "terms",
     ]);
-    if (ok) {
-      setError(null);
-      setStep(2);
-    }
-  };
+    if (!ok) return;
 
-  /* ── Submit ── */
-
-  const onSubmit = async (data: SignUpFormValues) => {
     setIsLoading(true);
     setError(null);
     try {
-      const phoneEntry = COUNTRY_PHONE_CODES.find(
-        (c) => c.code === data.countryCode,
-      );
-      const fullPhone = `${phoneEntry?.dial ?? ""}${data.phone.replace(/\D/g, "")}`;
+      const v = getValues();
+      const phoneEntry = countryPhoneCodes.find((c) => c.code === v.countryCode);
+      const fullPhone = `${phoneEntry?.dial ?? ""}${v.phone.replace(/\D/g, "")}`;
 
-      const res = await fetch("/api/auth/signup", {
+      const res = await fetch("/api/auth/signup/send-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: data.email,
-          username: data.username,
-          password: data.password,
-          fullName: data.fullName,
+          email: v.email.trim().toLowerCase(),
+          username: v.username,
+          fullName: v.fullName,
           phone: fullPhone,
-          countryCode: data.countryCode,
-          dob: data.dob,
-          gender: data.gender,
-          country: data.country,
+          countryCode: v.countryCode,
           preferredLang: lang ?? "en",
         }),
       });
-      const text = await res.text();
-      type SignupJson = {
+      const json = (await res.json().catch(() => ({}))) as {
+        success?: boolean;
         error?: string;
-        token?: string;
-        user?: { id: string; email: string; username: string };
+        details?: Record<string, unknown>;
+        cooldownSeconds?: number;
+        resendInSeconds?: number;
+        emailSent?: boolean;
       };
-      let json: SignupJson = {};
-      try {
-        json = text ? (JSON.parse(text) as SignupJson) : {};
-      } catch {
-        setError(`${L.genericError} (HTTP ${res.status})`);
+
+      const failed = !res.ok || json.success === false;
+      if (failed) {
+        let msg =
+          typeof json.error === "string" && json.error.length > 0
+            ? json.error
+            : L.genericError;
+        if (process.env.NODE_ENV === "development" && json.details) {
+          try {
+            msg += ` — ${JSON.stringify(json.details).slice(0, 800)}`;
+          } catch {
+            /* ignore */
+          }
+        }
+        setError(msg);
         return;
       }
+
+      const waitSeconds =
+        typeof json.cooldownSeconds === "number"
+          ? json.cooldownSeconds
+          : typeof json.resendInSeconds === "number"
+            ? json.resendInSeconds
+            : 0;
+      if (json.emailSent === false && waitSeconds > 0) {
+        setResendSeconds(waitSeconds);
+        setError(L.resendWait.replace("{s}", String(waitSeconds)));
+        return;
+      }
+      setStep(2);
+      setVerificationCode("");
+      if (typeof json.resendInSeconds === "number" && json.resendInSeconds > 0) {
+        setResendSeconds(json.resendInSeconds);
+      } else {
+        setResendSeconds(60);
+      }
+    } catch {
+      setError(L.genericError);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onSubmitVerify = async () => {
+    const code = verificationCode.trim().replace(/\s/g, "");
+    if (!/^\d{4}$/.test(code)) {
+      setError(L.errors.codeInvalid);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    try {
+      const v = getValues();
+      const phoneEntry = countryPhoneCodes.find((c) => c.code === v.countryCode);
+      const fullPhone = `${phoneEntry?.dial ?? ""}${v.phone.replace(/\D/g, "")}`;
+
+      const res = await fetch("/api/auth/signup/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: v.email.trim().toLowerCase(),
+          code,
+          username: v.username,
+          password: v.password,
+          fullName: v.fullName,
+          phone: fullPhone,
+          countryCode: v.countryCode,
+          preferredLang: lang ?? "en",
+        }),
+      });
+      const json = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        token?: string;
+        user?: { id: string; email: string; username: string; onboardingCompleted?: boolean };
+      };
       if (!res.ok) {
         setError(json.error ?? L.genericError);
         return;
@@ -367,7 +298,8 @@ export function SignUpForm({ t, lang, signInHref }: SignUpFormProps) {
         return;
       }
       setSession(json.token, json.user);
-      router.push(`/login/onboarding?lang=${lang ?? "en"}`);
+      setStep(3);
+      setError(null);
     } catch {
       setError(L.genericError);
     } finally {
@@ -375,36 +307,31 @@ export function SignUpForm({ t, lang, signInHref }: SignUpFormProps) {
     }
   };
 
-  /* ── Styles ── */
-
-  const fieldCls = (hasError: boolean) =>
-    `h-11 rounded-lg border-neutral-200 bg-white text-[15px] transition-colors placeholder:text-neutral-400 focus-visible:border-neutral-400 focus-visible:ring-1 focus-visible:ring-neutral-300/50 ${hasError ? "border-red-400" : ""}`;
-
-  const selectTriggerCls = (hasError: boolean) =>
-    `h-11 rounded-lg border-neutral-200 bg-white text-[15px] ${hasError ? "border-red-400" : ""}`;
-
-  /* ── Render ── */
-
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-[22px] font-semibold tracking-tight text-neutral-900 sm:text-2xl">
-          {L.signUpTitle}
-        </h1>
-        <p className="mt-1 text-xs font-medium text-neutral-400">
-          {step === 1 ? L.step1of2 : L.step2of2}
-        </p>
-      </div>
+      {step < 3 && (
+        <div className="text-center">
+          <h1 className="text-[22px] font-semibold tracking-tight text-neutral-900 sm:text-2xl">{L.signUpTitle}</h1>
+          <p className="mt-2 text-[16px] text-neutral-400">{L.signUpSubtitle}</p>
+        </div>
+      )}
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-sm text-red-700">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        <AnimatePresence mode="wait">
-          {/* ── Step 1: Account Basics ── */}
+      {step < 3 ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (step === 1) void sendVerificationEmail();
+            else void onSubmitVerify();
+          }}
+          className="space-y-5"
+        >
+          <AnimatePresence mode="wait">
           {step === 1 && (
             <motion.div
               key="signup-step-1"
@@ -414,37 +341,8 @@ export function SignUpForm({ t, lang, signInHref }: SignUpFormProps) {
               transition={{ duration: 0.2 }}
               className="space-y-4"
             >
-              {/* Full Name */}
               <div className="space-y-1.5">
-                <Label
-                  htmlFor="signup-fullname"
-                  className="text-[13px] font-medium text-neutral-600"
-                >
-                  {L.fullName}
-                </Label>
-                <Input
-                  id="signup-fullname"
-                  type="text"
-                  autoComplete="name"
-                  placeholder={L.fullNamePlaceholder}
-                  className={fieldCls(!!errors.fullName)}
-                  disabled={isLoading}
-                  aria-invalid={!!errors.fullName}
-                  {...register("fullName")}
-                />
-                {errors.fullName && (
-                  <p className="text-xs text-red-500">
-                    {errors.fullName.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Username */}
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="signup-username"
-                  className="text-[13px] font-medium text-neutral-600"
-                >
+                <Label htmlFor="signup-username" className="sr-only">
                   {L.username}
                 </Label>
                 <Input
@@ -458,18 +356,31 @@ export function SignUpForm({ t, lang, signInHref }: SignUpFormProps) {
                   {...register("username")}
                 />
                 {errors.username && (
-                  <p className="text-xs text-red-500">
-                    {errors.username.message}
-                  </p>
+                  <p className="text-xs text-red-500">{errors.username.message}</p>
                 )}
               </div>
 
-              {/* Email */}
               <div className="space-y-1.5">
-                <Label
-                  htmlFor="signup-email"
-                  className="text-[13px] font-medium text-neutral-600"
-                >
+                <Label htmlFor="signup-fullname" className="sr-only">
+                  {L.fullName}
+                </Label>
+                <Input
+                  id="signup-fullname"
+                  type="text"
+                  autoComplete="name"
+                  placeholder={L.fullNamePlaceholder}
+                  className={fieldCls(!!errors.fullName)}
+                  disabled={isLoading}
+                  aria-invalid={!!errors.fullName}
+                  {...register("fullName")}
+                />
+                {errors.fullName && (
+                  <p className="text-xs text-red-500">{errors.fullName.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="signup-email" className="sr-only">
                   {L.email}
                 </Label>
                 <Input
@@ -482,19 +393,89 @@ export function SignUpForm({ t, lang, signInHref }: SignUpFormProps) {
                   aria-invalid={!!errors.email}
                   {...register("email")}
                 />
-                {errors.email && (
-                  <p className="text-xs text-red-500">
-                    {errors.email.message}
-                  </p>
-                )}
+                {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
               </div>
 
-              {/* Password */}
               <div className="space-y-1.5">
-                <Label
-                  htmlFor="signup-password"
-                  className="text-[13px] font-medium text-neutral-600"
+                <Label htmlFor="signup-phone" className="sr-only">
+                  {L.mobileNumber}
+                </Label>
+                <div
+                  className={`flex h-16 items-center overflow-hidden rounded-2xl border bg-white ${
+                    errors.phone ? "border-red-400" : "border-neutral-300"
+                  }`}
                 >
+                  <Select
+                    value={phoneCountryCodeValue || undefined}
+                    onValueChange={(v) => {
+                      setValue("countryCode", v, { shouldValidate: true });
+                    }}
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger
+                      id="signup-phone-country"
+                      className="h-16 min-w-[6.2rem] w-[6.5rem] shrink-0 justify-center rounded-none border-0 border-e border-neutral-300 bg-transparent px-2 text-[14px] shadow-none focus:ring-0 focus:ring-offset-0 [&>svg]:hidden"
+                      aria-label={L.phonePrefixAria}
+                    >
+                      <SelectValue>
+                        <span className="inline-flex w-full items-center justify-center gap-1.5">
+                          <img
+                            src={appleFlagEmojiUrl(selectedPhoneEntry.code)}
+                            alt={selectedFlagEmoji}
+                            className="h-4 w-5 rounded-[2px] object-cover"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          <span className="tabular-nums text-[13px] font-normal text-neutral-700">
+                            {selectedPhoneEntry.dial}
+                          </span>
+                        </span>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="w-[17rem] rounded-2xl">
+                      {countryPhoneCodes.map((c) => (
+                        <SelectItem
+                          key={c.code}
+                          value={c.code}
+                          textValue={`${c.name} ${c.dial}`}
+                          className="my-0.5 rounded-xl"
+                        >
+                          <span className="inline-flex w-full items-center gap-2.5">
+                            <img
+                              src={appleFlagEmojiUrl(c.code)}
+                              alt={flagEmojiFromIso2(c.code) || c.code}
+                              className="h-4 w-5 rounded-[2px] object-cover"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                            <span className="text-[13px] font-medium text-neutral-800">{c.name}</span>
+                            <span className="ms-auto tabular-nums text-[13px] font-normal text-neutral-600">
+                              {c.dial}
+                            </span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    id="signup-phone"
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel-national"
+                    placeholder={L.phonePlaceholder}
+                    className="auth-form-input-autofill h-16 border-0 bg-transparent px-4 text-[17px] text-neutral-700 placeholder:text-neutral-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    disabled={isLoading}
+                    aria-invalid={!!errors.phone}
+                    {...register("phone", {
+                      setValueAs: (v) => String(v ?? "").replace(/\D/g, ""),
+                    })}
+                  />
+                </div>
+                {errors.phone && <p className="text-xs text-red-500">{errors.phone.message}</p>}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="signup-password" className="sr-only">
                   {L.password}
                 </Label>
                 <div className="relative">
@@ -503,311 +484,52 @@ export function SignUpForm({ t, lang, signInHref }: SignUpFormProps) {
                     type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
                     placeholder={L.placeholderPassword}
-                    className={`${fieldCls(!!errors.password)} pe-11`}
+                    className={`${fieldCls(!!errors.password)} pe-12`}
                     disabled={isLoading}
                     aria-invalid={!!errors.password}
                     {...register("password")}
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 end-0 flex w-11 items-center justify-center text-neutral-400 transition-colors hover:text-neutral-600"
+                    className="absolute inset-y-0 end-0 flex w-12 items-center justify-center text-neutral-400 transition-colors hover:text-neutral-600"
                     onClick={() => setShowPassword(!showPassword)}
                     tabIndex={-1}
-                    aria-label={
-                      showPassword ? "Hide password" : "Show password"
-                    }
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-xs text-red-500">
-                    {errors.password.message}
-                  </p>
+                  <p className="text-xs text-red-500">{errors.password.message}</p>
                 )}
-              </div>
-
-              {/* Confirm Password */}
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="confirm-password"
-                  className="text-[13px] font-medium text-neutral-600"
-                >
-                  {L.confirmPassword}
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="confirm-password"
-                    type={showConfirmPassword ? "text" : "password"}
-                    autoComplete="new-password"
-                    placeholder={L.placeholderPassword}
-                    className={`${fieldCls(!!errors.confirmPassword)} pe-11`}
-                    disabled={isLoading}
-                    aria-invalid={!!errors.confirmPassword}
-                    {...register("confirmPassword")}
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 end-0 flex w-11 items-center justify-center text-neutral-400 transition-colors hover:text-neutral-600"
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
-                    tabIndex={-1}
-                    aria-label={
-                      showConfirmPassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
+                <div className="space-y-1.5">
+                  <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-center text-[12px]">
+                    <li className={`inline-flex items-center gap-1 ${pwd.minLength ? "text-green-600" : "text-neutral-500"}`}>
+                      {pwd.minLength ? <CheckCircle2 className="h-3.5 w-3.5 shrink-0" /> : <X className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} />}
+                      8+ characters
+                    </li>
+                    <li className={`inline-flex items-center gap-1 ${pwd.hasUpper ? "text-green-600" : "text-neutral-500"}`}>
+                      {pwd.hasUpper ? <CheckCircle2 className="h-3.5 w-3.5 shrink-0" /> : <X className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} />}
+                      Uppercase
+                    </li>
+                    <li className={`inline-flex items-center gap-1 ${pwd.hasLower ? "text-green-600" : "text-neutral-500"}`}>
+                      {pwd.hasLower ? <CheckCircle2 className="h-3.5 w-3.5 shrink-0" /> : <X className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} />}
+                      Lowercase
+                    </li>
+                    <li className={`inline-flex items-center gap-1 ${pwd.hasNumber ? "text-green-600" : "text-neutral-500"}`}>
+                      {pwd.hasNumber ? <CheckCircle2 className="h-3.5 w-3.5 shrink-0" /> : <X className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} />}
+                      Number
+                    </li>
+                  </ul>
                 </div>
-                {errors.confirmPassword && (
-                  <p className="text-xs text-red-500">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
               </div>
 
-              {/* Next */}
-              <Button
-                type="button"
-                className="h-11 w-full rounded-lg bg-vibo-primary text-[15px] font-medium shadow-sm transition-colors hover:bg-vibo-primary/90"
-                onClick={goToStep2}
-              >
-                {L.stepNext}
-              </Button>
-            </motion.div>
-          )}
-
-          {/* ── Step 2: Personal Details ── */}
-          {step === 2 && (
-            <motion.div
-              key="signup-step-2"
-              initial={{ opacity: 0, x: 8 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -8 }}
-              transition={{ duration: 0.2 }}
-              className="space-y-4"
-            >
-              {/* Date of Birth */}
-              <div className="space-y-1.5">
-                <Label
-                  id="signup-dob-label"
-                  className="text-[13px] font-medium text-neutral-600"
-                >
-                  {L.dob}
-                </Label>
-                <div
-                  className="grid grid-cols-3 gap-2"
-                  role="group"
-                  aria-labelledby="signup-dob-label"
-                >
-                  <Select
-                    value={dobY || undefined}
-                    onValueChange={(v) => setDobPart("y", v)}
-                    disabled={isLoading}
-                  >
-                    <SelectTrigger
-                      id="signup-dob-year"
-                      className={selectTriggerCls(!!errors.dob)}
-                      aria-invalid={!!errors.dob}
-                    >
-                      <SelectValue placeholder={L.dobYear} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {birthYears.map((y) => (
-                        <SelectItem key={y} value={String(y)}>
-                          {y}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    value={dobM || undefined}
-                    onValueChange={(v) => setDobPart("m", v)}
-                    disabled={isLoading}
-                  >
-                    <SelectTrigger
-                      id="signup-dob-month"
-                      className={selectTriggerCls(!!errors.dob)}
-                      aria-invalid={!!errors.dob}
-                    >
-                      <SelectValue placeholder={L.dobMonth} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {visibleMonths.map((item) => (
-                        <SelectItem key={item.value} value={item.value}>
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    value={dobD || undefined}
-                    onValueChange={(v) => setDobPart("d", v)}
-                    disabled={isLoading}
-                  >
-                    <SelectTrigger
-                      id="signup-dob-day"
-                      className={selectTriggerCls(!!errors.dob)}
-                      aria-invalid={!!errors.dob}
-                    >
-                      <SelectValue placeholder={L.dobDay} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {dayOptions.map((day) => (
-                        <SelectItem key={day} value={day}>
-                          {parseInt(day, 10)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                {errors.dob && (
-                  <p className="text-xs text-red-500">{errors.dob.message}</p>
-                )}
-              </div>
-
-              {/* Gender */}
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="signup-gender"
-                  className="text-[13px] font-medium text-neutral-600"
-                >
-                  {L.gender}
-                </Label>
-                <Select
-                  value={genderValue || undefined}
-                  onValueChange={(v) =>
-                    setValue("gender", v, { shouldValidate: true })
-                  }
-                  disabled={isLoading}
-                >
-                  <SelectTrigger
-                    id="signup-gender"
-                    className={`${selectTriggerCls(!!errors.gender)} w-full`}
-                    aria-invalid={!!errors.gender}
-                  >
-                    <SelectValue placeholder={L.genderPlaceholder} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="male">
-                      {L.genderOptions.male}
-                    </SelectItem>
-                    <SelectItem value="female">
-                      {L.genderOptions.female}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.gender && (
-                  <p className="text-xs text-red-500">
-                    {errors.gender.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Country */}
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="signup-country"
-                  className="text-[13px] font-medium text-neutral-600"
-                >
-                  {L.country}
-                </Label>
-                <Select
-                  value={countryValue || undefined}
-                  onValueChange={(v) =>
-                    setValue("country", v, { shouldValidate: true })
-                  }
-                  disabled={isLoading}
-                >
-                  <SelectTrigger
-                    id="signup-country"
-                    className={`${selectTriggerCls(!!errors.country)} w-full`}
-                    aria-invalid={!!errors.country}
-                  >
-                    <SelectValue placeholder={L.countryPlaceholder} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {COUNTRIES.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.country && (
-                  <p className="text-xs text-red-500">
-                    {errors.country.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Phone */}
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="signup-phone"
-                  className="text-[13px] font-medium text-neutral-600"
-                >
-                  {L.phone}
-                </Label>
-                <div className="flex gap-2">
-                  <Select
-                    value={phoneCountryCodeValue || undefined}
-                    onValueChange={(v) =>
-                      setValue("countryCode", v, { shouldValidate: true })
-                    }
-                    disabled={isLoading}
-                  >
-                    <SelectTrigger
-                      id="signup-phone-country"
-                      className="h-11 w-[6.5rem] shrink-0 rounded-lg border-neutral-200 bg-white px-2 text-[15px]"
-                      aria-label={L.countryCode}
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {COUNTRY_PHONE_CODES.map((c) => (
-                        <SelectItem key={c.code} value={c.code}>
-                          {c.code} {c.dial}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    id="signup-phone"
-                    type="tel"
-                    autoComplete="tel"
-                    placeholder={L.phonePlaceholder}
-                    className={fieldCls(!!errors.phone)}
-                    disabled={isLoading}
-                    aria-invalid={!!errors.phone}
-                    {...register("phone")}
-                  />
-                </div>
-                {errors.phone && (
-                  <p className="text-xs text-red-500">
-                    {errors.phone.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Terms */}
               <div className="flex items-start gap-2.5 pt-1">
                 <Checkbox
                   id="terms"
                   checked={termsValue}
                   onCheckedChange={(checked) => {
-                    setValue("terms", checked === true, {
-                      shouldValidate: true,
-                    });
+                    setValue("terms", checked === true, { shouldValidate: true });
                   }}
                   disabled={isLoading}
                   className="mt-0.5 rounded border-neutral-300 data-[state=checked]:border-vibo-primary data-[state=checked]:bg-vibo-primary"
@@ -819,29 +541,115 @@ export function SignUpForm({ t, lang, signInHref }: SignUpFormProps) {
                   >
                     {L.termsLabel}
                   </label>
-                  <p className="text-[11px] leading-snug text-neutral-400">
-                    {L.termsHint}
-                  </p>
+                  <p className="text-[11px] leading-snug text-neutral-400">{L.termsHint}</p>
                 </div>
               </div>
-              {errors.terms && (
-                <p className="text-xs text-red-500">{errors.terms.message}</p>
-              )}
+              {errors.terms && <p className="text-xs text-red-500">{errors.terms.message}</p>}
 
-              {/* Actions */}
+              <Button
+                type="submit"
+                className={`h-16 w-full rounded-full text-[17px] font-medium text-white transition-colors ${
+                  canContinueStep1
+                    ? "bg-vibo-primary hover:bg-vibo-primary/90"
+                    : "bg-vibo-primary/45"
+                } disabled:cursor-not-allowed disabled:bg-vibo-primary/35`}
+                disabled={isLoading || !canContinueStep1}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="me-2 inline h-4 w-4 animate-spin" />
+                    {L.sendingCode}
+                  </>
+                ) : (
+                  L.continueToVerify
+                )}
+              </Button>
+            </motion.div>
+          )}
+
+          {step === 2 && (
+            <motion.div
+              key="signup-step-2"
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -8 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-4"
+            >
+              <div className="rounded-2xl border border-neutral-200/90 bg-gradient-to-b from-white to-neutral-50/90 px-5 py-4 text-sm text-neutral-600 shadow-sm">
+                <p className="font-medium text-neutral-900">{L.verificationTitle}</p>
+                <p className="mt-1 text-xs text-neutral-500">
+                  {L.verificationSubtitle.replace("{email}", getValues("email"))}
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="signup-code" className="text-[13px] font-medium text-neutral-600">
+                  {L.verificationCode}
+                </Label>
+                <Input
+                  id="signup-code"
+                  type="tel"
+                  inputMode="numeric"
+                  pattern="\d{4}"
+                  minLength={4}
+                  autoComplete="one-time-code"
+                  maxLength={4}
+                  placeholder="0000"
+                  className={fieldCls(false)}
+                  disabled={isLoading}
+                  value={verificationCode}
+                  onKeyDown={(e) => {
+                    const allowed =
+                      e.key === "Backspace" ||
+                      e.key === "Delete" ||
+                      e.key === "ArrowLeft" ||
+                      e.key === "ArrowRight" ||
+                      e.key === "Tab";
+                    if (allowed) return;
+                    if (!/^\d$/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                    const pasted = e.clipboardData.getData("text");
+                    setVerificationCode(pasted.replace(/\D/g, "").slice(0, 4));
+                  }}
+                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-10 rounded-xl px-3 text-vibo-primary hover:bg-vibo-primary/5 hover:text-vibo-primary/90"
+                  disabled={isLoading || resendSeconds > 0}
+                  onClick={() => void sendVerificationEmail()}
+                >
+                  {resendSeconds > 0
+                    ? L.resendIn.replace("{s}", String(resendSeconds))
+                    : L.resendCode}
+                </Button>
+              </div>
+
               <div className="flex gap-3 pt-1">
                 <Button
                   type="button"
                   variant="outline"
-                  className="h-11 flex-1 rounded-lg border-neutral-200 text-[15px] font-medium text-neutral-700"
-                  onClick={() => setStep(1)}
+                  className="h-12 flex-1 rounded-xl border-neutral-200 text-[15px] font-medium text-neutral-700"
+                  onClick={() => {
+                    setStep(1);
+                    setError(null);
+                  }}
                   disabled={isLoading}
                 >
                   {L.stepBack}
                 </Button>
                 <Button
                   type="submit"
-                  className="h-11 flex-1 gap-2 rounded-lg bg-vibo-primary text-[15px] font-medium shadow-sm transition-colors hover:bg-vibo-primary/90"
+                  className="h-12 flex-1 gap-2 rounded-xl bg-vibo-primary text-[15px] font-medium shadow-sm transition-colors hover:bg-vibo-primary/90"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -850,26 +658,29 @@ export function SignUpForm({ t, lang, signInHref }: SignUpFormProps) {
                       {L.creatingAccount}
                     </>
                   ) : (
-                    L.createAccount
+                    L.verifyAndContinue
                   )}
                 </Button>
               </div>
             </motion.div>
           )}
-        </AnimatePresence>
-      </form>
+          </AnimatePresence>
+        </form>
+      ) : (
+        <div className="px-1 sm:px-0">
+          <OnboardingForm t={t} lang={lang ?? "en"} />
+        </div>
+      )}
 
-      {/* Footer link */}
-      <p className="text-center text-sm text-neutral-500">
-        {L.hasAccount}{" "}
-        <Link
-          href={signInHref}
-          className="font-semibold text-neutral-900 hover:underline"
-          prefetch
-        >
-          {L.signInLink}
-        </Link>
-      </p>
+      {step < 3 && (
+        <p className="text-center text-sm text-neutral-500">
+          {L.hasAccount}{" "}
+          <Link href={signInHref} className="font-semibold text-neutral-900 hover:underline" prefetch>
+            {L.signInLink}
+          </Link>
+        </p>
+      )}
     </div>
   );
 }
+

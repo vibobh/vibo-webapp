@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Globe } from "lucide-react";
+import { Globe } from "@/components/ui/icons";
 
 import { isRTL, type Lang, type Translations } from "@/i18n";
 import { SignInForm } from "@/components/auth/SignInForm";
@@ -50,7 +50,7 @@ export function ViboAuthPage({ t, lang, onSwitchLang, authMode }: ViboAuthPagePr
             {/* Logo */}
             <Link
               href={homeHref}
-              className="mb-10 inline-flex transition-opacity hover:opacity-80"
+              className="mb-10 flex w-full justify-center transition-opacity hover:opacity-80"
             >
               <Image
                 src="/images/vibo-icon-maroon.png"
@@ -71,7 +71,7 @@ export function ViboAuthPage({ t, lang, onSwitchLang, authMode }: ViboAuthPagePr
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <SignInForm t={t} signUpHref={signupHref} />
+                  <SignInForm t={t} lang={lang} signUpHref={signupHref} />
                 </motion.div>
               ) : (
                 <motion.div
@@ -96,3 +96,4 @@ export function ViboAuthPage({ t, lang, onSwitchLang, authMode }: ViboAuthPagePr
     </main>
   );
 }
+

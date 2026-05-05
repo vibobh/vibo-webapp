@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { api, createConvexHttpClient } from "@/lib/convexServer";
-import { verifyToken, COOKIE_NAME } from "@/lib/auth/jwt";
-import type { Id } from "@convex/_generated/dataModel";
+import { verifyToken, signToken, COOKIE_NAME, makeAuthCookieOptions } from "@/lib/auth/jwt";
+import type { Id } from "@convex_app/_generated/dataModel";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { interests, bio, bioLink, isPrivate } = body;
+    const { bio, bioLink } = body;
 
     let client;
     try {
@@ -30,15 +30,21 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
-    await client.mutation(api.users.completeOnboarding, {
+    await client.mutation(api.users.updateProfile, {
       userId: payload.sub as Id<"users">,
-      interests: interests ?? [],
-      bio: bio || undefined,
-      bioLink: bioLink || undefined,
-      isPrivate: isPrivate ?? false,
+      bio: typeof bio === "string" && bio.trim() ? bio.trim() : undefined,
+      bioLink: typeof bioLink === "string" && bioLink.trim() ? bioLink.trim() : undefined,
     });
 
-    return NextResponse.json({ ok: true });
+    const freshToken = await signToken({
+      sub: payload.sub,
+      email: payload.email,
+      username: payload.username,
+      onboardingCompleted: true,
+    });
+    const res = NextResponse.json({ ok: true, token: freshToken });
+    res.cookies.set(COOKIE_NAME, freshToken, makeAuthCookieOptions());
+    return res;
   } catch (err: any) {
     return NextResponse.json(
       { error: err?.message ?? "Failed to save profile" },

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useCallback, useRef, type FormEvent } from "react";
-import { ChevronDown, Loader2, X } from "lucide-react";
+import { ChevronDown, Loader2, X } from "@/components/ui/icons";
 import HelpAiSearchIcon from "@/components/help/HelpAiSearchIcon";
 import { useAction } from "convex/react";
-import { api } from "@convex/_generated/api";
+import { api } from "@convex_app/_generated/api";
 import type { Lang } from "@/i18n";
 import { searchArticles } from "@/data/helpArticles";
 import Link from "next/link";
@@ -186,3 +186,4 @@ export default function HelpAiSearch({ lang, copy, helpBasePath }: Props) {
     </div>
   );
 }
+

@@ -1,5 +1,16 @@
+/** Same resolution as `getConvexDeploymentUrl` in src/lib/convexServer.ts (browser + API routes). */
+function resolvedConvexUrl() {
+  return (
+    process.env.NEXT_PUBLIC_CONVEX_URL?.trim() ||
+    process.env.EXPO_PUBLIC_CONVEX_URL?.trim() ||
+    process.env.CONVEX_URL?.trim() ||
+    process.env.SOURCE_CONVEX_URL?.trim() ||
+    ""
+  );
+}
+
 function convexImageHostname() {
-  const raw = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+  const raw = resolvedConvexUrl();
   if (!raw) return null;
   try {
     return new URL(raw).hostname;
@@ -12,14 +23,23 @@ const convexHost = convexImageHostname();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  /**
+   * Disk pack cache on Windows can throw ENOENT on rename under `.next/cache/webpack`.
+   * Memory cache avoids flaky PackFileCacheStrategy errors in dev (slightly slower cold compile).
+   */
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.cache = { type: "memory" };
+    }
+    return config;
+  },
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
-  // Single source of truth: set NEXT_PUBLIC_CONVEX_URL in .env.local (same host as CONVEX_DEPLOYMENT).
-  // Do NOT fall back to CONVEX_URL here — the CLI may set a different deployment than NEXT_PUBLIC_* and
-  // would override the URL you intend (e.g. calculating-viper-482 vs fortunate-capybara-474).
+  // Prefer NEXT_PUBLIC_CONVEX_URL (Next.js web); else EXPO_PUBLIC_* if you pasted a mobile .env; else CONVEX_URL / SOURCE_*.
+  // First defined wins. Restart `npm run dev` after changing .env.local.
   env: {
-    NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL?.trim() || "",
+    NEXT_PUBLIC_CONVEX_URL: resolvedConvexUrl(),
   },
   async rewrites() {
     return [

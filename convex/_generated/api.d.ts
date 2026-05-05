@@ -11,8 +11,14 @@
 import type * as authActions from "../authActions.js";
 import type * as blogs from "../blogs.js";
 import type * as contact from "../contact.js";
+import type * as emailOtp from "../emailOtp.js";
 import type * as helpChat from "../helpChat.js";
+import type * as messaging from "../messaging.js";
 import type * as news from "../news.js";
+import type * as posts from "../posts.js";
+import type * as signupVerification from "../signupVerification.js";
+import type * as social from "../social.js";
+import type * as stories from "../stories.js";
 import type * as users from "../users.js";
 
 import type {
@@ -25,8 +31,14 @@ declare const fullApi: ApiFromModules<{
   authActions: typeof authActions;
   blogs: typeof blogs;
   contact: typeof contact;
+  emailOtp: typeof emailOtp;
   helpChat: typeof helpChat;
+  messaging: typeof messaging;
   news: typeof news;
+  posts: typeof posts;
+  signupVerification: typeof signupVerification;
+  social: typeof social;
+  stories: typeof stories;
   users: typeof users;
 }>;
 

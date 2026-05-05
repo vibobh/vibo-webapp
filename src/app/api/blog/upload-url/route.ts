@@ -4,7 +4,8 @@ import {
   BLOG_SESSION_COOKIE,
   verifySessionToken,
 } from "@/lib/blogSession";
-import { api, getConvexClient } from "@/lib/convexServer";
+import { getConvexClient } from "@/lib/convexServer";
+import { api } from "@convex_app/_generated/api";
 
 export const dynamic = "force-dynamic";
 

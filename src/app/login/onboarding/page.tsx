@@ -7,5 +7,9 @@ type PageProps = {
 
 export default function OnboardingPage({ searchParams }: PageProps) {
   const initialUrlLang = parseLangSearchParam(searchParams.lang);
-  return <OnboardingPageClient initialUrlLang={initialUrlLang} />;
+  const preview =
+    searchParams.preview === "1" ||
+    searchParams.preview === "true" ||
+    (Array.isArray(searchParams.preview) && searchParams.preview.includes("1"));
+  return <OnboardingPageClient initialUrlLang={initialUrlLang} preview={preview} />;
 }

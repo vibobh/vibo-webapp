@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import BlogArticleClient from "./BlogArticleClient";
-import { api, getConvexClient } from "@/lib/convexServer";
+import { getConvexClient } from "@/lib/convexServer";
+import { api } from "@convex_app/_generated/api";
 
 type Props = {
   params: { slug: string };

@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, Mail, Smartphone } from "lucide-react";
+import { BarChart3, Mail, Smartphone } from "@/components/ui/icons";
 import { motion, useReducedMotion } from "framer-motion";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -156,3 +156,4 @@ export default function BusinessGrowthContactSection({ copy, siteOrigin, lang, r
     </section>
   );
 }
+

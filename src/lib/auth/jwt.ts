@@ -29,11 +29,17 @@ export interface TokenPayload {
   sub: string;
   email: string;
   username?: string;
+  /** When true, user has finished first-time onboarding (JWT claim `obc`). */
+  onboardingCompleted?: boolean;
 }
 
 export async function signToken(payload: TokenPayload): Promise<string> {
   const key = await getPrivateKey();
-  return new SignJWT({ email: payload.email, username: payload.username })
+  return new SignJWT({
+    email: payload.email,
+    username: payload.username,
+    ...(payload.onboardingCompleted === true ? { obc: true } : {}),
+  })
     .setProtectedHeader({ alg: ALG, kid: KID })
     .setSubject(payload.sub)
     .setIssuedAt()
@@ -55,6 +61,7 @@ export async function verifyToken(token: string): Promise<TokenPayload | null> {
       sub: payload.sub,
       email: (payload.email as string) ?? "",
       username: (payload.username as string) ?? undefined,
+      onboardingCompleted: payload.obc === true,
     };
   } catch {
     return null;

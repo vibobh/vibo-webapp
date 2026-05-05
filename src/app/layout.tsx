@@ -3,6 +3,7 @@ import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import "./globals.css";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
 import JsonLd from "@/components/seo/JsonLd";
+import { THEME_INIT_SCRIPT } from "@/lib/theme/ThemeProvider";
 import {
   DEFAULT_DESCRIPTION,
   DEFAULT_KEYWORDS,
@@ -90,6 +91,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" dir="ltr">
+      <head>
+        {/* Set `dark` class on <html> before hydration so app surfaces don't flash. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className={`${inter.variable} ${ibmPlexSansArabic.variable} font-en antialiased`}>
         <JsonLd />
         <ConvexClientProvider>{children}</ConvexClientProvider>

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "@/components/ui/icons";
 import type { HelpArticle, HelpCategory } from "@/data/helpArticles";
 import type { Lang } from "@/i18n";
 
@@ -91,3 +91,4 @@ export default function HelpArticleView({
     </div>
   );
 }
+

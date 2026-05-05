@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, BadgeCheck } from "lucide-react";
+import { Check, BadgeCheck } from "@/components/ui/icons";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -144,3 +144,4 @@ export default function Pricing({ copy, siteOrigin }: PricingProps) {
     </section>
   );
 }
+

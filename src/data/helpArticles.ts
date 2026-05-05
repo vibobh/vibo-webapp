@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "@/components/ui/icons";
 import {
   Film,
   Compass,
@@ -6,7 +6,7 @@ import {
   User,
   Shield,
   Rocket,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 export type HelpCategory = {
   slug: string;
@@ -294,3 +294,4 @@ export function searchArticles(query: string): HelpArticle[] {
       a.body.toLowerCase().includes(q),
   );
 }
+

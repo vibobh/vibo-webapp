@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, FileText } from "lucide-react";
+import { ArrowLeft, ArrowRight, FileText } from "@/components/ui/icons";
 import { getTranslations, isRTL } from "@/i18n";
 import { useViboLang } from "@/i18n/useViboLang";
 import Navbar from "@/components/Navbar";

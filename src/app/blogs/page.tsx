@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useQuery } from "convex/react";
-import { api } from "@convex/_generated/api";
 import { getTranslations, isRTL } from "@/i18n";
 import { useViboLang } from "@/i18n/useViboLang";
 import GradientBg from "@/components/GradientBg";
@@ -25,6 +23,10 @@ function formatDate(ts: number, locale: string) {
   }
 }
 
+type BlogListQueryRow = Omit<BlogListItem, "_id"> & {
+  _id: BlogListItem["_id"] | { toString(): string };
+};
+
 export default function BlogsPage() {
   const { lang, switchLang } = useViboLang();
   const t = getTranslations(lang);
@@ -33,9 +35,27 @@ export default function BlogsPage() {
   const categoryLabel = bt.categories;
 
   const hasConvex = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL?.trim());
-  const postsRaw = useQuery(api.blogs.listPublished, hasConvex ? {} : "skip");
+  const [postsRaw, setPostsRaw] = useState<
+    readonly BlogListQueryRow[] | undefined | null
+  >(() => (hasConvex ? undefined : null));
 
-  const loading = hasConvex && postsRaw === undefined;
+  useEffect(() => {
+    if (!hasConvex) return;
+    let cancelled = false;
+    fetch("/api/blogs")
+      .then((r) => (r.ok ? r.json() : Promise.resolve({ posts: [] })))
+      .then((data: { posts?: readonly BlogListQueryRow[] }) => {
+        if (!cancelled) setPostsRaw(data.posts ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setPostsRaw([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [hasConvex]);
+
+  const loading = postsRaw !== null && postsRaw === undefined;
 
   const posts: BlogListItem[] = useMemo(() => {
     if (!postsRaw?.length) return [];

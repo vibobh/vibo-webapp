@@ -5,9 +5,12 @@ import { signToken, COOKIE_NAME, makeAuthCookieOptions } from "@/lib/auth/jwt";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { identifier, password } = body;
+    const email = String(body?.email ?? "")
+      .trim()
+      .toLowerCase();
+    const password = String(body?.password ?? "");
 
-    if (!identifier || !password) {
+    if (!email || !password) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -23,23 +26,39 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
-    const result = await client.action(api.authActions.loginWithEmail, {
-      identifier,
+    const result = await client.action(api.auth.signInEmail, {
+      email,
       password,
     });
+    const profile = await client.query(api.users.getById, {
+      id: result.userId,
+    });
+    const row =
+      profile &&
+      typeof profile === "object" &&
+      (!("restricted" in profile) ||
+        (profile as { restricted?: boolean }).restricted !== true)
+        ? (profile as {
+            email?: string;
+            username?: string;
+            onboardingCompleted?: boolean;
+          })
+        : null;
 
     const token = await signToken({
       sub: result.userId,
-      email: result.email,
-      username: result.username,
+      email: row?.email ?? "",
+      username: row?.username,
+      onboardingCompleted: row?.onboardingCompleted === true,
     });
 
     const res = NextResponse.json({
       token,
       user: {
         id: result.userId,
-        email: result.email,
-        username: result.username,
+        email: row?.email ?? "",
+        username: row?.username,
+        onboardingCompleted: row?.onboardingCompleted === true,
       },
     });
     res.cookies.set(COOKIE_NAME, token, makeAuthCookieOptions());

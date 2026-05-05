@@ -3,7 +3,8 @@ import { cookies } from "next/headers";
 import type { NewsArticle, NewsTag } from "@/types/news";
 import { filterArticlesForVibo } from "@/lib/newsContentFilter";
 import { verifySessionToken, BLOG_SESSION_COOKIE } from "@/lib/blogSession";
-import { api, getConvexClient } from "@/lib/convexServer";
+import { getConvexClient } from "@/lib/convexServer";
+import { api } from "@convex_app/_generated/api";
 
 export const dynamic = "force-dynamic";
 

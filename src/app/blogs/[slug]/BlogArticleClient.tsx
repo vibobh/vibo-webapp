@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useQuery } from "convex/react";
-import { api } from "@convex/_generated/api";
 import { readStoredLang, writeStoredLang } from "@/i18n/useViboLang";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -40,7 +38,30 @@ export default function BlogArticleClient() {
   const [coverImageFailed, setCoverImageFailed] = useState(false);
 
   const hasConvex = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL?.trim());
-  const rawPost = useQuery(api.blogs.getBySlug, hasConvex && slug ? { slug } : "skip");
+  const [rawPost, setRawPost] = useState<
+    Omit<BlogPost, "_id"> & { _id: BlogPost["_id"] | { toString(): string } } | null | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (!hasConvex || !slug) {
+      setRawPost(undefined);
+      return;
+    }
+    let cancelled = false;
+    setRawPost(undefined);
+    fetch(`/api/blogs/${encodeURIComponent(slug)}`)
+      .then((r) => (r.ok ? r.json() : Promise.resolve({ post: null })))
+      .then((data: { post?: BlogPost | null }) => {
+        if (cancelled) return;
+        setRawPost(data.post ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setRawPost(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [hasConvex, slug]);
 
   const post: BlogPost | null | undefined = useMemo(() => {
     if (!hasConvex) return undefined;

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useCallback, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useAction } from "convex/react";
-import { api } from "@convex/_generated/api";
+import { api } from "@convex_app/_generated/api";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

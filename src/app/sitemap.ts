@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
-import { api, getConvexClient } from "@/lib/convexServer";
+import { getConvexClient } from "@/lib/convexServer";
+import { api } from "@convex_app/_generated/api";
 import { SITE_URL } from "@/lib/seo";
 
 /**
@@ -80,7 +81,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const posts = await convex.query(api.blogs.listPublished, {});
-    const postUrls: MetadataRoute.Sitemap = posts.map((post) => ({
+    const postUrls: MetadataRoute.Sitemap = posts.map((post: (typeof posts)[number]) => ({
       url: `${SITE_URL}/blogs/${post.slug}`,
       lastModified: new Date(post.updatedAt),
       changeFrequency: "weekly",

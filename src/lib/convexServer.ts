@@ -1,5 +1,5 @@
 import { ConvexHttpClient } from "convex/browser";
-import { api } from "@convex/_generated/api";
+import { api } from "@convex_app/_generated/api";
 
 export { api };
 
@@ -8,9 +8,13 @@ export { api };
  * Must match the project you open in the Convex dashboard (see CONVEX_DEPLOYMENT in .env.local).
  */
 export function getConvexDeploymentUrl(): string | null {
-  // Use only NEXT_PUBLIC_CONVEX_URL so API routes match the browser and .env.local.
-  // Do not fall back to CONVEX_URL (Convex CLI / shell may point at another deployment).
-  const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim() || "";
+  // Keep in sync with `resolvedConvexUrl` in next.config.js (NEXT_PUBLIC wins, then CLI, then SOURCE_*).
+  const url =
+    process.env.NEXT_PUBLIC_CONVEX_URL?.trim() ||
+    process.env.EXPO_PUBLIC_CONVEX_URL?.trim() ||
+    process.env.CONVEX_URL?.trim() ||
+    process.env.SOURCE_CONVEX_URL?.trim() ||
+    "";
   return url || null;
 }
 
@@ -37,8 +41,9 @@ export function createConvexHttpClient(): ConvexHttpClient {
   const url = getConvexDeploymentUrl();
   if (!url) {
     throw new Error(
-      "Convex is not configured: set NEXT_PUBLIC_CONVEX_URL in .env.local to your deployment URL " +
-        "(e.g. https://YOUR_DEPLOYMENT.convex.cloud) and restart `npm run dev`. " +
+      "Convex is not configured: set NEXT_PUBLIC_CONVEX_URL in .env.local (use Next naming, not EXPO_PUBLIC_*), " +
+        "or CONVEX_URL / SOURCE_CONVEX_URL / EXPO_PUBLIC_CONVEX_URL as fallback. " +
+        "Example: https://YOUR_DEPLOYMENT.convex.cloud — then restart `npm run dev`. " +
         "It must match CONVEX_DEPLOYMENT from `npx convex dev`.",
     );
   }

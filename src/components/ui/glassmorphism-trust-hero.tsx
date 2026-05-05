@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Play } from "@/components/ui/icons";
 import WorldGlobe from "@/components/ui/WorldGlobe";
 
 type HeroProfile = {
@@ -101,4 +101,5 @@ export default function GlassmorphismTrustHero(props: GlassmorphismTrustHeroProp
     </div>
   );
 }
+
 

@@ -1,9 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useQuery } from "convex/react";
-import { api } from "@convex/_generated/api";
 import type { BlogListItem } from "@/types/blog";
 import { pickBlogExcerpt, pickBlogTitle } from "@/lib/blogLocale";
 import { useBlogListAutoAr } from "@/hooks/useBlogAutoTranslate";
@@ -23,6 +21,9 @@ type Props = {
     guide: string;
   };
 };
+
+/** Convex listPublished row before `_id` is stringified for the client list type */
+type BlogListQueryRow = Omit<BlogListItem, "_id"> & { _id: BlogListItem["_id"] | { toString(): string } };
 
 function formatDate(ts: number, locale: string) {
   try {
@@ -46,8 +47,25 @@ export default function BlogSection({
   categories,
 }: Props) {
   const hasConvex = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL?.trim());
-  const postsRaw = useQuery(api.blogs.listPublished, hasConvex ? {} : "skip");
+  const [postsRaw, setPostsRaw] = useState<
+    readonly BlogListQueryRow[] | undefined | null
+  >(() => (hasConvex ? undefined : null));
 
+  useEffect(() => {
+    if (!hasConvex) return;
+    let cancelled = false;
+    fetch("/api/blogs")
+      .then((r) => (r.ok ? r.json() : Promise.resolve({ posts: [] })))
+      .then((data: { posts?: readonly BlogListQueryRow[] }) => {
+        if (!cancelled) setPostsRaw(data.posts ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setPostsRaw([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [hasConvex]);
   const posts: BlogListItem[] = useMemo(() => {
     if (!postsRaw?.length) return [];
     return postsRaw.slice(0, 3).map((p) => ({
@@ -56,6 +74,7 @@ export default function BlogSection({
     }));
   }, [postsRaw]);
 
+  const loading = postsRaw !== null && postsRaw === undefined;
   const locale = lang === "ar" ? "ar" : "en";
   const q = `?lang=${lang}`;
   const { mergeOne } = useBlogListAutoAr(posts, lang);
@@ -83,7 +102,7 @@ export default function BlogSection({
           </Link>
         </div>
 
-        {hasConvex && postsRaw === undefined ? (
+        {loading ? (
           <p className="text-neutral-400 text-sm">…</p>
         ) : posts.length === 0 ? (
           <p className="text-neutral-500 text-sm max-w-lg">{sectionEmpty}</p>

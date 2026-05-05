@@ -101,7 +101,10 @@ export const loginWithEmail = action({
     identifier: v.string(),
     password: v.string(),
   },
-  handler: async (ctx, args): Promise<{ userId: string; email: string; username: string }> => {
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{ userId: string; email: string; username: string; onboardingCompleted: boolean }> => {
     const identifier = args.identifier.trim();
     const email = normalizeEmail(identifier);
     const username = identifier.toLowerCase();
@@ -133,6 +136,11 @@ export const loginWithEmail = action({
     const ok = await verifyPassword(args.password, user.passwordHash!);
     if (!ok) throw new Error(INVALID_CREDENTIALS);
 
-    return { userId: user._id, email: user.email, username: user.username ?? "" };
+    return {
+      userId: user._id,
+      email: user.email,
+      username: user.username ?? "",
+      onboardingCompleted: user.onboardingCompleted === true,
+    };
   },
 });

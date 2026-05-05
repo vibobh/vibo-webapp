@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "@/components/ui/icons";
 import Link from "next/link";
 
-import type { Translations } from "@/i18n";
+import type { Lang, Translations } from "@/i18n";
 import { useViboAuth } from "@/lib/auth/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,10 +17,11 @@ import { Label } from "@/components/ui/label";
 
 export interface SignInFormProps {
   t: Translations;
+  lang: Lang;
   signUpHref: string;
 }
 
-export function SignInForm({ t, signUpHref }: SignInFormProps) {
+export function SignInForm({ t, lang, signUpHref }: SignInFormProps) {
   const L = t.login;
   const router = useRouter();
   const { setSession } = useViboAuth();
@@ -31,7 +32,7 @@ export function SignInForm({ t, signUpHref }: SignInFormProps) {
   const signInSchema = useMemo(
     () =>
       z.object({
-        identifier: z.string().min(3, { message: L.errors.email }),
+        email: z.string().email({ message: L.errors.email }),
         password: z.string().min(8, { message: L.errors.passwordMin }),
       }),
     [L.errors.email, L.errors.passwordMin],
@@ -45,7 +46,7 @@ export function SignInForm({ t, signUpHref }: SignInFormProps) {
     formState: { errors },
   } = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
-    defaultValues: { identifier: "", password: "" },
+    defaultValues: { email: "", password: "" },
   });
 
   const onSubmit = async (data: SignInFormValues) => {
@@ -56,7 +57,7 @@ export function SignInForm({ t, signUpHref }: SignInFormProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          identifier: data.identifier,
+          email: data.email.trim().toLowerCase(),
           password: data.password,
         }),
       });
@@ -66,7 +67,8 @@ export function SignInForm({ t, signUpHref }: SignInFormProps) {
         return;
       }
       setSession(json.token, json.user);
-      router.push("/");
+      const done = json.user?.onboardingCompleted === true;
+      router.push(done ? "/" : `/signup?lang=${lang ?? "en"}&onboarding=1`);
     } catch {
       setError(L.genericError);
     } finally {
@@ -75,7 +77,7 @@ export function SignInForm({ t, signUpHref }: SignInFormProps) {
   };
 
   const fieldCls = (hasError: boolean) =>
-    `h-11 rounded-lg border-neutral-200 bg-white text-[15px] transition-colors placeholder:text-neutral-400 focus-visible:border-neutral-400 focus-visible:ring-1 focus-visible:ring-neutral-300/50 ${hasError ? "border-red-400" : ""}`;
+    `auth-form-input-autofill h-16 rounded-2xl border bg-white px-5 text-[17px] text-neutral-700 transition-colors placeholder:text-neutral-400 focus-visible:border-neutral-400 focus-visible:ring-2 focus-visible:ring-vibo-primary/20 ${hasError ? "border-red-400" : "border-neutral-300"}`;
 
   return (
     <div className="space-y-8">
@@ -84,32 +86,32 @@ export function SignInForm({ t, signUpHref }: SignInFormProps) {
       </h1>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-sm text-red-700">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* Identifier */}
+          {/* Email */}
         <div className="space-y-1.5">
           <Label
-            htmlFor="login-identifier"
+            htmlFor="login-email"
             className="text-[13px] font-medium text-neutral-600"
           >
-            {L.identifier}
+            {L.email ?? L.identifier}
           </Label>
           <Input
-            id="login-identifier"
-            type="text"
-            autoComplete="username"
-            placeholder={L.placeholderIdentifier}
-            className={fieldCls(!!errors.identifier)}
+            id="login-email"
+            type="email"
+            autoComplete="email"
+            placeholder={L.placeholderEmail ?? L.placeholderIdentifier}
+            className={fieldCls(!!errors.email)}
             disabled={isLoading}
-            aria-invalid={!!errors.identifier}
-            {...register("identifier")}
+            aria-invalid={!!errors.email}
+            {...register("email")}
           />
-          {errors.identifier && (
-            <p className="text-xs text-red-500">{errors.identifier.message}</p>
+          {errors.email && (
+            <p className="text-xs text-red-500">{errors.email.message}</p>
           )}
         </div>
 
@@ -127,14 +129,14 @@ export function SignInForm({ t, signUpHref }: SignInFormProps) {
               type={showPassword ? "text" : "password"}
               autoComplete="current-password"
               placeholder={L.placeholderPassword}
-              className={`${fieldCls(!!errors.password)} pe-11`}
+              className={`${fieldCls(!!errors.password)} pe-12`}
               disabled={isLoading}
               aria-invalid={!!errors.password}
               {...register("password")}
             />
             <button
               type="button"
-              className="absolute inset-y-0 end-0 flex w-11 items-center justify-center text-neutral-400 transition-colors hover:text-neutral-600"
+              className="absolute inset-y-0 end-0 flex w-12 items-center justify-center text-neutral-400 transition-colors hover:text-neutral-600"
               onClick={() => setShowPassword(!showPassword)}
               tabIndex={-1}
               aria-label={showPassword ? "Hide password" : "Show password"}
@@ -171,7 +173,7 @@ export function SignInForm({ t, signUpHref }: SignInFormProps) {
         {/* Submit */}
         <Button
           type="submit"
-          className="h-11 w-full rounded-lg bg-vibo-primary text-[15px] font-medium shadow-sm transition-colors hover:bg-vibo-primary/90"
+          className="h-16 w-full rounded-full bg-vibo-primary/45 text-[17px] font-medium text-white transition-colors hover:bg-vibo-primary/90 disabled:cursor-not-allowed disabled:bg-vibo-primary/35"
           disabled={isLoading}
         >
           {isLoading ? (
@@ -199,3 +201,4 @@ export function SignInForm({ t, signUpHref }: SignInFormProps) {
     </div>
   );
 }
+

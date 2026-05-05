@@ -15,6 +15,7 @@ interface AuthUser {
   id: string;
   email: string;
   username?: string;
+  onboardingCompleted?: boolean;
 }
 
 interface AuthContextValue {
@@ -110,8 +111,18 @@ function useConvexAuthFromToken() {
   );
 }
 
+function convexDeploymentUrl(): string {
+  return (
+    process.env.NEXT_PUBLIC_CONVEX_URL?.trim() ||
+    process.env.EXPO_PUBLIC_CONVEX_URL?.trim() ||
+    process.env.CONVEX_URL?.trim() ||
+    process.env.SOURCE_CONVEX_URL?.trim() ||
+    ""
+  );
+}
+
 function makeClient(): ConvexReactClient | null {
-  const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim() || "";
+  const url = convexDeploymentUrl();
   if (!url) return null;
   return new ConvexReactClient(url);
 }

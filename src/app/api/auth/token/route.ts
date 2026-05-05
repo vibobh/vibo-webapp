@@ -20,7 +20,12 @@ export async function GET(request: NextRequest) {
   const remainingSec = exp - Math.floor(Date.now() / 1000);
 
   if (remainingSec < 60 * 60 * 24) {
-    const freshToken = await signToken(payload);
+    const freshToken = await signToken({
+      sub: payload.sub,
+      email: payload.email,
+      username: payload.username,
+      onboardingCompleted: payload.onboardingCompleted === true,
+    });
     const res = NextResponse.json({ token: freshToken });
     res.cookies.set(COOKIE_NAME, freshToken, makeAuthCookieOptions());
     return res;

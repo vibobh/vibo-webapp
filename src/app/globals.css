@@ -48,6 +48,20 @@
   .section-padding {
     @apply px-6 sm:px-8 lg:px-12 xl:px-16;
   }
+
+  /**
+   * Login / signup inputs: keep white field + dark text when Chrome autofills
+   * (otherwise WebKit applies blue-gray bg + white text and looks “wrong” vs sign-in).
+   */
+  .auth-form-input-autofill:-webkit-autofill,
+  .auth-form-input-autofill:-webkit-autofill:hover,
+  .auth-form-input-autofill:-webkit-autofill:focus,
+  .auth-form-input-autofill:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #404040 !important;
+    caret-color: #404040;
+  }
 }
 
 @layer utilities {
